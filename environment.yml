@@ -1,0 +1,17 @@
+# Entorno conda equivalente al de uv/pip. Las versiones salen de requirements.txt.
+name: proyecto-mine
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip
+  # Paquetes con código nativo que PyPI no publica precompilados para todas las
+  # plataformas. Sus versiones deben coincidir con las de requirements.txt para
+  # que pip los dé por instalados y no intente compilarlos.
+  - pycairo=1.29.2
+  - manimpango=0.7.0
+  - moderngl=5.13.0
+  - glcontext=3.1.0
+  - argon2-cffi-bindings=26.1.0
+  - pip:
+      - -r requirements.txt

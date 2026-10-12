@@ -1,0 +1,36 @@
+[project]
+name = "proyecto-mine-ciencia-de-datos"
+version = "0.1.0"
+description = "Proyecto final de MINE-4101: Ciencia de Datos Aplicada (2026-20)"
+readme = "README.md"
+requires-python = ">=3.12,<3.14"
+dependencies = [
+    # Análisis y ciencia de datos
+    "numpy>=2.1",
+    "pandas>=2.2",
+    "scipy>=1.15",
+    "statsmodels>=0.14",
+    "scikit-learn>=1.6",
+    "matplotlib>=3.9",
+    "seaborn>=0.13",
+    "ydata-profiling>=4.12",
+    # ydata-profiling importa pkg_resources, que setuptools eliminó en la versión 81.
+    "setuptools<81",
+    "levenshtein>=0.26",
+    # Notebooks
+    "jupyterlab>=4.3",
+    "ipykernel>=6.29",
+    # Videos de sustentación
+    "manim>=0.22",
+    "manim-voiceover>=0.4.0",
+    "google-genai>=2.29.0",
+    "python-dotenv>=1.2.4",
+    "python-pptx>=1.0.2",
+]
+
+[tool.uv]
+# El repositorio no es un paquete instalable: solo se gestionan las dependencias.
+package = false
+# Desde la versión 49, cryptography (dependencia de google-genai) no publica
+# binarios para macOS con procesador Intel y habría que compilarla con Rust.
+constraint-dependencies = ["cryptography<49"]
