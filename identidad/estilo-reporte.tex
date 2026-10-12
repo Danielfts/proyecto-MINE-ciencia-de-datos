@@ -1,0 +1,166 @@
+% Estilo de los reportes del proyecto, con la identidad visual de la Universidad
+% de los Andes: amarillo, negro y blanco, y tipografía sin serifas (ver README.md
+% de esta carpeta). Lo comparten los reportes de las dos entregas.
+%
+% El reporte define antes: \titulo, \titulocorto, \subtitulo, \entrega, \fecha,
+% \urlrepositorio, \urlvideo y \maxpaginas, y pone \input{../../identidad/estilo-reporte}.
+% Se compila con LuaLaTeX.
+
+\usepackage[spanish,es-tabla,es-nodecimaldot]{babel}
+\usepackage{fontspec}
+\usepackage[letterpaper,left=2.5cm,right=2.5cm,top=2.6cm,bottom=2.4cm,
+  headheight=14pt,headsep=0.8cm,footskip=1.0cm]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{csquotes}
+\usepackage{xcolor}
+\usepackage{luacolor}
+\usepackage{lua-ul}
+\usepackage{tikz}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage[font=small,labelfont=bf,labelsep=period]{caption}
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+\usepackage[hidelinks]{hyperref}
+
+\newcommand{\dirIdentidad}{../../identidad}
+
+% --- Colores -----------------------------------------------------------------
+% Los oficiales del logosímbolo: negro y amarillo (C0 M0 Y100 K0). El amarillo se
+% define en CMYK para que sea exactamente el del logo.
+\definecolor{amarillo}{cmyk}{0,0,1,0}
+\colorlet{negro}{black}
+\definecolor{gris}{gray}{0.40}
+\definecolor{grisclaro}{gray}{0.94}
+
+% --- Tipografía --------------------------------------------------------------
+% Arial 12 (lo exige el enunciado; el manual recomienda fuentes sin serifas). Si
+% Arial no está instalada se usa una fuente con las mismas medidas, para que el
+% número de páginas no cambie, pero el PDF que se entrega debe salir con Arial.
+\IfFontExistsTF{Arial}{\setmainfont{Arial}}{%
+  \IfFontExistsTF{Liberation Sans}{\setmainfont{Liberation Sans}}{\setmainfont{TeX Gyre Heros}}%
+  \AtEndDocument{\PackageWarningNoLine{reporte}{Arial no esta instalada: este PDF usa una
+    fuente sustituta. Compile la version que se entrega en un equipo con Arial}}}
+\renewcommand{\familydefault}{\rmdefault}
+
+% --- Títulos, listas y párrafos: compactos, el espacio es para el contenido -----
+\titleformat{\section}{\large\bfseries}
+  {\colorbox{amarillo}{\makebox[1.3em]{\strut\thesection}}}{0.6em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{0.5em}{}
+\titlespacing*{\section}{0pt}{1.4ex plus 0.4ex}{0.7ex}
+\titlespacing*{\subsection}{0pt}{1ex plus 0.3ex}{0.4ex}
+\setlist{nosep,leftmargin=*}
+\setlist[itemize,1]{label=\textcolor{amarillo}{\rule[0.15ex]{0.9ex}{0.9ex}}}
+\setlength{\parskip}{0.5ex}
+\setlength{\parindent}{0pt}
+
+% --- Enlaces: texto negro con subrayado amarillo ---------------------------------
+\newcommand{\enlace}[2]{\href{#1}{\underLine[color=amarillo,top=-0.22ex,bottom=-0.42ex]{#2}}}
+% Enlace a un archivo o carpeta del repositorio: \repo{ruta/al/archivo}{texto}.
+\newcommand{\repo}[2]{\enlace{\urlrepositorio/blob/main/#1}{#2}}
+
+% --- Recuadro para el resultado o la cifra que no se puede pasar por alto --------
+% Fondo gris con una barra amarilla a la izquierda. No se parte entre páginas.
+\newsavebox{\cajadestacado}
+\newenvironment{destacado}{%
+  \par\addvspace{1.2ex}\noindent\setlength{\fboxsep}{6pt}%
+  \begin{lrbox}{\cajadestacado}%
+  \begin{minipage}{\dimexpr\linewidth-3pt-2\fboxsep\relax}\setlength{\parskip}{0.5ex}}
+  {\end{minipage}\end{lrbox}%
+  \textcolor{amarillo}{\vrule width 3pt}\colorbox{grisclaro}{\usebox{\cajadestacado}}%
+  \par\addvspace{1.2ex}}
+
+% --- Encabezado y pie de página --------------------------------------------------
+% Franja amarilla de borde a borde, con una línea negra debajo.
+\newcommand{\franja}{%
+  \begin{tikzpicture}[remember picture,overlay]
+    \fill[amarillo] (current page.north west) rectangle
+      ([yshift=-1.15cm]current page.north east);
+    \fill[negro] ([yshift=-1.15cm]current page.north west) rectangle
+      ([yshift=-1.21cm]current page.north east);
+    \node[anchor=west,font=\small\bfseries,text=negro]
+      at ([xshift=2.5cm,yshift=-0.6cm]current page.north west) {\titulocorto};
+    \node[anchor=east,font=\small,text=negro]
+      at ([xshift=-2.5cm,yshift=-0.6cm]current page.north east) {\entrega};
+  \end{tikzpicture}}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\franja}
+\fancyfoot[L]{\footnotesize\color{gris}MINE-4101 Ciencia de Datos Aplicada · Universidad de los Andes}
+\fancyfoot[R]{\footnotesize\color{gris}\thepage\ de \pageref*{LastPage}}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% --- Portada ----------------------------------------------------------------------
+% El logo a color va sobre blanco, sin modificar y acompañado del texto legal, como
+% pide el manual de identidad.
+\newcommand{\legaluniandes}{Universidad de los Andes | Vigilada Mineducación.
+  Reconocimiento como Universidad: Decreto 1297 del 30 de mayo de 1964.
+  Reconocimiento personería jurídica: Resolución 28 del 23 de febrero de 1949 Minjusticia.}
+
+\newcommand{\portada}{%
+  \begin{titlepage}
+  \begin{tikzpicture}[remember picture,overlay]
+    \node[anchor=north west,inner sep=0pt]
+      at ([xshift=2.5cm,yshift=-2.2cm]current page.north west)
+      {\includegraphics[height=1.9cm]{\dirIdentidad/logo-uniandes.pdf}};
+    % bloque amarillo de borde a borde, con el título
+    \fill[amarillo] ([yshift=-7.6cm]current page.north west) rectangle
+      ([yshift=-16.0cm]current page.north east);
+    \node[anchor=north west,inner sep=0pt,text width=16.5cm,align=left]
+      at ([xshift=2.5cm,yshift=-8.7cm]current page.north west) {%
+        \hyphenpenalty=10000\exhyphenpenalty=10000
+        {\small\bfseries\addfontfeature{LetterSpace=12}\MakeUppercase{Proyecto final · \entrega}}\\[0.9cm]
+        {\fontsize{30}{35}\selectfont\bfseries\titulo\par}\vspace{0.6cm}
+        {\Large\subtitulo\par}};
+    % franja negra con el curso
+    \fill[negro] ([yshift=-16.0cm]current page.north west) rectangle
+      ([yshift=-17.3cm]current page.north east);
+    \node[anchor=west,text=white,font=\normalsize\bfseries]
+      at ([xshift=2.5cm,yshift=-16.65cm]current page.north west)
+      {MINE-4101 Ciencia de Datos Aplicada};
+    \node[anchor=east,text=white,font=\normalsize]
+      at ([xshift=-2.5cm,yshift=-16.65cm]current page.north east) {Semestre 2026-20};
+    % integrantes y profesores
+    \node[anchor=north west,inner sep=0pt,text width=8.5cm,align=left]
+      at ([xshift=2.5cm,yshift=-18.6cm]current page.north west) {%
+        {\small\bfseries\addfontfeature{LetterSpace=12}INTEGRANTES}\\[0.25cm]
+        Daniel Felipe Triviño Santana\\ Nicolas Bedoya Figueroa\\
+        Joubert Daniel Álvarez\\ Gabriel Bejarano};
+    \node[anchor=north west,inner sep=0pt,text width=7cm,align=left]
+      at ([xshift=12cm,yshift=-18.6cm]current page.north west) {%
+        {\small\bfseries\addfontfeature{LetterSpace=12}PROFESORES}\\[0.25cm]
+        Fabian Camilo Peña\\ Juan Pablo Reyes\\[0.5cm]
+        \enlace{\urlrepositorio}{Repositorio} · \enlace{\urlvideo}{Video}\\[0.15cm]
+        \fecha};
+    % texto legal que acompaña al logo
+    \draw[negro,line width=0.4pt] ([xshift=2.5cm,yshift=2.5cm]current page.south west)
+      -- ([xshift=-2.5cm,yshift=2.5cm]current page.south east);
+    \node[anchor=north west,inner sep=0pt,text width=16.5cm,align=left,
+      font=\scriptsize,text=gris]
+      at ([xshift=2.5cm,yshift=2.3cm]current page.south west) {\legaluniandes};
+  \end{tikzpicture}
+  \end{titlepage}
+  \setcounter{page}{2}}
+
+% Título compacto, para cuando no hay portada.
+\newcommand{\titulocompacto}{%
+  \begin{center}
+    {\Large\bfseries\titulo\par}\vspace{0.5ex}
+    \entrega\ · MINE-4101 Ciencia de Datos Aplicada · 2026-20\\[0.5ex]
+    Daniel Felipe Triviño Santana, Nicolas Bedoya Figueroa,\\
+    Joubert Daniel Álvarez, Gabriel Bejarano\\[0.5ex]
+    \enlace{\urlrepositorio}{Repositorio} · \enlace{\urlvideo}{Video de sustentación}
+  \end{center}}
+
+% \encabezado pone la portada o, con \portadafalse, el título compacto.
+\newif\ifportada
+\portadatrue
+\newcommand{\encabezado}{\ifportada\portada\else\titulocompacto\fi}
+
+% --- Aviso si el reporte se pasa del máximo de páginas ---------------------------
+\AtEndDocument{\ifnum\value{page}>\maxpaginas\relax
+  \PackageWarningNoLine{reporte}{El reporte tiene \thepage\space paginas y el maximo
+    es \maxpaginas}\fi}
