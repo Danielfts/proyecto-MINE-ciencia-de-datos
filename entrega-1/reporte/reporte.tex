@@ -1,0 +1,97 @@
+% Reporte ejecutivo de la primera entrega.
+%
+% Formato que exige el enunciado: PDF, una columna, Arial 12, máximo 6 páginas,
+% enfoque netamente ejecutivo y con enlaces a los recursos del repositorio donde
+% está el detalle. El enunciado recomienda no gastar páginas en portada ni tabla de
+% contenidos; la portada se puede quitar con \portadafalse.
+%
+% Se compila con LuaLaTeX (hace falta para usar Arial), desde esta carpeta:
+%
+%     latexmk reporte.tex
+%
+\documentclass[12pt,letterpaper]{article}
+
+\newcommand{\titulo}{Título del proyecto}
+\newcommand{\titulocorto}{Título corto del proyecto} % va en la franja de cada página
+\newcommand{\subtitulo}{Una línea que diga qué problema se resuelve y para qué organización}
+\newcommand{\entrega}{Primera entrega}
+\newcommand{\fecha}{Bogotá, octubre de 2026}
+\newcommand{\maxpaginas}{6}
+\newcommand{\urlrepositorio}{https://github.com/Danielfts/proyecto-MINE-ciencia-de-datos}
+\newcommand{\urlvideo}{https://www.youtube.com/} % pendiente: enlace del video
+
+% Colores, tipografía, encabezado, portada y enlaces: identidad/estilo-reporte.tex.
+\input{../../identidad/estilo-reporte}
+
+\addbibresource{referencias.bib}
+
+% La portada cuenta dentro del máximo de páginas. Con \portadafalse se cambia por
+% un título compacto en la primera página y se recupera esa página para contenido.
+\portadatrue
+
+\begin{document}
+
+\encabezado
+
+% Los porcentajes son el peso de cada actividad en la nota de la entrega. Sirven
+% para repartir las 6 páginas: el entendimiento de los datos pesa más que todo.
+
+\section{Problemática y entendimiento del negocio} % 10 %
+% La organización y la problemática u oportunidad. La información clave del negocio
+% (estrategia, datos del sector) que sustenta su relevancia. Los objetivos del
+% proyecto y las métricas de negocio (KPIs) con las que se evaluará.
+Pendiente.
+
+\section{Ideación} % 10 %
+% Los usuarios potenciales, sus procesos actuales y sus dolores. Los requerimientos
+% del producto de datos, sus componentes analíticos y tecnológicos, y el mockup.
+Pendiente.
+
+% \begin{figure}[ht]
+%   \centering
+%   \includegraphics[width=0.7\linewidth]{imagenes/mockup.png}
+%   \caption{Mockup del producto de datos.}
+% \end{figure}
+
+\section{Aspectos éticos y legales} % 10 %
+% Implicaciones éticas, de privacidad, confidencialidad, transparencia y
+% regulatorias en este contexto. Las fuentes consultadas se citan con \cite{clave}
+% y van en referencias.bib.
+Pendiente.
+
+\section{Enfoque analítico} % 15 %
+% Las hipótesis o preguntas de negocio que guían la experimentación. Las técnicas
+% estadísticas, de visualización y de machine learning que las responderán. Las
+% métricas con las que se evaluará la calidad del modelo.
+Pendiente.
+
+\section{Recolección de datos} % 10 %
+% Las fuentes de datos, según su estructura e importancia. El diccionario de datos
+% completo va en el repositorio; aquí, solo las entidades o atributos más relevantes.
+Pendiente. El diccionario de datos completo está en \repo{entrega-1}{el repositorio}.
+
+% \begin{table}[ht]
+%   \centering
+%   \caption{Atributos más relevantes.}
+%   \begin{tabular}{lll}
+%     \toprule
+%     Atributo & Tipo & Descripción \\
+%     \midrule
+%     pendiente & pendiente & pendiente \\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
+
+\section{Entendimiento de los datos} % 35 %
+% Los resultados más importantes del análisis exploratorio y de la calidad de los
+% datos. Debe notarse el uso de técnicas univariadas y multivariadas, gráficas y
+% no gráficas. El notebook completo se enlaza con \repo.
+Pendiente.
+
+\section{Conclusiones iniciales} % 10 %
+% Primeras conclusiones e insights, y las acciones que siguen.
+Pendiente.
+
+\printbibliography
+
+\end{document}
