@@ -1,0 +1,31 @@
+# Material de referencia del curso: solo local, ver course-contents/README.md
+course-contents/*
+!course-contents/README.md
+
+# Bitácora privada de uso de IA; la versión que se entrega es USO_DE_IA.md
+USO_DE_IA.borrador.md
+
+# Entorno de Python
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+
+# Salida de manim (los videos finales se publican en YouTube)
+media/
+
+# Credenciales y configuración local de voz (ver .env.template)
+.env
+
+# Archivos auxiliares de LaTeX (el PDF del reporte sí se sube)
+entrega-*/reporte/*.aux
+entrega-*/reporte/*.bbl
+entrega-*/reporte/*.bcf
+entrega-*/reporte/*.blg
+entrega-*/reporte/*.fdb_latexmk
+entrega-*/reporte/*.fls
+entrega-*/reporte/*.log
+entrega-*/reporte/*.out
+entrega-*/reporte/*.run.xml
+entrega-*/reporte/*.synctex.gz
+entrega-*/reporte/*.toc
