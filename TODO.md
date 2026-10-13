@@ -50,7 +50,7 @@ Lista de pendientes derivada del enunciado ([Proyecto Final.pdf](Proyecto%20Fina
 ### 5. Recolección de datos (10%)
 
 - [ ] Describir las fuentes de datos según su estructura e importancia
-- [ ] Elaborar el diccionario de datos, al menos de las entidades o atributos más relevantes
+- [x] Elaborar el diccionario de datos, al menos de las entidades o atributos más relevantes (ver [datos/base-podada/diccionario-de-datos.md](datos/base-podada/diccionario-de-datos.md))
 
 ### 6. Entendimiento de los datos (35%)
 

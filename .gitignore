@@ -29,3 +29,10 @@ entrega-*/reporte/*.out
 entrega-*/reporte/*.run.xml
 entrega-*/reporte/*.synctex.gz
 entrega-*/reporte/*.toc
+
+# Respaldos y archivos de transferencia de la base catastral: tienen datos personales
+*.dump
+*.backup
+*.xtf
+*.sql.gz
+catastro_*.sql

@@ -1,0 +1,577 @@
+---
+title: Base podada del levantamiento catastral (LADM-COL) · modelo entidad-relación
+config:
+  theme: base
+  layout: elk
+  themeVariables:
+    fontFamily: "Arial"
+    primaryColor: "#FFFF00"
+    primaryBorderColor: "#000000"
+    primaryTextColor: "#000000"
+    lineColor: "#000000"
+    edgeLabelBackground: "#FFFFFF"
+    tertiaryColor: "#FFFFFF"
+  themeCSS: ".erDiagramTitleText { font-size: 64px; font-weight: bold; }"
+---
+%% Diagrama entidad-relación de la base podada (catastro_pruned): 45 tablas.
+%% Es el homólogo, para la base podada, del diagrama de clases del modelo original
+%% (../modelos-ladm-col/documentacion/Modelo_Aplicacion_LADMCOL_Levantamiento_Catastral_V2_0.png).
+%% Cómo leerlo:
+%%   - Cada tabla de datos (amarillo) lista todas sus columnas: tipo, nombre, llave (PK, FK, UK)
+%%     y obligatoriedad: [1] es obligatoria (NOT NULL) y [0..1] admite NULL. En las llaves
+%%     foráneas, la flecha indica la tabla a la que apuntan.
+%%   - Cada dominio (blanco) lista sus valores: los códigos de su columna ilicode. Su estructura
+%%     real, igual en todos, es t_id, thisclass, baseclass, itfcode, ilicode, seq, inactive,
+%%     dispname, description.
+%%   - Cada línea es una llave foránea, con el nombre de la columna. No se dibujan las 20 de
+%%     t_basket hacia t_ili2db_basket (gris): la tienen todas las tablas de datos.
+%%   - col_unidadadministrativabasicatipo y col_fuenteadministrativatipo solo muestran los valores
+%%     del levantamiento catastral; sus tablas guardan además los del núcleo y los del modelo RIC.
+%%   - cr_usouconstipo tiene 102 valores con la forma Grupo.Uso; aquí se resumen por grupo.
+%%     La lista completa está en diccionario-de-datos.md.
+%% Las columnas, sus descripciones y cuánto dato trae cada una están en diccionario-de-datos.md.
+erDiagram
+
+    %% ---------- Predio ----------
+    lc_predio {
+        bigint t_id PK "[1]"
+        bigint t_basket FK "[1] → t_ili2db_basket"
+        uuid t_ili_tid "[0..1]"
+        varchar(2) departamento "[1]"
+        varchar(3) municipio "[1]"
+        varchar(30) id_operacion "[1]"
+        varchar(4) codigo_orip "[0..1]"
+        integer matricula_inmobiliaria "[0..1]"
+        varchar(30) numero_predial "[1]"
+        varchar(11) codigo_homologado "[0..1]"
+        numeric(16,1) avaluo_catastral "[0..1]"
+        bigint tipo FK "[1] → col_unidadadministrativabasicatipo"
+        bigint condicion_predio FK "[1] → lc_condicionprediotipo"
+        bigint destinacion_economica FK "[1] → lc_destinacioneconomicatipo"
+        varchar(255) nombre "[0..1]"
+        timestamp comienzo_vida_util_version "[1]"
+        timestamp fin_vida_util_version "[0..1]"
+        varchar(255) espacio_de_nombres "[1]"
+        varchar(255) local_id "[1]"
+    }
+    lc_datosadicionaleslevantamientocatastral {
+        bigint t_id PK "[1]"
+        bigint t_basket FK "[1] → t_ili2db_basket"
+        uuid t_ili_tid "[0..1]"
+        numeric(25,2) area_registral_m2 "[0..1]"
+        varchar(500) observaciones "[0..1]"
+        date fecha_visita_predial "[0..1]"
+        bigint resultado_visita FK "[1] → lc_resultadovisitatipo"
+        bigint lc_predio FK "[1] → lc_predio"
+    }
+    lc_contactovisita {
+        bigint t_id PK "[1]"
+        bigint t_basket FK "[1] → t_ili2db_basket"
+        uuid t_ili_tid "[0..1]"
+        varchar(150) nombres_apellidos_quien_atendio "[1]"
+        bigint tipo_documento_quien_atendio FK "[0..1] → cr_documentotipo"
+        varchar(50) numero_documento_quien_atendio "[0..1]"
+        varchar(255) domicilio_notificaciones "[0..1]"
+        varchar(20) celular "[0..1]"
+        varchar(100) correo_electronico "[0..1]"
+        boolean autoriza_notificaciones "[0..1]"
+        bigint lc_datos_adicionales FK "[1] → lc_datosadicionaleslevantamientocatastral"
+    }
+    lc_estructuranovedadnumeropredial {
+        bigint t_id PK "[1]"
+        bigint t_basket FK "[1] → t_ili2db_basket"
+        uuid t_ili_tid "[0..1]"
+        bigint t_seq "[0..1]"
+        varchar(30) numero_predial "[1]"
+        bigint tipo_novedad FK "[1] → lc_estructuranovedadnumeropredial_tipo_novedad"
+        bigint lc_dtsdcnlstmntctstral_novedad_numeros_prediales FK "[0..1] → lc_datosadicionaleslevantamientocatastral"
+    }
+    cr_datosphcondominio {
+        bigint t_id PK "[1]"
+        bigint t_basket FK "[1] → t_ili2db_basket"
+        uuid t_ili_tid "[0..1]"
+        numeric(16,2) area_total_terreno "[0..1]"
+        numeric(16,2) area_total_terreno_privada "[0..1]"
+        numeric(16,2) area_total_terreno_comun "[0..1]"
+        numeric(16,2) area_total_construida "[0..1]"
+        numeric(16,2) area_total_construida_privada "[0..1]"
+        numeric(16,2) area_total_construida_comun "[0..1]"
+        integer numero_torres "[0..1]"
+        integer total_unidades_privadas "[0..1]"
+        bigint lc_predio FK "[1] → lc_predio"
+    }
+    cr_predio_copropiedad {
+        bigint t_id PK "[1]"
+        bigint t_basket FK "[1] → t_ili2db_basket"
+        bigint unidad_predial FK, UK "[1] → lc_predio"
+        bigint matriz FK "[1] → lc_predio"
+        numeric(11,10) coeficiente "[0..1]"
+    }
+    lc_predio_informalidad {
+        bigint t_id PK "[1]"
+        bigint t_basket FK "[1] → t_ili2db_basket"
+        bigint lc_predio_formal FK "[1] → lc_predio"
+        bigint lc_predio_informal FK "[1] → lc_predio"
+    }
+    extdireccion {
+        bigint t_id PK "[1]"
+        bigint t_basket FK "[1] → t_ili2db_basket"
+        bigint t_seq "[0..1]"
+        bigint tipo_direccion FK "[1] → extdireccion_tipo_direccion"
+        boolean es_direccion_principal "[0..1]"
+        geometry(PointZ,9377) localizacion "[0..1]"
+        varchar(255) codigo_postal "[0..1]"
+        bigint clase_via_principal FK "[0..1] → extdireccion_clase_via_principal"
+        varchar(100) valor_via_principal "[0..1]"
+        varchar(20) letra_via_principal "[0..1]"
+        varchar(20) letra_via_generadora "[0..1]"
+        bigint sector_ciudad FK "[0..1] → extdireccion_sector_ciudad"
+        varchar(100) valor_via_generadora "[0..1]"
+        varchar(20) numero_predio "[0..1]"
+        bigint sector_predio FK "[0..1] → extdireccion_sector_predio"
+        varchar(255) complemento "[0..1]"
+        varchar(255) nombre_predio "[0..1]"
+        bigint cr_construccion_ext_direccion_id FK "[0..1] → cr_construccion"
+        bigint cr_terreno_ext_direccion_id FK "[0..1] → cr_terreno"
+        bigint cr_unidadconstruccion_ext_direccion_id FK "[0..1] → cr_unidadconstruccion"
+        bigint lc_predio_direccion FK "[0..1] → lc_predio"
+    }
+
+    %% ---------- Unidades espaciales ----------
+    col_uebaunit {
+        bigint t_id PK "[1]"
+        bigint t_basket FK "[1] → t_ili2db_basket"
+        bigint ue_cr_unidadconstruccion FK "[0..1] → cr_unidadconstruccion"
+        bigint ue_cr_terreno FK "[0..1] → cr_terreno"
+        bigint ue_cr_construccion FK "[0..1] → cr_construccion"
+        bigint baunit_lc_predio FK "[0..1] → lc_predio"
+    }
+    cr_terreno {
+        bigint t_id PK "[1]"
+        bigint t_basket FK "[1] → t_ili2db_basket"
+        uuid t_ili_tid "[0..1]"
+        numeric(15,1) area_terreno "[1]"
+        geometry(MultiSurfaceZ,9377) geometria "[1]"
+        bigint dimension FK "[0..1] → col_dimensiontipo"
+        varchar(255) etiqueta "[0..1]"
+        bigint relacion_superficie FK "[0..1] → col_relacionsuperficietipo"
+        timestamp comienzo_vida_util_version "[1]"
+        timestamp fin_vida_util_version "[0..1]"
+        varchar(255) espacio_de_nombres "[1]"
+        varchar(255) local_id "[1]"
+    }
+    cr_construccion {
+        bigint t_id PK "[1]"
+        bigint t_basket FK "[1] → t_ili2db_basket"
+        uuid t_ili_tid "[0..1]"
+        varchar(20) identificador "[1]"
+        integer total_pisos "[1]"
+        integer total_sotanos "[0..1]"
+        integer total_mezanines "[0..1]"
+        integer total_semisotanos "[0..1]"
+        numeric(15,1) area_total_construccion "[1]"
+        numeric(6,2) altura_total_construccion "[0..1]"
+        geometry(MultiSurfaceZ,9377) geometria "[1]"
+        bigint dimension FK "[0..1] → col_dimensiontipo"
+        varchar(255) etiqueta "[0..1]"
+        bigint relacion_superficie FK "[0..1] → col_relacionsuperficietipo"
+        timestamp comienzo_vida_util_version "[1]"
+        timestamp fin_vida_util_version "[0..1]"
+        varchar(255) espacio_de_nombres "[1]"
+        varchar(255) local_id "[1]"
+    }
+    cr_unidadconstruccion {
+        bigint t_id PK "[1]"
+        bigint t_basket FK "[1] → t_ili2db_basket"
+        uuid t_ili_tid "[0..1]"
+        bigint tipo_planta FK "[1] → cr_construccionplantatipo"
+        integer planta_ubicacion "[1]"
+        numeric(15,1) area_construida "[1]"
+        integer altura "[0..1]"
+        geometry(MultiSurfaceZ,9377) geometria "[0..1]"
+        bigint cr_caracteristicasunidadconstruccion FK "[1] → cr_caracteristicasunidadconstruccion"
+        bigint cr_construccion FK "[0..1] → cr_construccion"
+        bigint dimension FK "[0..1] → col_dimensiontipo"
+        varchar(255) etiqueta "[0..1]"
+        bigint relacion_superficie FK "[0..1] → col_relacionsuperficietipo"
+        timestamp comienzo_vida_util_version "[1]"
+        timestamp fin_vida_util_version "[0..1]"
+        varchar(255) espacio_de_nombres "[1]"
+        varchar(255) local_id "[1]"
+    }
+    cr_caracteristicasunidadconstruccion {
+        bigint t_id PK "[1]"
+        bigint t_basket FK "[1] → t_ili2db_basket"
+        uuid t_ili_tid "[0..1]"
+        varchar(20) identificador "[1]"
+        bigint tipo_unidad_construccion FK "[1] → cr_unidadconstrucciontipo"
+        integer total_plantas "[0..1]"
+        bigint uso FK "[1] → cr_usouconstipo"
+        integer anio_construccion "[0..1]"
+        numeric(15,1) area_construida "[1]"
+        numeric(15,1) area_privada_construida "[0..1]"
+        text observaciones "[0..1]"
+        timestamp comienzo_vida_util_version "[1]"
+        timestamp fin_vida_util_version "[0..1]"
+        varchar(255) espacio_de_nombres "[1]"
+        varchar(255) local_id "[1]"
+    }
+
+    %% ---------- Interesados y derechos ----------
+    cr_interesado {
+        bigint t_id PK "[1]"
+        bigint t_basket FK "[1] → t_ili2db_basket"
+        uuid t_ili_tid "[0..1]"
+        bigint tipo FK "[1] → cr_interesadotipo"
+        bigint tipo_documento FK "[1] → cr_documentotipo"
+        varchar(50) documento_identidad "[1]"
+        varchar(100) primer_nombre "[0..1]"
+        varchar(100) segundo_nombre "[0..1]"
+        varchar(100) primer_apellido "[0..1]"
+        varchar(100) segundo_apellido "[0..1]"
+        bigint sexo FK "[0..1] → cr_sexotipo"
+        bigint grupo_etnico FK "[0..1] → cr_grupoetnicotipo"
+        varchar(255) razon_social "[0..1]"
+        varchar(255) nombre "[0..1]"
+        timestamp comienzo_vida_util_version "[1]"
+        timestamp fin_vida_util_version "[0..1]"
+        varchar(255) espacio_de_nombres "[1]"
+        varchar(255) local_id "[1]"
+    }
+    cr_agrupacioninteresados {
+        bigint t_id PK "[1]"
+        bigint t_basket FK "[1] → t_ili2db_basket"
+        uuid t_ili_tid "[0..1]"
+        bigint tipo FK "[1] → col_grupointeresadotipo"
+        varchar(255) nombre "[0..1]"
+        timestamp comienzo_vida_util_version "[1]"
+        timestamp fin_vida_util_version "[0..1]"
+        varchar(255) espacio_de_nombres "[1]"
+        varchar(255) local_id "[1]"
+    }
+    col_miembros {
+        bigint t_id PK "[1]"
+        bigint t_basket FK "[1] → t_ili2db_basket"
+        bigint interesado_cr_interesado FK "[0..1] → cr_interesado"
+        bigint interesado_cr_agrupacioninteresados FK "[0..1] → cr_agrupacioninteresados"
+        bigint agrupacion_cr_agrupacioninteresados FK "[0..1] → cr_agrupacioninteresados"
+        numeric(11,10) participacion "[0..1]"
+    }
+    lc_derecho {
+        bigint t_id PK "[1]"
+        bigint t_basket FK "[1] → t_ili2db_basket"
+        uuid t_ili_tid "[0..1]"
+        bigint tipo FK "[1] → lc_derechotipo"
+        numeric(11,10) fraccion_derecho "[1]"
+        date fecha_inicio_tenencia "[0..1]"
+        varchar(255) descripcion "[0..1]"
+        bigint interesado_cr_interesado FK "[0..1] → cr_interesado"
+        bigint interesado_cr_agrupacioninteresados FK "[0..1] → cr_agrupacioninteresados"
+        bigint unidad_lc_predio FK "[0..1] → lc_predio"
+        timestamp comienzo_vida_util_version "[1]"
+        timestamp fin_vida_util_version "[0..1]"
+        varchar(255) espacio_de_nombres "[1]"
+        varchar(255) local_id "[1]"
+    }
+
+    %% ---------- Fuentes administrativas ----------
+    lc_fuenteadministrativa {
+        bigint t_id PK "[1]"
+        bigint t_basket FK "[1] → t_ili2db_basket"
+        uuid t_ili_tid "[0..1]"
+        bigint tipo FK "[1] → col_fuenteadministrativatipo"
+        varchar(255) ente_emisor "[0..1]"
+        varchar(255) observacion "[0..1]"
+        varchar(150) numero_fuente "[0..1]"
+        bigint estado_disponibilidad FK "[1] → col_estadodisponibilidadtipo"
+        bigint tipo_principal FK "[0..1] → ci_forma_presentacion_codigo"
+        date fecha_documento_fuente "[0..1]"
+        varchar(255) espacio_de_nombres "[1]"
+        varchar(255) local_id "[1]"
+    }
+    col_rrrfuente {
+        bigint t_id PK "[1]"
+        bigint t_basket FK "[1] → t_ili2db_basket"
+        bigint fuente_administrativa_lc_fuenteadministrativa FK "[0..1] → lc_fuenteadministrativa"
+        bigint rrr_lc_derecho FK "[0..1] → lc_derecho"
+    }
+    col_unidadfuente {
+        bigint t_id PK "[1]"
+        bigint t_basket FK "[1] → t_ili2db_basket"
+        bigint fuente_administrativa_lc_fuenteadministrativa FK "[0..1] → lc_fuenteadministrativa"
+        bigint unidad_lc_predio FK "[0..1] → lc_predio"
+    }
+
+    %% ---------- Tablas de la carga ----------
+    t_ili2db_dataset {
+        bigint t_id PK "[1]"
+        varchar(200) datasetname UK "[0..1]"
+    }
+    t_ili2db_basket {
+        bigint t_id PK "[1]"
+        bigint dataset FK "[0..1] → t_ili2db_dataset"
+        varchar(200) topic "[1]"
+        varchar(200) t_ili_tid "[0..1]"
+        varchar(200) attachmentkey "[1]"
+        varchar(1024) domains "[0..1]"
+    }
+
+    %% ---------- Dominios ----------
+    ci_forma_presentacion_codigo["ci_forma_presentacion_codigo (dominio)"] {
+        ilicode Documento
+        ilicode Imagen
+        ilicode Mapa
+        ilicode Otro
+        ilicode Video
+    }
+    col_dimensiontipo["col_dimensiontipo (dominio)"] {
+        ilicode Dim2D
+        ilicode Dim3D
+        ilicode Otro
+    }
+    col_estadodisponibilidadtipo["col_estadodisponibilidadtipo (dominio)"] {
+        ilicode Convertido
+        ilicode Desconocido
+        ilicode Disponible
+    }
+    col_fuenteadministrativatipo["col_fuenteadministrativatipo (dominio)"] {
+        ilicode Documento_Privado
+        ilicode Documento_Publico.Acto_Administrativo
+        ilicode Documento_Publico.Escritura_Publica
+        ilicode Documento_Publico.Sentencia_Judicial
+        ilicode Sin_Documento
+    }
+    col_grupointeresadotipo["col_grupointeresadotipo (dominio)"] {
+        ilicode Grupo_Civil
+        ilicode Grupo_Empresarial
+        ilicode Grupo_Etnico
+        ilicode Grupo_Mixto
+    }
+    col_relacionsuperficietipo["col_relacionsuperficietipo (dominio)"] {
+        ilicode En_Rasante
+        ilicode En_Subsuelo
+        ilicode En_Vuelo
+        ilicode Otro
+    }
+    col_unidadadministrativabasicatipo["col_unidadadministrativabasicatipo (dominio)"] {
+        ilicode Amenazas_Riesgos
+        ilicode Ordenamiento_Territorial
+        ilicode Parques_Naturales
+        ilicode Predio.Privado
+        ilicode Predio.Publico.Baldio
+        ilicode Predio.Publico.Fiscal_Patrimonial
+        ilicode Predio.Publico.Publico
+        ilicode Predio.Publico.Uso_Publico
+        ilicode Reservas_Naturales
+        ilicode Servicios_Publicos
+        ilicode Servidumbre
+        ilicode Superficies_Agua
+        ilicode Transporte
+    }
+    cr_construccionplantatipo["cr_construccionplantatipo (dominio)"] {
+        ilicode Mezanine
+        ilicode Piso
+        ilicode Semisotano
+        ilicode Sotano
+        ilicode Subterraneo
+    }
+    cr_documentotipo["cr_documentotipo (dominio)"] {
+        ilicode Cedula_Ciudadania
+        ilicode Cedula_Extranjeria
+        ilicode NIT
+        ilicode Pasaporte
+        ilicode Registro_Civil
+        ilicode Secuencial
+        ilicode Tarjeta_Identidad
+    }
+    cr_grupoetnicotipo["cr_grupoetnicotipo (dominio)"] {
+        ilicode Indigena
+        ilicode Negro_Afrocolombiano
+        ilicode Ninguno
+        ilicode Palenquero
+        ilicode Raizal
+        ilicode Rrom
+    }
+    cr_interesadotipo["cr_interesadotipo (dominio)"] {
+        ilicode Persona_Juridica
+        ilicode Persona_Natural
+    }
+    cr_sexotipo["cr_sexotipo (dominio)"] {
+        ilicode Femenino
+        ilicode Masculino
+        ilicode Sin_Determinar
+    }
+    cr_unidadconstrucciontipo["cr_unidadconstrucciontipo (dominio)"] {
+        ilicode Anexo
+        ilicode Comercial
+        ilicode Industrial
+        ilicode Institucional
+        ilicode Residencial
+    }
+    cr_usouconstipo["cr_usouconstipo (dominio)"] {
+        ilicode Residencial.* "15 usos"
+        ilicode Comercial.* "24 usos"
+        ilicode Industrial.* "5 usos"
+        ilicode Institucional.* "23 usos"
+        ilicode Anexo.* "35 usos"
+    }
+    extdireccion_clase_via_principal["extdireccion_clase_via_principal (dominio)"] {
+        ilicode Autopista
+        ilicode Avenida
+        ilicode Avenida_Calle
+        ilicode Avenida_Carrera
+        ilicode Calle
+        ilicode Carrera
+        ilicode Circular
+        ilicode Circunvalar
+        ilicode Diagonal
+        ilicode Transversal
+    }
+    extdireccion_sector_ciudad["extdireccion_sector_ciudad (dominio)"] {
+        ilicode Este
+        ilicode Norte
+        ilicode Oeste
+        ilicode Sur
+    }
+    extdireccion_sector_predio["extdireccion_sector_predio (dominio)"] {
+        ilicode Este
+        ilicode Norte
+        ilicode Oeste
+        ilicode Sur
+    }
+    extdireccion_tipo_direccion["extdireccion_tipo_direccion (dominio)"] {
+        ilicode Estructurada
+        ilicode No_Estructurada
+    }
+    lc_condicionprediotipo["lc_condicionprediotipo (dominio)"] {
+        ilicode Bien_Uso_Publico
+        ilicode Condominio.Matriz
+        ilicode Condominio.Unidad_Predial
+        ilicode Informal
+        ilicode NPH
+        ilicode PH.Matriz
+        ilicode PH.Unidad_Predial
+        ilicode Parque_Cementerio.Matriz
+        ilicode Parque_Cementerio.Unidad_Predial
+        ilicode Via
+    }
+    lc_derechotipo["lc_derechotipo (dominio)"] {
+        ilicode Dominio
+        ilicode Ocupacion
+        ilicode Posesion
+    }
+    lc_destinacioneconomicatipo["lc_destinacioneconomicatipo (dominio)"] {
+        ilicode Acuicola
+        ilicode Agricola
+        ilicode Agroforestal
+        ilicode Agroindustrial
+        ilicode Agropecuario
+        ilicode Comercial
+        ilicode Cultural
+        ilicode Educativo
+        ilicode Forestal
+        ilicode Habitacional
+        ilicode Industrial
+        ilicode Infraestructura_Asociada_Produccion_Agropecuaria
+        ilicode Infraestructura_Hidraulica
+        ilicode Infraestructura_Saneamiento_Basico
+        ilicode Infraestructura_Seguridad
+        ilicode Infraestructura_Transporte
+        ilicode Institucional
+        ilicode Lote_No_Urbanizable
+        ilicode Lote_Urbanizable_No_Urbanizado
+        ilicode Lote_Urbanizado_No_Construido
+        ilicode Mineria_Hidrocarburos
+        ilicode Pecuario
+        ilicode Recreacional
+        ilicode Religioso
+        ilicode Salubridad
+        ilicode Servicios_Funerarios
+        ilicode Uso_Publico
+    }
+    lc_estructuranovedadnumeropredial_tipo_novedad["lc_estructuranovedadnumeropredial_tipo_novedad (dominio)"] {
+        ilicode Cambio_Numero_Predial
+        ilicode Cancelacion
+        ilicode Desenglobe
+        ilicode Englobe
+        ilicode Predio_Nuevo
+    }
+    lc_resultadovisitatipo["lc_resultadovisitatipo (dominio)"] {
+        ilicode Exitoso
+        ilicode Incompleto
+        ilicode Menor_Edad
+        ilicode No_Hay_Nadie
+        ilicode No_Permitieron_Acceso
+        ilicode Sin_Visita
+        ilicode Situacion_Orden_Publico
+        ilicode Zona_Dificil_Acceso
+    }
+
+    %% ---------- Llaves foráneas entre tablas de datos ----------
+    lc_predio ||--o{ lc_datosadicionaleslevantamientocatastral : "lc_predio"
+    lc_datosadicionaleslevantamientocatastral ||--o{ lc_contactovisita : "lc_datos_adicionales"
+    lc_datosadicionaleslevantamientocatastral |o--o{ lc_estructuranovedadnumeropredial : "lc_dtsdcnlstmntctstral_novedad_numeros_prediales"
+    lc_predio ||--o{ cr_datosphcondominio : "lc_predio"
+    lc_predio ||--o| cr_predio_copropiedad : "unidad_predial"
+    lc_predio ||--o{ cr_predio_copropiedad : "matriz"
+    lc_predio ||--o{ lc_predio_informalidad : "lc_predio_formal"
+    lc_predio ||--o{ lc_predio_informalidad : "lc_predio_informal"
+    cr_construccion |o--o{ extdireccion : "cr_construccion_ext_direccion_id"
+    cr_terreno |o--o{ extdireccion : "cr_terreno_ext_direccion_id"
+    cr_unidadconstruccion |o--o{ extdireccion : "cr_unidadconstruccion_ext_direccion_id"
+    lc_predio |o--o{ extdireccion : "lc_predio_direccion"
+    cr_unidadconstruccion |o--o{ col_uebaunit : "ue_cr_unidadconstruccion"
+    cr_terreno |o--o{ col_uebaunit : "ue_cr_terreno"
+    cr_construccion |o--o{ col_uebaunit : "ue_cr_construccion"
+    lc_predio |o--o{ col_uebaunit : "baunit_lc_predio"
+    cr_caracteristicasunidadconstruccion ||--o{ cr_unidadconstruccion : "cr_caracteristicasunidadconstruccion"
+    cr_construccion |o--o{ cr_unidadconstruccion : "cr_construccion"
+    cr_interesado |o--o{ col_miembros : "interesado_cr_interesado"
+    cr_agrupacioninteresados |o--o{ col_miembros : "interesado_cr_agrupacioninteresados"
+    cr_agrupacioninteresados |o--o{ col_miembros : "agrupacion_cr_agrupacioninteresados"
+    cr_interesado |o--o{ lc_derecho : "interesado_cr_interesado"
+    cr_agrupacioninteresados |o--o{ lc_derecho : "interesado_cr_agrupacioninteresados"
+    lc_predio |o--o{ lc_derecho : "unidad_lc_predio"
+    lc_fuenteadministrativa |o--o{ col_rrrfuente : "fuente_administrativa_lc_fuenteadministrativa"
+    lc_derecho |o--o{ col_rrrfuente : "rrr_lc_derecho"
+    lc_fuenteadministrativa |o--o{ col_unidadfuente : "fuente_administrativa_lc_fuenteadministrativa"
+    lc_predio |o--o{ col_unidadfuente : "unidad_lc_predio"
+
+    %% ---------- Llaves foráneas hacia los dominios ----------
+    col_unidadadministrativabasicatipo ||--o{ lc_predio : "tipo"
+    lc_condicionprediotipo ||--o{ lc_predio : "condicion_predio"
+    lc_destinacioneconomicatipo ||--o{ lc_predio : "destinacion_economica"
+    lc_resultadovisitatipo ||--o{ lc_datosadicionaleslevantamientocatastral : "resultado_visita"
+    cr_documentotipo |o--o{ lc_contactovisita : "tipo_documento_quien_atendio"
+    lc_estructuranovedadnumeropredial_tipo_novedad ||--o{ lc_estructuranovedadnumeropredial : "tipo_novedad"
+    extdireccion_tipo_direccion ||--o{ extdireccion : "tipo_direccion"
+    extdireccion_clase_via_principal |o--o{ extdireccion : "clase_via_principal"
+    extdireccion_sector_ciudad |o--o{ extdireccion : "sector_ciudad"
+    extdireccion_sector_predio |o--o{ extdireccion : "sector_predio"
+    col_dimensiontipo |o--o{ cr_terreno : "dimension"
+    col_relacionsuperficietipo |o--o{ cr_terreno : "relacion_superficie"
+    col_dimensiontipo |o--o{ cr_construccion : "dimension"
+    col_relacionsuperficietipo |o--o{ cr_construccion : "relacion_superficie"
+    cr_construccionplantatipo ||--o{ cr_unidadconstruccion : "tipo_planta"
+    col_dimensiontipo |o--o{ cr_unidadconstruccion : "dimension"
+    col_relacionsuperficietipo |o--o{ cr_unidadconstruccion : "relacion_superficie"
+    cr_unidadconstrucciontipo ||--o{ cr_caracteristicasunidadconstruccion : "tipo_unidad_construccion"
+    cr_usouconstipo ||--o{ cr_caracteristicasunidadconstruccion : "uso"
+    cr_interesadotipo ||--o{ cr_interesado : "tipo"
+    cr_documentotipo ||--o{ cr_interesado : "tipo_documento"
+    cr_sexotipo |o--o{ cr_interesado : "sexo"
+    cr_grupoetnicotipo |o--o{ cr_interesado : "grupo_etnico"
+    col_grupointeresadotipo ||--o{ cr_agrupacioninteresados : "tipo"
+    lc_derechotipo ||--o{ lc_derecho : "tipo"
+    col_fuenteadministrativatipo ||--o{ lc_fuenteadministrativa : "tipo"
+    col_estadodisponibilidadtipo ||--o{ lc_fuenteadministrativa : "estado_disponibilidad"
+    ci_forma_presentacion_codigo |o--o{ lc_fuenteadministrativa : "tipo_principal"
+
+    %% ---------- Carga ----------
+    t_ili2db_dataset |o--o{ t_ili2db_basket : "dataset"
+
+    %% ---------- Colores: amarillo, tablas de datos; blanco, dominios; gris, tablas de la carga ----------
+    classDef dominio fill:#FFFFFF,stroke:#000000,color:#000000
+    classDef carga fill:#D9D9D9,stroke:#000000,color:#000000
+    class ci_forma_presentacion_codigo,col_dimensiontipo,col_estadodisponibilidadtipo,col_fuenteadministrativatipo,col_grupointeresadotipo,col_relacionsuperficietipo,col_unidadadministrativabasicatipo,cr_construccionplantatipo,cr_documentotipo,cr_grupoetnicotipo,cr_interesadotipo,cr_sexotipo,cr_unidadconstrucciontipo,cr_usouconstipo,extdireccion_clase_via_principal,extdireccion_sector_ciudad,extdireccion_sector_predio,extdireccion_tipo_direccion,lc_condicionprediotipo,lc_derechotipo,lc_destinacioneconomicatipo,lc_estructuranovedadnumeropredial_tipo_novedad,lc_resultadovisitatipo dominio
+    class t_ili2db_dataset,t_ili2db_basket carga
