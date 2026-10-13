@@ -17,6 +17,7 @@ The final project for MINE-4101 Ciencia de Datos Aplicada (Universidad de los An
 - **Everything committed to the repo is written in Spanish**: README, reports, notebook prose, slides, code comments in config files. The team and graders are Spanish speakers.
 - **Team member names** are listed in `README.md` under "Integrantes". Use exactly those names, in that order, on every deliverable and artifact (reports, slides, videos).
 - The repository is graded directly and must be **public and self-contained**, so treat anything committed as published.
+- **Do not name the municipality.** The dataset is cadastral data for a real Colombian municipality. In everything written for the project (repo files, reports, slides, video scripts, charts, notebook outputs, commit messages) refer to it only as "un municipio colombiano": no name, no department or municipality codes, no source file names that contain it. The user will decide whether to name it in the final deliverable; until they say so, do not.
 - **Visual identity:** everything the project produces (reports, videos, slides, notebook charts, the data product's UI) follows the Universidad de los Andes identity: yellow, black and white, sans-serif type. Read `identidad/README.md` before designing anything visual; it summarizes the institutional manual (colors, typography, logo and legal-text rules) and lists where the style is already implemented.
 
 ## Requirements from the statement that shape the work
