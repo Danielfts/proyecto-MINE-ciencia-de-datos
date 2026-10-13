@@ -1,0 +1,4 @@
+# Los modelos y su documentación se versionan byte a byte, tal como se recibieron.
+# Sin esto git les cambia los finales de línea y dejan de coincidir con el contenido
+# que ili2pg guardó en la base (ver datos/README.md)
+datos/modelos-ladm-col/** -text
