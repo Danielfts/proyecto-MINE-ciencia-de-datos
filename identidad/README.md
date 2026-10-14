@@ -26,6 +26,24 @@ Fuentes:
 - Se usa Arial en todo. Donde no está instalada (lo usual en Linux) se reemplaza por una equivalente, Liberation Sans. El PDF que se entrega debe compilarse con Arial.
 - No se usan fuentes caligráficas, góticas, manuscritas ni decorativas.
 
+## Gráficas
+
+[graficas.mplstyle](graficas.mplstyle) es el estilo de matplotlib y seaborn para las gráficas de los notebooks: fondo blanco, texto negro, Arial, y ejes y cuadrícula discretos. Se carga con `plt.style.use`, como hace la primera etapa de cada notebook.
+
+- **Una serie** va en negro.
+- **Para resaltar** una barra o un grupo sirve el amarillo, siempre con borde negro. Solo no se ve sobre blanco: su contraste es de 1,07 a 1.
+- **Varias series:** después del negro siguen siete colores (azul, naranja, verde azulado, ámbar, rosa, verde y violeta). Son elección del equipo y se cambian en ese archivo. Se comprobó con un validador de paletas que, en ese orden y sobre blanco, dos series vecinas se distinguen también con los dos tipos más comunes de daltonismo (protanopia y deuteranopia). El verde azulado, el ámbar y el rosa contrastan menos de 3 a 1 con el blanco: las gráficas que los usen llevan etiquetas o van junto a la tabla con las cifras. En una gráfica de dispersión, donde cualquier par de colores puede quedar junto, no pasar de cuatro series.
+- **Cajas y violines de seaborn:** rellenos de negro tapan su mediana. Se dibujan con `fill=False`, o en amarillo con `color="#FFFF00", saturation=1, linecolor="black"`.
+- **No llamar a `sns.set_theme()`** después de cargar el estilo: lo reemplaza por el de seaborn.
+
+**Arial en matplotlib.** matplotlib guarda una lista de las fuentes instaladas y no la actualiza sola. Si Arial se instaló después de usar matplotlib por primera vez, las gráficas siguen saliendo en Liberation Sans hasta que se borra esa lista, que se vuelve a crear en el siguiente uso:
+
+```bash
+uv run python -c "import matplotlib, pathlib; [f.unlink() for f in pathlib.Path(matplotlib.get_cachedir()).glob('fontlist-*.json')]"
+```
+
+El notebook imprime, en su primera etapa, la fuente que están usando las gráficas.
+
 ## Logo
 
 Archivos, recortados sin modificar del logosímbolo oficial que publica la Universidad (`Logosimbolo-universidaddelosandes_0.eps`):
@@ -52,5 +70,6 @@ El manual está escrito para las comunicaciones institucionales y no dice nada s
 | --- | --- |
 | Reportes | [estilo-reporte.tex](estilo-reporte.tex): portada, franja amarilla en cada página, títulos de sección, enlaces, recuadro `destacado` |
 | Videos y diapositivas | [herramientas_video/escena.py](../herramientas_video/escena.py): fondo negro, texto blanco, acento amarillo, fuente sin serifas |
+| Notebooks | [graficas.mplstyle](graficas.mplstyle) para las gráficas (ver [Gráficas](#gráficas)). El encabezado de cada notebook es una franja amarilla con texto negro, como en [el de la primera entrega](../entrega-1/notebooks/06-entendimiento-de-los-datos.ipynb) |
 
-Al hacer una pieza nueva (gráficas de los notebooks, dashboard, aplicación), partir de estos mismos colores y de una fuente sin serifas.
+Al hacer una pieza nueva (dashboard, aplicación), partir de estos mismos colores y de una fuente sin serifas.
