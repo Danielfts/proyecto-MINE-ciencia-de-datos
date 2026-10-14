@@ -16,7 +16,7 @@ Estos son los nombres que deben aparecer en todas las entregas y artefactos del 
 | Carpeta o archivo | Contenido |
 | --- | --- |
 | [entrega-1/](entrega-1/README.md) | Primera entrega: reporte en LaTeX, notebook de entendimiento de los datos, video de sustentación, guion y diapositivas |
-| [datos/](datos/README.md) | Documentación de la base de datos catastral (modelo LADM-COL) que sirve de fuente al proyecto, y los modelos INTERLIS y el diccionario de datos de los que sale su estructura. En [datos/base-podada/](datos/base-podada/README.md): la versión reducida de la base que usa el proyecto, con su diagrama entidad-relación, su [diccionario de datos](datos/base-podada/diccionario-de-datos.md) y el script que la crea |
+| [datos/](datos/README.md) | Documentación de la base de datos catastral (modelo LADM-COL) que sirve de fuente al proyecto, y los modelos INTERLIS y el diccionario de datos de los que sale su estructura. En [datos/base-podada/](datos/base-podada/README.md): la versión reducida de la base que usa el proyecto, con su diagrama entidad-relación, su [diccionario de datos](datos/base-podada/diccionario-de-datos.md) y el script que la crea. En [datos/predios/](datos/predios/README.md): cómo convertir la base podada en un archivo parquet con un predio por fila y sin datos personales |
 | [identidad/](identidad/README.md) | Identidad visual del proyecto (colores, tipografía y logo de la Universidad de los Andes) y el estilo de los reportes y de las gráficas |
 | [herramientas_video/](herramientas_video/README.md) | Herramientas y flujo de trabajo para hacer los videos con manim y Gemini TTS |
 | [course-contents/](course-contents/README.md) | Material de referencia del curso (no versionado; el README indica qué debe contener) |
@@ -27,11 +27,11 @@ Estos son los nombres que deben aparecer en todas las entregas y artefactos del 
 
 ## Notebooks
 
-Se ejecutan en este orden, con el [entorno de Python](#entorno-de-python) instalado:
+Se ejecutan en este orden, con el [entorno de Python](#entorno-de-python) instalado. Leen el archivo `datos/predios/predios.parquet`, que no está en el repositorio porque identifica al municipio: hay que pedirlo al equipo o construirlo a partir de la base podada, como indica [datos/predios/](datos/predios/README.md).
 
 | Orden | Notebook | Actividad | Estado |
 | --- | --- | --- | --- |
-| 1 | [entrega-1/notebooks/06-entendimiento-de-los-datos.ipynb](entrega-1/notebooks/06-entendimiento-de-los-datos.ipynb) | 6. Entendimiento de los datos | Andamiaje: tiene la estructura y la carga de librerías, y todavía no lee los datos |
+| 1 | [entrega-1/notebooks/06-entendimiento-de-los-datos.ipynb](entrega-1/notebooks/06-entendimiento-de-los-datos.ipynb) | 6. Entendimiento de los datos | En desarrollo: carga los datos (etapa 2); las etapas 3 a 8 están por desarrollar |
 
 Se abren con JupyterLab (`uv run jupyter lab`) o con VS Code y se ejecutan de arriba abajo. También desde la terminal, en la raíz del repositorio:
 
@@ -43,7 +43,7 @@ uv run jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor
 
 Un solo entorno para el análisis de datos, los notebooks y los videos de sustentación (hechos con [Manim Community](https://www.manim.community/)). Usa Python 3.12 y las mismas versiones de todas las librerías sin importar la herramienta con la que se instale.
 
-Incluye: numpy, pandas, scipy, statsmodels, scikit-learn, matplotlib, seaborn, ydata-profiling, Levenshtein, JupyterLab, manim y lo necesario para narrar los videos (manim-voiceover y el cliente de Gemini).
+Incluye: numpy, pandas, scipy, statsmodels, scikit-learn, matplotlib, seaborn, ydata-profiling, Levenshtein, pyarrow (archivos parquet), JupyterLab, manim y lo necesario para narrar los videos (manim-voiceover y el cliente de Gemini).
 
 ### Instalación
 

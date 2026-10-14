@@ -29,13 +29,13 @@ latexmk reporte.tex
 
 ## Notebook
 
-[notebooks/06-entendimiento-de-los-datos.ipynb](notebooks/06-entendimiento-de-los-datos.ipynb) desarrolla la actividad 6: el análisis exploratorio y la calidad de los datos. Por ahora es un andamiaje: tiene el encabezado, la tabla de contenido, la carga de librerías y una sección por etapa, con las técnicas del curso que le corresponden a cada una.
+[notebooks/06-entendimiento-de-los-datos.ipynb](notebooks/06-entendimiento-de-los-datos.ipynb) desarrolla la actividad 6: el análisis exploratorio y la calidad de los datos. Tiene el encabezado, la tabla de contenido, la carga de librerías y de los datos, y una sección por etapa con las técnicas del curso que le corresponden a cada una. Las etapas 3 a 8 están por desarrollar.
 
 - **Etapas:** siguen el proceso de exploración de las diapositivas de EDA del curso. La tabla de contenido del notebook indica de dónde sale cada una.
 - **Ejecución:** de arriba abajo, con el entorno del proyecto. Las instrucciones están en el [README principal](../README.md#notebooks).
 - **Salidas:** se suben con el notebook, y el repositorio es público. No pueden mostrar datos personales ni nada que identifique al municipio; el detalle está en la etapa 2 del notebook.
 - **Gráficas:** usan el estilo de [identidad/graficas.mplstyle](../identidad/graficas.mplstyle), que el notebook carga en su primera etapa. Cómo usar sus colores está en [identidad/](../identidad/README.md#gráficas).
-- **Pendiente antes de la etapa 2:** decidir cómo lee el notebook la base de datos y con qué datos lo ejecuta quien clone el repositorio.
+- **Datos:** lee `datos/predios/predios.parquet`, la base podada en un solo archivo y sin datos personales (ver [datos/predios/](../datos/predios/README.md)). El archivo no está en el repositorio, así que quien lo clone tiene que pedirlo al equipo o construirlo antes de ejecutar el notebook.
 
 ## Video
 
