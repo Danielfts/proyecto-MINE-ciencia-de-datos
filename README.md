@@ -15,15 +15,29 @@ Estos son los nombres que deben aparecer en todas las entregas y artefactos del 
 
 | Carpeta o archivo | Contenido |
 | --- | --- |
-| [entrega-1/](entrega-1/README.md) | Primera entrega: reporte en LaTeX, video de sustentación, guion y diapositivas |
+| [entrega-1/](entrega-1/README.md) | Primera entrega: reporte en LaTeX, notebook de entendimiento de los datos, video de sustentación, guion y diapositivas |
 | [datos/](datos/README.md) | Documentación de la base de datos catastral (modelo LADM-COL) que sirve de fuente al proyecto, y los modelos INTERLIS y el diccionario de datos de los que sale su estructura. En [datos/base-podada/](datos/base-podada/README.md): la versión reducida de la base que usa el proyecto, con su diagrama entidad-relación, su [diccionario de datos](datos/base-podada/diccionario-de-datos.md) y el script que la crea |
-| [identidad/](identidad/README.md) | Identidad visual del proyecto (colores, tipografía y logo de la Universidad de los Andes) y el estilo de los reportes |
+| [identidad/](identidad/README.md) | Identidad visual del proyecto (colores, tipografía y logo de la Universidad de los Andes) y el estilo de los reportes y de las gráficas |
 | [herramientas_video/](herramientas_video/README.md) | Herramientas y flujo de trabajo para hacer los videos con manim y Gemini TTS |
 | [course-contents/](course-contents/README.md) | Material de referencia del curso (no versionado; el README indica qué debe contener) |
 | [Proyecto Final.pdf](Proyecto%20Final.pdf) | Enunciado del proyecto |
 | [TODO.md](TODO.md) | Pendientes y fechas límite de cada entrega |
 | [USO_DE_IA.md](USO_DE_IA.md) | Declaración de uso de IA |
 | `pyproject.toml`, `uv.lock`, `requirements.txt`, `environment.yml` | Entorno de Python |
+
+## Notebooks
+
+Se ejecutan en este orden, con el [entorno de Python](#entorno-de-python) instalado:
+
+| Orden | Notebook | Actividad | Estado |
+| --- | --- | --- | --- |
+| 1 | [entrega-1/notebooks/06-entendimiento-de-los-datos.ipynb](entrega-1/notebooks/06-entendimiento-de-los-datos.ipynb) | 6. Entendimiento de los datos | Andamiaje: tiene la estructura y la carga de librerías, y todavía no lee los datos |
+
+Se abren con JupyterLab (`uv run jupyter lab`) o con VS Code y se ejecutan de arriba abajo. También desde la terminal, en la raíz del repositorio:
+
+```bash
+uv run jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.record_timing=False entrega-1/notebooks/06-entendimiento-de-los-datos.ipynb
+```
 
 ## Entorno de Python
 

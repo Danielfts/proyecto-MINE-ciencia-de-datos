@@ -6,7 +6,7 @@ It also applies to Claude Cowork sessions opened on this folder. If you are Clau
 
 ## What this repository is
 
-The final project for MINE-4101 Ciencia de Datos Aplicada (Universidad de los Andes, semester 2026-20): a data science project for a real organization, following the ASUM-DM methodology and delivered as a data product. It is a coursework repository, not a software package. As of October 2026 it holds only scaffolding (environment, docs, and the first delivery's report and video skeletons); no notebooks or product code exist yet.
+The final project for MINE-4101 Ciencia de Datos Aplicada (Universidad de los Andes, semester 2026-20): a data science project for a real organization, following the ASUM-DM methodology and delivered as a data product. It is a coursework repository, not a software package. As of October 2026 it holds only scaffolding (environment, docs, and the first delivery's report, video and data-understanding notebook skeletons); no analysis or product code exists yet.
 
 - `Proyecto Final.pdf` is the project statement and the source of truth for requirements and grading weights.
 - `TODO.md` is the checklist derived from it, one section per delivery. Tick items there as work is completed.
@@ -99,6 +99,7 @@ Each delivery has its own folder (`entrega-1/` now; the final one should mirror 
 - The cover page counts toward the page limit (the statement recommends against cover pages; the user asked for one). `\portadafalse` in `reporte.tex` swaps it for a compact title block.
 - The logo may only be used unmodified, in color on white only, and with the legal text, as the cover does. Do not put it on the yellow band, recolor it, or create a project logo.
 - The statement requires Arial 12. The template falls back to a metric-compatible font and emits a warning when Arial is missing, which is the default on Linux. The user's machine has had Arial since 12 October 2026 (Microsoft core fonts in `/usr/share/fonts/msttcore/`), but a teammate's may not. Never report a PDF as final without checking `pdffonts` shows Arial, and check the page count against the limit with `pdfinfo`.
+- `notebooks/06-entendimiento-de-los-datos.ipynb` is the notebook for activity 6 (exploratory analysis and data quality). Its stages follow the exploration process from the course's EDA slides; so far it is a scaffold that loads the libraries and does not read the data. Notebooks are committed with their outputs, so no cell output may show personal data or anything that identifies the municipality (stage 2 of the notebook lists what that covers). Charts use `identidad/graficas.mplstyle`, loaded in the notebook's first stage; do not call `sns.set_theme()` after it. After changing a notebook, re-run it top to bottom with the command in the root README, which also lists the run order.
 - `video/video_entrega_N.py` is the manim video; `video/guion.md` (the script the members read) and `video/diapositivas.pptx`/`.pdf` (the slides the statement requires in the repo) are generated from it and must not be edited by hand.
 
 ## Videos (manim + Gemini TTS)

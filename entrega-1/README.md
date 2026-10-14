@@ -5,6 +5,7 @@ Fecha límite: **domingo 18 de octubre de 2026, 11:59 PM**. Los pendientes está
 | Entregable | Dónde | Límite |
 | --- | --- | --- |
 | Reporte ejecutivo en PDF | [reporte/](reporte/) | 6 páginas, una columna, Arial 12 |
+| Notebook de entendimiento de los datos (actividad 6) | [notebooks/](notebooks/06-entendimiento-de-los-datos.ipynb) | |
 | Video de sustentación (YouTube) | [video/](video/) | 6 minutos, con participación similar de todos |
 | Guion del video | [video/guion.md](video/guion.md) | |
 | Diapositivas del video | `video/diapositivas.pptx` y `.pdf` (se generan) | |
@@ -25,6 +26,16 @@ latexmk reporte.tex
 - Para enlazar un recurso del repositorio: `\repo{entrega-1/video/guion.md}{el guion}`.
 - **Estilo:** los colores, el encabezado, la portada y los enlaces vienen de [identidad/estilo-reporte.tex](../identidad/estilo-reporte.tex), que comparten las dos entregas. El recuadro `destacado` resalta el resultado o la cifra clave de una sección.
 - **Portada:** cuenta dentro de las 6 páginas, así que deja 5 para el contenido. El enunciado recomienda no gastar páginas en portada ni tabla de contenidos. Con `\portadafalse` en `reporte.tex` se cambia por un título compacto en la primera página.
+
+## Notebook
+
+[notebooks/06-entendimiento-de-los-datos.ipynb](notebooks/06-entendimiento-de-los-datos.ipynb) desarrolla la actividad 6: el análisis exploratorio y la calidad de los datos. Por ahora es un andamiaje: tiene el encabezado, la tabla de contenido, la carga de librerías y una sección por etapa, con las técnicas del curso que le corresponden a cada una.
+
+- **Etapas:** siguen el proceso de exploración de las diapositivas de EDA del curso. La tabla de contenido del notebook indica de dónde sale cada una.
+- **Ejecución:** de arriba abajo, con el entorno del proyecto. Las instrucciones están en el [README principal](../README.md#notebooks).
+- **Salidas:** se suben con el notebook, y el repositorio es público. No pueden mostrar datos personales ni nada que identifique al municipio; el detalle está en la etapa 2 del notebook.
+- **Gráficas:** usan el estilo de [identidad/graficas.mplstyle](../identidad/graficas.mplstyle), que el notebook carga en su primera etapa. Cómo usar sus colores está en [identidad/](../identidad/README.md#gráficas).
+- **Pendiente antes de la etapa 2:** decidir cómo lee el notebook la base de datos y con qué datos lo ejecuta quien clone el repositorio.
 
 ## Video
 
