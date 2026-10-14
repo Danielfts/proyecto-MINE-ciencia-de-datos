@@ -320,6 +320,6 @@ Por eso ni la base ni su respaldo van al repositorio, que es público: el `.giti
 
 ## Pendientes
 
-- **Decidir cómo recibe el equipo la base podada**: el respaldo por un canal privado o una versión anonimizada.
+- **Decidir cómo recibe el equipo la base podada**: el respaldo por un canal privado o una versión anonimizada. Una opción intermedia es el archivo parquet de [predios/](../predios/README.md): no tiene datos personales, pero sigue identificando al municipio y tampoco es público.
 - **Anonimizar** si los datos van a salir del equipo o a aparecer en un entregable: como mínimo, las tablas con datos personales y lo que identifica al municipio.
 - **Decidir si se eliminan también las 24 columnas sin datos** y los tres dominios que ninguna fila usa.

@@ -36,3 +36,5 @@ entrega-*/reporte/*.toc
 *.xtf
 *.sql.gz
 catastro_*.sql
+# Exportaciones de la base (ver datos/predios/README.md): no se publican
+*.parquet

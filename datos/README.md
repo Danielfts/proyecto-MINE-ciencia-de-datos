@@ -2,7 +2,7 @@
 
 Este documento describe la base de datos que sirve de fuente al proyecto: qué es, de dónde sale su estructura, cómo están organizadas sus tablas y qué documentación la acompaña. No describe todavía el contenido de los datos (cantidades, calidad, distribuciones); eso corresponde al entendimiento de los datos y se documentará aparte.
 
-De las 217 tablas de la base, 117 están vacías. Para trabajar con los datos está la **base podada**, una copia con las 45 tablas que tienen contenido útil: su criterio, su diagrama entidad-relación, su diccionario de datos y el script que la crea están en [base-podada/](base-podada/README.md).
+De las 217 tablas de la base, 117 están vacías. Para trabajar con los datos está la **base podada**, una copia con las 45 tablas que tienen contenido útil: su criterio, su diagrama entidad-relación, su diccionario de datos y el script que la crea están en [base-podada/](base-podada/README.md). Para analizarla sin PostgreSQL, [predios/](predios/README.md) la convierte en un archivo parquet con un predio por fila y sin datos personales.
 
 ## Qué es
 

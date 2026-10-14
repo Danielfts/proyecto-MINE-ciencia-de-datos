@@ -348,6 +348,8 @@ pure-eval==0.2.4
     # via stack-data
 puremagic==2.2.0
     # via visions
+pyarrow==26.0.0
+    # via proyecto-mine-ciencia-de-datos
 pyasn1==0.6.4
     # via pyasn1-modules
 pyasn1-modules==0.4.2
