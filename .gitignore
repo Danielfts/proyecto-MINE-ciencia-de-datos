@@ -29,6 +29,11 @@ entrega-*/reporte/*.out
 entrega-*/reporte/*.run.xml
 entrega-*/reporte/*.synctex.gz
 entrega-*/reporte/*.toc
+# En el diccionario de datos solo se suben la fuente, el PDF y la configuración de latexmk
+datos/predios/diccionario/*
+!datos/predios/diccionario/*.tex
+!datos/predios/diccionario/*.pdf
+!datos/predios/diccionario/.latexmkrc
 
 # Respaldos y archivos de transferencia de la base catastral: tienen datos personales
 *.dump

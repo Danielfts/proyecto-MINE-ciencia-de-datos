@@ -1,0 +1,706 @@
+% Diccionario de datos de predios.parquet: un diagrama de qué va anidado dentro de qué,
+% la estructura del número predial nacional y los campos del archivo como un árbol, con
+% su tipo, su porcentaje de nulos y una definición corta.
+%
+% Se compila con LuaLaTeX (hace falta para usar Arial), desde esta carpeta:
+%
+%     latexmk diccionario-de-datos.tex
+%
+% Las definiciones de los campos salen del diccionario de datos del modelo LADM_COL de
+% Levantamiento Catastral V2.0 del IGAC; las del número predial, de la Resolución 1149 de
+% 2021 y del Instructivo de Identificación Predial IN-GCT-PC01-06 del IGAC. No se describen
+% las columnas que identifican al municipio o pueden traer datos de personas, porque no se
+% usan en el análisis.
+%
+% Las cifras se midieron sobre el archivo construido el 14 de octubre de 2026. El
+% documento se mantiene a mano: si cambia ../predios.sql, hay que actualizarlo.
+\documentclass[10pt,letterpaper]{article}
+
+% Lo que pide identidad/estilo-reporte.tex
+\newcommand{\titulo}{Diccionario de datos de predios.parquet}
+\newcommand{\titulocorto}{Diccionario de datos · predios.parquet}
+\newcommand{\subtitulo}{}
+\newcommand{\entrega}{Proyecto final · 2026-20}
+\newcommand{\fecha}{Octubre de 2026}
+\newcommand{\maxpaginas}{99}
+\newcommand{\urlrepositorio}{https://github.com/Danielfts/proyecto-MINE-ciencia-de-datos}
+\newcommand{\urlvideo}{}
+
+% Sin las comillas de babel en < y >, que aquí aparecen en el texto y en TikZ
+\PassOptionsToPackage{es-noquoting}{babel}
+% Colores, tipografía, franja amarilla, títulos y enlaces de los reportes del proyecto
+\input{../../../identidad/estilo-reporte}
+
+\usepackage[nohyphen]{underscore}   % los nombres llevan _: se escriben tal cual y no se cortan con guion
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{colortbl}
+\usetikzlibrary{babel,positioning,calc,fit,shadows,backgrounds,arrows.meta}
+
+\hypersetup{pdftitle={\titulo},pdfauthor={Daniel Felipe Triviño Santana, Nicolas Bedoya Figueroa,
+  Joubert Daniel Álvarez, Gabriel Bejarano}}
+
+% =====================================================================================
+% Notación
+% =====================================================================================
+
+% --- Insignias de tipo ---------------------------------------------------------------
+% Escalar: gris. Estructura: blanca con borde. Lista: amarilla, con el tipo de su
+% elemento adentro, así que list<struct> se ve como una insignia dentro de otra.
+\tikzset{
+  insignia/.style={font=\footnotesize, inner sep=1.4pt, rounded corners=1.5pt,
+    text height=1.45ex, text depth=0.3ex},
+  escalar/.style={insignia, fill=grisclaro},
+  estructura/.style={insignia, draw=negro, fill=white, line width=0.5pt},
+  lista/.style={insignia, draw=negro, fill=amarillo, line width=0.5pt},
+  mezcla/.style={insignia, draw=negro, dashed, line width=0.5pt, inner xsep=2pt},
+}
+% Lista: la insignia del elemento va dentro de la amarilla. #1: estilo, #2: tipo
+\newcommand{\hacerlista}[2]{\tikz[baseline=(l.base)]{%
+  \node[insignia](l){list};
+  \node[#1, right=0.5pt of l, inner sep=1pt, font=\scriptsize, text height=1.2ex](e){#2};
+  \begin{scope}[on background layer]
+    \node[lista, fit=(l)(e), inner sep=1pt]{};
+  \end{scope}}}
+% Las insignias se dibujan una sola vez y se reusan como cajas: así también pueden ir
+% dentro de los nodos del diagrama sin anidar dibujos de TikZ.
+\newcommand{\guardarinsignia}[2]{%
+  \expandafter\newsavebox\csname insignia@#1\endcsname
+  \AtBeginDocument{\expandafter\sbox\csname insignia@#1\endcsname{#2}}}
+\newcommand{\usarinsignia}[1]{\usebox{\csname insignia@#1\endcsname}}
+\guardarinsignia{i64}{\tikz[baseline=(t.base)]\node[escalar](t){i64};}
+\guardarinsignia{i32}{\tikz[baseline=(t.base)]\node[escalar](t){i32};}
+\guardarinsignia{f64}{\tikz[baseline=(t.base)]\node[escalar](t){f64};}
+\guardarinsignia{str}{\tikz[baseline=(t.base)]\node[escalar](t){str};}
+\guardarinsignia{bool}{\tikz[baseline=(t.base)]\node[escalar](t){bool};}
+\guardarinsignia{date}{\tikz[baseline=(t.base)]\node[escalar](t){date};}
+\guardarinsignia{struct}{\tikz[baseline=(t.base)]\node[estructura](t){struct};}
+\guardarinsignia{liststruct}{\hacerlista{estructura}{struct}}
+\guardarinsignia{listi64}{\hacerlista{escalar}{i64}}
+\guardarinsignia{geometria}{\tikz[baseline=(t.base)]\node[mezcla](t){6 medidas};}
+\newcommand{\tE}[1]{\usarinsignia{#1}}           % escalar: \tE{i64}, \tE{str}...
+\newcommand{\tS}{\usarinsignia{struct}}          % struct
+\newcommand{\tLS}{\usarinsignia{liststruct}}     % list<struct>
+\newcommand{\tLE}{\usarinsignia{listi64}}        % list<i64>
+\newcommand{\tG}{\usarinsignia{geometria}}       % las medidas de la geometría
+
+% --- Enlaces y marcas -------------------------------------------------------------------
+% Enlace dentro del documento: texto negro con subrayado amarillo, como los externos
+\newcommand{\enlaceinterno}[2]{\hyperlink{#1}{\mbox{\underLine[color=amarillo,top=-0.22ex,bottom=-0.42ex]{#2}}}}
+% Categórica: enlaza con sus valores
+\newcommand{\cat}[2]{\enlaceinterno{cat-#1}{categórica · #2}}
+% Posiciones del número predial: enlaza con su estructura
+\newcommand{\npn}[1]{\enlaceinterno{npn}{NPN #1}}
+\newcommand{\geo}{\enlaceinterno{geometria}{ver medidas de la geometría}}
+% Llamada a una nota del final
+\newcommand{\nota}[1]{\textsuperscript{\hyperlink{nota-#1}{\textbf{#1}}}}
+% Dato medido en el archivo, después de la definición
+\newcommand{\dato}[1]{\ \mbox{\color{gris}·\ #1}}
+% Nombre de campo dentro del texto: en negrita y sin cortarlo
+\newcommand{\cn}[1]{\mbox{\textbf{#1}}}
+
+% --- Ramas del árbol -------------------------------------------------------------------
+% Cada fila de la tabla empieza con sus ramas, una por nivel: \rI (la rama sigue),
+% \rT (rama a este campo y siguen otros), \rL (último campo del nivel) y \rO (vacío).
+% Las líneas van de arriba abajo de la fila, así que las de filas vecinas se tocan. La
+% descripción se mide antes de escribir la fila (\medirdescripcion): si ocupa dos líneas,
+% las ramas bajan hasta el final de la segunda.
+\newlength{\anchorama}
+\newlength{\altofila}
+\newlength{\fondofila}
+\newlength{\ejefila}
+\newlength{\fondoactual}
+\newlength{\anchodesc}
+\newlength{\anchotabla}
+\newsavebox{\cajadesc}
+\newcommand{\medirfilas}{%
+  \setlength{\anchorama}{1.05em}%
+  \setlength{\altofila}{\arraystretch\ht\strutbox}%
+  \setlength{\fondofila}{\arraystretch\dp\strutbox}%
+  \setlength{\ejefila}{0.55ex}%
+  \global\fondoactual=\fondofila}
+\newcommand{\medirdescripcion}[1]{%
+  \global\setbox\cajadesc=\vtop{\hsize=\anchodesc\footnotesize\raggedright
+    \strut#1\rule[-\fondofila]{0pt}{\fondofila}\par}%
+  \global\fondoactual=\dp\cajadesc}
+\tikzset{rama/.style={draw=gris, line width=0.6pt}}
+\newcommand{\glifo}[1]{\begin{tikzpicture}[baseline=0pt]
+  \useasboundingbox (0,0) rectangle (\anchorama,0); #1\end{tikzpicture}}
+\newcommand{\rI}{\glifo{\draw[rama] (0.45\anchorama,-\fondoactual) -- (0.45\anchorama,\altofila);}}
+\newcommand{\rT}{\glifo{\draw[rama] (0.45\anchorama,-\fondoactual) -- (0.45\anchorama,\altofila);
+  \draw[rama] (0.45\anchorama,\ejefila) -- (0.95\anchorama,\ejefila);}}
+\newcommand{\rL}{\glifo{\draw[rama] (0.45\anchorama,\altofila) -- (0.45\anchorama,\ejefila)
+  -- (0.95\anchorama,\ejefila);}}
+\newcommand{\rO}{\hspace*{\anchorama}}
+
+% --- Filas de la tabla -----------------------------------------------------------------
+% \campo{ramas}{nombre}{tipo}{% de nulos o vacío}{descripción}
+\newcommand{\nulos}[1]{\ifx\relax#1\relax\else
+  \tikz[baseline=0pt]{\fill[grisclaro] (0,0) rectangle (0.6cm,0.8ex);
+    \fill[negro] (0,0) rectangle ({#1/100*0.6cm},0.8ex);}\ #1\,\%\fi}
+\newcommand{\campo}[5]{\medirdescripcion{#5}#1\,#2 & #3 & \nulos{#4} & \usebox{\cajadesc} \\}
+% La fila del registro: la raíz del árbol
+\newcommand{\raiz}[1]{\medirdescripcion{#1}\textbf{predio} & \tS & & \usebox{\cajadesc} \\}
+% El elemento de una lista
+\newcommand{\elemento}[2]{\medirdescripcion{#2}#1\,\tikz[baseline=(t.base)]\node[lista,
+  font=\scriptsize, text height=1.2ex](t){[\,]};\,\textit{elemento} & \tS & & \usebox{\cajadesc} \\}
+% Las medidas de la geometría, que se repiten en terreno, construcciones y unidades
+\newcommand{\geometria}[1]{\medirdescripcion{\geo}#1\,\textit{‹geometría›} & \tG & & \usebox{\cajadesc} \\}
+% Título de un grupo de campos, con las clases del modelo de las que salen. Si no caben en
+% una línea, siguen en la segunda, y las ramas las cubren. La celda es p y no l: con una caja
+% del ancho de la tabla en una celda l, longtable no termina de compilar.
+\newcommand{\grupo}[3]{\rowcolor{grisclaro}\multicolumn{4}{@{}p{\anchotabla}@{}}{%
+  \global\setbox\cajadesc=\vtop{\hsize=\dimexpr\anchotabla-\anchorama-0.5em\relax\raggedright
+    \strut\textbf{#2}\quad{\scriptsize\color{gris}#3}\rule[-\fondofila]{0pt}{\fondofila}\par}%
+  \global\fondoactual=\dp\cajadesc
+  #1\,\usebox{\cajadesc}} \\}
+
+% Encabezado de la tabla de campos: negro con texto blanco
+\newcommand{\encabezadocampos}{\rowcolor{negro}
+  \color{white}\textbf{campo} & \color{white}\textbf{tipo} & \color{white}\textbf{nulos}
+  & \color{white}\textbf{descripción} \\}
+% Anchos de columna. El nombre más largo con tres niveles de ramas
+% (area_construida_caracteristicas) mide unos 5,7 cm.
+\newcommand{\anchonombre}{5.85cm}
+\newcommand{\anchotipo}{1.5cm}
+\newcommand{\anchonulos}{1.6cm}
+\newcommand{\prepararcampos}{%
+  \renewcommand{\arraystretch}{1.42}%
+  \setlength{\tabcolsep}{4.5pt}%
+  \medirfilas
+  \setlength{\anchotabla}{\linewidth}%
+  \setlength{\anchodesc}{\dimexpr\linewidth-6\tabcolsep-\anchonombre-\anchotipo-\anchonulos\relax}}
+\newcolumntype{N}{>{\raggedright\arraybackslash}p{\anchonombre}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}p{\anchotipo}}
+\newcolumntype{U}{>{\raggedright\arraybackslash\footnotesize}p{\anchonulos}}
+\newcolumntype{D}{>{\raggedright\arraybackslash}p{\anchodesc}}
+
+% --- Número predial: un segmento del esquema --------------------------------------------
+% \segmento{x inicial}{ancho}{primera posición}{última}{nombre}{columna del archivo}{relleno}
+\newcommand{\segmento}[7]{%
+  \pgfmathtruncatemacro{\cuantos}{#4-#3+1}%
+  \pgfmathsetmacro{\anchocelda}{#2/\cuantos}%
+  \fill[#7] (#1,0) rectangle ++(#2,0.6);
+  \foreach \p in {#3,...,#4} {
+    \pgfmathsetmacro{\xcelda}{#1+(\p-#3)*\anchocelda}
+    \draw[gris, line width=0.3pt] (\xcelda,0) rectangle ++(\anchocelda,0.6);
+    \node[font=\scriptsize, text=negro] at ({\xcelda+\anchocelda/2},0.3) {\p};
+  }
+  \draw[negro, line width=0.8pt] (#1,0) rectangle ++(#2,0.6);
+  \node[font=\scriptsize\bfseries, text width=#2 cm, align=center, anchor=south, inner sep=1pt]
+    at ({#1+#2/2},0.65) {#5};
+  \node[font=\scriptsize, text width=#2 cm, align=center, anchor=north, inner sep=1pt]
+    at ({#1+#2/2},-0.08) {#6};
+}
+
+\begin{document}
+
+% =====================================================================================
+\begin{flushleft}
+{\fontsize{20}{24}\selectfont\bfseries Diccionario de datos de predios.parquet\par}
+\vspace{0.6ex}
+{\large La base catastral podada de un municipio colombiano, en un solo archivo\par}
+\vspace{1ex}
+{\small\color{gris}Daniel Felipe Triviño Santana · Nicolas Bedoya Figueroa ·
+  Joubert Daniel Álvarez · Gabriel Bejarano\par}
+\end{flushleft}
+
+\textbf{Una fila por predio: 22 220 filas, clave \cn{id_predio}.} Lo que es de uno a uno
+con el predio va en columnas simples o en estructuras (\tS); lo que es de uno a muchos va
+en listas (\tLS). El archivo trae además columnas que identifican al municipio o pueden
+contener datos de personas; no se usan en el análisis y no se describen aquí.
+
+\section{Vista general}
+
+Cada caja está dentro de la que la contiene en el archivo. Las listas se dibujan
+apiladas: tienen un elemento por cada construcción o unidad del predio.
+
+\begin{center}
+\begin{tikzpicture}[
+    >={Stealth[length=5pt,width=4pt]},
+    linea/.style={anchor=north west, inner sep=0.7pt, font=\scriptsize,
+      text height=1.5ex, text depth=0.35ex},
+    titulo/.style={anchor=north west, inner sep=1pt, font=\footnotesize},
+    caja/.style={draw=negro, line width=0.6pt, rounded corners=2pt, fill=white, inner sep=4pt},
+    pila/.style={draw=negro, line width=0.6pt, rounded corners=2pt, fill=amarillo, inner sep=5pt,
+      double copy shadow={shadow xshift=3pt, shadow yshift=-3pt, fill=amarillo, draw=negro,
+        line width=0.6pt}},
+    ref/.style={->, draw=negro, line width=0.7pt},
+  ]
+  % Lista de campos desde la coordenada #2: una línea por campo, llamadas #1-1, #1-2...
+  \newcommand{\lineas}[3]{%
+    \foreach \c [count=\i] in {#3} {
+      \node[linea] (#1-\i) at ($(#2)+(0,{-(\i-1)*0.34})$) {\c};}}
+  \coordinate (o) at (0,0);
+
+  % --- El registro: encabezado del predio ---------------------------------------------
+  \node[anchor=north west, fill=amarillo, minimum width=16.1cm, minimum height=0.62cm,
+    inner sep=4pt, text width=15.7cm, align=left] (enc) at (0,0)
+    {\textbf{predio}\enspace\tS\enspace 1 fila = 1 predio · 22 220 filas · clave \cn{id_predio}};
+
+  % --- Columnas escalares, por grupo ----------------------------------------------------
+  \node[titulo] (esc) at (0.25,-0.95) {\textbf{35 columnas escalares}};
+  \coordinate (e-0) at (0.3,-1.4);
+  \lineas{e}{e-0}{predio y número predial · 15, levantamiento y dirección · 8,
+    derecho y fuente · 7, PH e informalidad · 5}
+  \node[linea, text width=4.8cm, align=left, text height=, text depth=, color=gris]
+    (e-nota) at ($(e-4.south west)+(0.25,-0.05)$)
+    {\cn{id_predio_matriz}, \cn{ids_predios_informales} y \cn{ids_predios_formales}
+     apuntan a \cn{id_predio} de otras filas};
+
+  % --- Estructuras ---------------------------------------------------------------------
+  \node[titulo] (ter-t) at (5.35,-0.95) {\textbf{terreno} \tS\ 0..1};
+  \coordinate (ter-0) at (5.4,-1.4);
+  \lineas{ter}{ter-0}{id_terreno, area_terreno, \textit{‹geometría›}}
+  \begin{scope}[on background layer]
+    \node[caja, fit=(ter-t)(ter-1)(ter-2)(ter-3)] (ter) {};
+  \end{scope}
+
+  \node[titulo] (ph-t) at (8.3,-0.95) {\textbf{ph_matriz} \tS\ 0..1};
+  \coordinate (ph-0) at (8.35,-1.4);
+  \lineas{ph}{ph-0}{area_total_terreno, area_total_terreno_privada,
+    area_total_terreno_comun, area_total_construida, area_total_construida_privada,
+    area_total_construida_comun, numero_torres, total_unidades_privadas}
+  \begin{scope}[on background layer]
+    \node[caja, fit=(ph-t)(ph-1)(ph-5)(ph-8)] (ph) {};
+  \end{scope}
+
+  \node[titulo] (tit-t) at (12.55,-0.95) {\textbf{titulares} \tS\ 1};
+  \coordinate (tit-0) at (12.6,-1.4);
+  \lineas{tit}{tit-0}{es_agrupacion, tipo_agrupacion, n_titulares, n_persona_natural,
+    n_persona_juridica, n_femenino, n_masculino, n_sexo_sin_determinar, participacion_max,
+    max_predios_mismo_titular}
+  \begin{scope}[on background layer]
+    \node[caja, fit=(tit-t)(tit-1)(tit-10)] (tit) {};
+  \end{scope}
+
+  % --- Listas ------------------------------------------------------------------------------
+  \coordinate (fila2) at ($(o |- tit.south)+(0,-0.75)$);
+
+  \node[titulo] (con-t) at ($(fila2)+(0.4,0)$)
+    {\textbf{construcciones} \tLS\ 0–303 por predio};
+  \node[titulo] (con-e) at ($(con-t.south west)+(0.15,-0.2)$) {\textit{elemento} \tS};
+  \coordinate (con-0) at ($(con-e.south west)+(0.05,-0.05)$);
+  \lineas{con}{con-0}{\textbf{id_construccion}, identificador,
+    total_pisos, total_sotanos, total_mezanines}
+  \coordinate (conb-0) at ($(con-1.north west)+(2.55,0)$);
+  \lineas{conb}{conb-0}{total_semisotanos, area_total_construccion,
+    altura_total_construccion, \textit{‹geometría›}}
+  \begin{scope}[on background layer]
+    \node[caja, fit=(con-e)(con-5)(conb-2)] (con-el) {};
+    \node[pila, fit=(con-t)(con-el)] (con) {};
+  \end{scope}
+
+  \node[titulo] (uni-t) at ($(fila2)+(8.3,0)$) {\textbf{unidades} \tLS\ 0–1 290 por predio};
+  \node[titulo] (uni-e) at ($(uni-t.south west)+(0.15,-0.2)$) {\textit{elemento} \tS};
+  \coordinate (uni-0) at ($(uni-e.south west)+(0.05,-0.05)$);
+  \lineas{uni}{uni-0}{id_unidad, \textbf{id_construccion},
+    identificador, tipo_unidad_construccion, uso, tipo_planta, planta_ubicacion,
+    total_plantas}
+  \coordinate (unib-0) at ($(uni-1.north west)+(3.35,0)$);
+  \lineas{unib}{unib-0}{anio_construccion, area_construida,
+    area_construida_caracteristicas, area_privada_construida, altura,
+    \textit{‹geometría›}}
+  \begin{scope}[on background layer]
+    \node[caja, fit=(uni-e)(uni-8)(unib-3)] (uni-el) {};
+    \node[pila, fit=(uni-t)(uni-el)] (uni) {};
+  \end{scope}
+
+  % --- Marco del registro --------------------------------------------------------------
+  \coordinate (pie) at ($(uni.south)+(0,-0.35)$);
+  \node[draw=negro, line width=0.9pt, inner sep=0pt, fit=(enc)(con)(uni)(pie)] (marco) {};
+
+  % --- Referencias por llave -----------------------------------------------------------
+  % Una unidad apunta a su construcción, en esta fila o, en PH, en la del predio matriz
+  \draw[ref] (uni-2.west -| uni-el.west) -- ++(-0.55,0) |- (con-1.east -| con-el.east);
+  \node[font=\scriptsize, align=center, anchor=south] at ($(con.east)!0.5!(uni.west)+(0,0.95)$)
+    {esta fila u\\otra (PH)};
+  % Las llaves a otros predios vuelven al registro
+  \draw[ref] (e-4.west) -- (e-4.west -| marco.west) -- ++(-0.35,0) |- (enc.west);
+\end{tikzpicture}
+\end{center}
+
+\vspace{-1ex}
+{\footnotesize\color{gris}
+\tE{i64} escalar\quad \tS{} estructura\quad \tLS{} lista de estructuras\quad
+\tLE{} lista de enteros\quad \tG{} las medidas de la geometría\quad
+\tikz[baseline=-0.6ex]\draw[->,>={Stealth[length=4pt]},line width=0.7pt] (0,0) -- (0.6,0);
+una llave que apunta a otra fila\par}
+
+% =====================================================================================
+% El esquema no cabe al final de la primera página: el apartado empieza en la siguiente
+\clearpage
+\section{Número predial nacional}\hypertarget{npn}{}
+
+Código de 30 posiciones que identifica cada predio en la base catastral y lo ubica de lo
+general a lo particular. El archivo trae sus segmentos como columnas, desde la zona.
+
+\begin{center}
+\begin{tikzpicture}
+  \segmento{0}{1.35}{1}{2}{Departa\-mento}{—}{white}
+  \segmento{1.35}{1.6}{3}{5}{Municipio}{—}{white}
+  \segmento{2.95}{1.0}{6}{7}{Zona}{zona}{white}
+  \segmento{3.95}{1.0}{8}{9}{Sector}{sector}{white}
+  \segmento{4.95}{1.15}{10}{11}{Comuna}{comuna}{white}
+  \segmento{6.1}{1.0}{12}{13}{Barrio}{barrio}{white}
+  \segmento{7.1}{1.7}{14}{17}{Manzana o vereda}{manzana_vereda}{white}
+  \segmento{8.8}{1.5}{18}{21}{Terreno}{numero_terreno}{white}
+  \segmento{10.3}{1.55}{22}{22}{Condición de propiedad}{condicion_propiedad}{amarillo}
+  \segmento{11.85}{1.3}{23}{24}{Edificio o torre}{edificio}{white}
+  \segmento{13.15}{1.0}{25}{26}{Piso}{piso}{white}
+  \segmento{14.15}{1.6}{27}{30}{Unidad}{unidad}{white}
+  % Grupos de segmentos
+  \draw[negro, line width=0.6pt] (0,1.55) -- (0,1.65) -- (2.95,1.65) -- (2.95,1.55);
+  \node[font=\scriptsize, anchor=south] at (1.475,1.65) {División político-administrativa (DANE)};
+  \draw[negro, line width=0.6pt] (11.85,1.55) -- (11.85,1.65) -- (15.75,1.65) -- (15.75,1.55);
+  \node[font=\scriptsize, anchor=south] at (13.8,1.65) {Número de construcción};
+\end{tikzpicture}
+\end{center}
+
+{\small
+\renewcommand{\arraystretch}{1.3}
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{1.05cm}
+    >{\raggedright\arraybackslash}p{2.35cm}
+    >{\raggedright\arraybackslash}p{\dimexpr\linewidth-8\tabcolsep-1.05cm-2.35cm-3.6cm\relax}
+    >{\raggedright\arraybackslash\color{gris}}p{3.6cm}@{}}
+\rowcolor{negro}
+\color{white}\textbf{pos.} & \color{white}\textbf{segmento} & \color{white}\textbf{qué indica}
+  & \color{white}\textbf{en el archivo} \\
+\endhead
+1–2 & Departamento & Departamento donde está el predio, según la codificación de la
+  División Político-Administrativa del DANE. & — \\
+3–5 & Municipio & Municipio donde está el predio, con la misma codificación. & — \\
+6–7 & Zona & Zona según el plan de ordenamiento territorial: 00 rural, 01 urbana, 02 a 09
+  otros núcleos o corregimientos. & 00 y 01 \\
+8–9 & Sector & Sector catastral: unidad geográfica en que se divide la zona para la gestión
+  catastral. & siempre 00 \\
+10–11 & Comuna & Comuna urbana aprobada por acuerdo municipal; en zona rural va en ceros.
+  & siempre 00 \\
+12–13 & Barrio & Barrio urbano aprobado por el plan de ordenamiento o un acuerdo municipal;
+  en zona rural va en ceros. & siempre 00 \\
+14–17 & Manzana o vereda & Manzana en zona urbana o corregimiento, o vereda en zona rural.
+  & 8 veredas, 62 manzanas \\
+18–21 & Terreno & Número de orden del terreno dentro de la manzana o vereda. & 1 815 valores \\
+22 & Condición de propiedad & Caracterización de las condiciones físicas y jurídicas del
+  predio (tabla siguiente). & 8 códigos \\
+23–24 & Edificio o torre & Número del edificio o torre dentro del terreno, en propiedad
+  horizontal; 00 en los demás. & distinto de 00 solo en PH \\
+25–26 & Piso & Piso dentro del edificio o torre: 01 a 80 desde el nivel de la vía hacia
+  arriba y 99 a 81 hacia abajo (sótanos); 00 si no es PH. & 01 a 05, 10 y 99 \\
+27–30 & Unidad & Número de la unidad predial en PH, condominio, parque cementerio o mejora;
+  0000 en los demás. & 0000 en NPH y vías \\
+\end{longtable}
+}
+
+\hypertarget{condicion}{}
+{\small
+\renewcommand{\arraystretch}{1.3}
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{@{}>{\centering\arraybackslash}p{1.05cm}
+    >{\raggedright\arraybackslash}p{\dimexpr\linewidth-8\tabcolsep-1.05cm-5.7cm-1.4cm\relax}
+    >{\raggedright\arraybackslash}p{5.7cm}
+    >{\raggedleft\arraybackslash}p{1.4cm}@{}}
+\rowcolor{negro}
+\color{white}\textbf{código} & \color{white}\textbf{condición de propiedad}
+  & \color{white}\textbf{\cn{condicion_predio} en el archivo} & \color{white}\textbf{predios} \\
+\endhead
+0 & No propiedad horizontal & NPH & 5 907 \\
+2 & Informal & Informal & 182 \\
+3 & Bien de uso público diferente a vías & Bien_Uso_Publico & 124 \\
+4 & Vía & Via & 59 \\
+5 & Mejora por edificación en terreno ajeno, sin reglamento de PH & Informal & 407 \\
+7 & Parque cementerio & Parque_Cementerio.Matriz o .Unidad_Predial & 1 285 \\
+8 & Condominio & Condominio.Matriz o .Unidad_Predial & 2 442 \\
+9 & Propiedad horizontal & PH.Matriz o .Unidad_Predial & 11 814 \\
+\end{longtable}
+}
+
+{\footnotesize\color{gris} El código no coincide con \cn{condicion_predio} en 4 predios con
+código 0: 2 informales, 1 unidad predial en PH y 1 vía.\par}
+
+% =====================================================================================
+\section{Campos}
+
+\begin{destacado}
+\textbf{Cómo leer la tabla.} Las ramas grises son el anidamiento: de \cn{predio} cuelgan
+las columnas del archivo, y de cada estructura o \textit{elemento} de lista, sus campos.
+\textbf{nulos} es el porcentaje de nulos en su nivel: filas, estructuras no nulas o
+elementos de la lista; en blanco es 0~\%. Después de cada definición, en gris, lo que se
+midió en el archivo. Las categóricas enlazan con sus valores
+(sección~\ref{sec:categoricas}) y los números volados, con las notas.
+\end{destacado}
+
+{\small
+\prepararcampos
+\setlength{\LTpre}{0.5ex}
+\begin{longtable}{@{}NYUD@{}}
+\encabezadocampos
+\endfirsthead
+\encabezadocampos
+\endhead
+\raiz{Unidad territorial legal propia de catastro: el terreno y sus construcciones.
+  \dato{22 220 filas}}
+%
+\grupo{\rI}{Predio y número predial}{LC_Predio}
+\campo{\rT}{id_predio}{\tE{i64}}{}{Llave del predio.}
+\campo{\rT}{zona}{\tE{str}}{}{Zona rural o urbana. \npn{6–7}\dato{00 o 01}}
+\campo{\rT}{sector}{\tE{str}}{}{Sector catastral. \npn{8–9}\dato{siempre 00}}
+\campo{\rT}{comuna}{\tE{str}}{}{Comuna urbana. \npn{10–11}\dato{siempre 00}}
+\campo{\rT}{barrio}{\tE{str}}{}{Barrio urbano. \npn{12–13}\dato{siempre 00}}
+\campo{\rT}{manzana_vereda}{\tE{str}}{}{Manzana o vereda. \npn{14–17}\dato{8 veredas y 62 manzanas}}
+\campo{\rT}{numero_terreno}{\tE{str}}{}{Terreno dentro de la manzana o vereda. \npn{18–21}}
+\campo{\rT}{condicion_propiedad}{\tE{str}}{}{Código de la condición de propiedad.
+  \npn{22}\dato{8 códigos}}
+\campo{\rT}{edificio}{\tE{str}}{}{Edificio o torre en PH. \npn{23–24}}
+\campo{\rT}{piso}{\tE{str}}{}{Piso dentro del edificio o torre. \npn{25–26}}
+\campo{\rT}{unidad}{\tE{str}}{}{Unidad predial en PH, condominio, cementerio o mejora.
+  \npn{27–30}}
+\campo{\rT}{avaluo_catastral}{\tE{f64}}{}{Valor catastral del predio: suma de los avalúos de
+  terreno y construcciones, en pesos y redondeado a miles.\dato{0 en 2 335 predios}}
+\campo{\rT}{tipo}{\tE{str}}{}{Tipo de predio para efectos catastrales. \cat{tipo}{4}}
+\campo{\rT}{condicion_predio}{\tE{str}}{}{Condiciones físicas y jurídicas del predio.
+  \cat{condicion}{10}}
+\campo{\rT}{destinacion_economica}{\tE{str}}{}{Actividad predominante que se desarrolla en el
+  inmueble. \cat{destinacion}{24}}
+%
+\grupo{\rI}{Levantamiento y dirección}{LC_DatosAdicionalesLevantamientoCatastral,
+  LC_EstructuraNovedadNumeroPredial, LC_ContactoVisita, ExtDireccion}
+\campo{\rT}{area_registral_m2}{\tE{f64}}{}{Área consignada en el certificado de tradición y
+  libertad o en los títulos registrados, en m².\dato{0 en 1 133 predios}}
+\campo{\rT}{fecha_visita_predial}{\tE{date}}{}{Fecha de la visita en campo al predio.%
+  \dato{2025-07-18 a 2026-02-16}}
+\campo{\rT}{resultado_visita}{\tE{str}}{}{Situación que afectó el levantamiento en campo.
+  \cat{resultado}{7}}
+\campo{\rT}{tipo_novedad_numero_predial}{\tE{str}}{32}{Cambio del número predial por la
+  dinámica inmobiliaria. \cat{novedad}{5}}
+\campo{\rT}{n_contactos_visita}{\tE{i32}}{}{Personas que atendieron la visita.\dato{0 a 4}}
+\campo{\rT}{autoriza_notificaciones}{\tE{bool}}{60}{Si alguna autorizó notificaciones
+  electrónicas.\dato{nulo si no hubo contacto}}
+\campo{\rT}{tipo_direccion}{\tE{str}}{}{Dirección estructurada o no estructurada.%
+  \dato{siempre No_Estructurada}}
+\campo{\rT}{es_direccion_principal}{\tE{bool}}{}{Si la dirección es la principal.%
+  \dato{siempre true}}
+%
+\grupo{\rI}{Propiedad horizontal e informalidad}{CR_DatosPHCondominio,
+  cr_predio_copropiedad, lc_predio_informalidad}
+\campo{\rT}{ph_matriz}{\tS}{96}{Datos del predio matriz en PH o condominio.%
+  \dato{838 matrices}}
+\campo{\rI\rT}{area_total_terreno}{\tE{f64}}{}{Área total del terreno, en m².}
+\campo{\rI\rT}{area_total_terreno_privada}{\tE{f64}}{}{Área privada del terreno, en m².}
+\campo{\rI\rT}{area_total_terreno_comun}{\tE{f64}}{}{Área común del terreno, en m².}
+\campo{\rI\rT}{area_total_construida}{\tE{f64}}{}{Área total construida, en m².}
+\campo{\rI\rT}{area_total_construida_privada}{\tE{f64}}{}{Área construida privada, en m².}
+\campo{\rI\rT}{area_total_construida_comun}{\tE{f64}}{}{Área construida común, en m².}
+\campo{\rI\rT}{numero_torres}{\tE{i32}}{}{Número de torres.}
+\campo{\rI\rL}{total_unidades_privadas}{\tE{i32}}{}{Total de unidades privadas.}
+\campo{\rT}{id_predio_matriz}{\tE{i64}}{34}{Predio matriz de esta unidad predial: apunta a
+  \cn{id_predio}.}
+\campo{\rT}{coeficiente_copropiedad}{\tE{f64}}{34}{Coeficiente de copropiedad de la unidad
+  predial.\dato{0 a 1}}
+\campo{\rT}{n_unidades_prediales}{\tE{i32}}{}{Unidades prediales del predio matriz.%
+  \dato{más de 0 en 854 matrices}}
+\campo{\rT}{ids_predios_informales}{\tLE}{}{Predios informales relacionados con este predio
+  formal: apuntan a \cn{id_predio}.\dato{0 a 12}}
+\campo{\rT}{ids_predios_formales}{\tLE}{}{Predios formales relacionados con este predio
+  informal: apuntan a \cn{id_predio}.\dato{0 a 2}}
+%
+\grupo{\rI}{Unidades espaciales}{CR_Terreno, CR_Construccion, CR_UnidadConstruccion,
+  CR_CaracteristicasUnidadConstruccion}
+\campo{\rT}{terreno}{\tS}{60}{Porción de tierra con una extensión geográfica definida.%
+  \dato{nulo sobre todo en unidades prediales}}
+\campo{\rI\rT}{id_terreno}{\tE{i64}}{}{Llave del terreno.}
+\campo{\rI\rT}{area_terreno}{\tE{f64}}{}{Área del terreno resultante del levantamiento, en m².}
+\geometria{\rI\rL}
+\campo{\rT}{construcciones}{\tLS}{}{Materiales adheridos al terreno con carácter permanente.%
+  \dato{0 a 303 por predio}}
+\elemento{\rI\rL}{Una construcción.}
+\campo{\rI\rO\rT}{id_construccion}{\tE{i64}}{}{Llave de la construcción.}
+\campo{\rI\rO\rT}{identificador}{\tE{str}}{}{Identificador de la construcción, por letras del
+  abecedario.}
+\campo{\rI\rO\rT}{total_pisos}{\tE{i32}}{}{Número total de pisos.}
+\campo{\rI\rO\rT}{total_sotanos}{\tE{i32}}{}{Número total de sótanos.}
+\campo{\rI\rO\rT}{total_mezanines}{\tE{i32}}{}{Número total de mezanines.}
+\campo{\rI\rO\rT}{total_semisotanos}{\tE{i32}}{}{Número total de semisótanos.}
+\campo{\rI\rO\rT}{area_total_construccion}{\tE{f64}}{}{Área total construida, en m².}
+\campo{\rI\rO\rT}{altura_total_construccion}{\tE{f64}}{}{Altura total de la construcción, en m.}
+\geometria{\rI\rO\rL}
+\campo{\rT}{unidades}{\tLS}{}{Partes de una construcción con elementos físicos y uso
+  propios.\dato{0 a 1 290 por predio}}
+\elemento{\rI\rL}{Una unidad de construcción, con sus características.}
+\campo{\rI\rO\rT}{id_unidad}{\tE{i64}}{}{Llave de la unidad.}
+\campo{\rI\rO\rT}{id_construccion}{\tE{i64}}{}{Construcción a la que pertenece: apunta a
+  \cn{construcciones[].id_construccion}.\nota{1}}
+\campo{\rI\rO\rT}{identificador}{\tE{str}}{}{Identificador de la unidad, por letras del
+  abecedario.}
+\campo{\rI\rO\rT}{tipo_unidad_construccion}{\tE{str}}{}{Convencional (residencial, comercial,
+  industrial, institucional) o anexo. \cat{tipounidad}{5}}
+\campo{\rI\rO\rT}{uso}{\tE{str}}{}{Actividad económica que se desarrolla en la unidad.
+  \cat{uso}{82}}
+\campo{\rI\rO\rT}{tipo_planta}{\tE{str}}{}{Tipo de planta donde está la unidad.
+  \cat{planta}{4}}
+\campo{\rI\rO\rT}{planta_ubicacion}{\tE{i32}}{}{Número de la planta donde está la unidad.}
+\campo{\rI\rO\rT}{total_plantas}{\tE{i32}}{}{Número total de plantas de la unidad.}
+\campo{\rI\rO\rT}{anio_construccion}{\tE{i32}}{}{Año de construcción.\dato{1930 a 2025}}
+\campo{\rI\rO\rT}{area_construida}{\tE{f64}}{}{Área construida de la unidad en su planta,
+  en m².}
+\campo{\rI\rO\rT}{area_construida_caracteristicas}{\tE{f64}}{}{Área construida según las
+  características de la unidad, en m².\dato{0 en PH y condominio}}
+\campo{\rI\rO\rT}{area_privada_construida}{\tE{f64}}{42}{Área privada construida, en m², para
+  predios en PH.\dato{solo en PH y condominio}}
+\campo{\rI\rO\rT}{altura}{\tE{i32}}{}{Altura total de la planta, en m.}
+\geometria{\rI\rO\rL}
+%
+\grupo{\rI}{Derecho y fuente administrativa}{LC_Derecho, LC_FuenteAdministrativa}
+\campo{\rT}{tipo_derecho}{\tE{str}}{}{Forma de tenencia del interesado sobre el predio.
+  \cat{derecho}{3}}
+\campo{\rT}{fraccion_derecho}{\tE{f64}}{}{Fracción del derecho según la tenencia y el área
+  que ocupa, de 0 a 1.\dato{menor que 1 en 3 predios}}
+\campo{\rT}{fecha_inicio_tenencia}{\tE{date}}{}{Fecha de inicio de la tenencia.%
+  \dato{1900-01-01 en 751 predios\nota{2}; 2 en el futuro}}
+\campo{\rT}{tipo_fuente}{\tE{str}}{}{Documento que acredita el derecho. \cat{fuente}{5}}
+\campo{\rT}{estado_disponibilidad}{\tE{str}}{}{Si la fuente está disponible y en qué
+  condiciones.\dato{siempre Disponible}}
+\campo{\rT}{tipo_principal}{\tE{str}}{2}{Formato en que se presenta la fuente.
+  \cat{principal}{3}}
+\campo{\rT}{fecha_documento_fuente}{\tE{date}}{}{Fecha de expedición del documento.%
+  \dato{1900-01-01 en 754 predios\nota{2}}}
+%
+\grupo{\rI}{Titulares}{CR_Interesado, CR_AgrupacionInteresados, col_miembros}
+\campo{\rL}{titulares}{\tS}{}{Interesados que tienen el derecho sobre el predio, solo
+  contados.}
+\campo{\rO\rT}{es_agrupacion}{\tE{bool}}{}{Si el derecho lo tiene una agrupación de
+  interesados.\dato{true en 6 142 predios}}
+\campo{\rO\rT}{tipo_agrupacion}{\tE{str}}{72}{Tipo de agrupación; nulo si el titular es uno
+  solo. \cat{agrupacion}{3}}
+\campo{\rO\rT}{n_titulares}{\tE{i32}}{}{Interesados que tienen el derecho.\dato{1 a 88}}
+\campo{\rO\rT}{n_persona_natural}{\tE{i32}}{}{Titulares que son personas naturales.}
+\campo{\rO\rT}{n_persona_juridica}{\tE{i32}}{}{Titulares que son personas jurídicas.}
+\campo{\rO\rT}{n_femenino}{\tE{i32}}{}{Titulares de sexo femenino según su documento.}
+\campo{\rO\rT}{n_masculino}{\tE{i32}}{}{Titulares de sexo masculino según su documento.}
+\campo{\rO\rT}{n_sexo_sin_determinar}{\tE{i32}}{}{Titulares sin sexo determinado; incluye a
+  todas las personas jurídicas.}
+\campo{\rO\rT}{participacion_max}{\tE{f64}}{}{Mayor participación de un miembro en la
+  agrupación; 1 si el titular es uno solo.}
+\campo{\rO\rL}{max_predios_mismo_titular}{\tE{i32}}{}{Predios que tiene en el levantamiento
+  el titular de este predio que más tiene.\dato{1 a 770}}
+\end{longtable}
+}
+
+% =====================================================================================
+\section{Medidas de la geometría}\hypertarget{geometria}{}
+
+Se calcularon con \mbox{PostGIS} sobre la geometría en \mbox{EPSG:9377}; el archivo no
+trae coordenadas.
+
+{\small
+\prepararcampos
+\begin{longtable}{@{}NYUD@{}}
+\encabezadocampos
+\medirdescripcion{Al final de \cn{terreno}, \cn{construcciones[]} y \cn{unidades[]}.}%
+\textit{‹geometría›} & \tG & & \usebox{\cajadesc} \\
+\campo{\rT}{area_geometrica}{\tE{f64}}{}{Área de la geometría, en m².}
+\campo{\rT}{perimetro}{\tE{f64}}{}{Perímetro de la geometría, en m.}
+\campo{\rT}{compacidad}{\tE{f64}}{}{4πA/P²: 1 para un círculo, cerca de 0 para una figura
+  alargada.}
+\campo{\rT}{n_vertices}{\tE{i32}}{}{Número de vértices.}
+\campo{\rT}{n_poligonos}{\tE{i32}}{}{Número de polígonos.}
+\campo{\rL}{geometria_valida}{\tE{bool}}{}{Si la geometría es válida (sin
+  autointersecciones ni anillos anidados).\dato{false en 31 construcciones y 19 unidades}}
+\end{longtable}
+}
+
+% =====================================================================================
+\section{Valores de las categóricas}\label{sec:categoricas}
+
+Son los códigos de los dominios del modelo LADM-COL, de más a menos frecuente en el
+archivo.
+
+\newcommand{\val}[1]{\tikz[baseline=(t.base)]\node[escalar, font=\scriptsize,
+  text height=1.3ex](t){#1};}
+% \categoria{ancla}{lista que contiene el campo o vacío}{campo}{valores}
+\newcommand{\categoria}[4]{\ifx\relax#2\relax\else{\color{gris}#2}\newline\fi
+  \cn{#3}\hypertarget{cat-#1}{} & #4 \\[0.6ex]}
+{\small
+\renewcommand{\arraystretch}{1.5}
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{5.1cm}
+    >{\raggedright\arraybackslash}p{\dimexpr\linewidth-5.1cm-2\tabcolsep\relax}@{}}
+\categoria{tipo}{}{tipo}{\val{Predio.Privado} \val{Predio.Publico.Baldio}
+  \val{Predio.Publico.Uso_Publico} \val{Predio.Publico.Publico}}
+\categoria{condicion}{}{condicion_predio}{\val{PH.Unidad_Predial} \val{NPH}
+  \val{Condominio.Unidad_Predial} \val{Parque_Cementerio.Unidad_Predial} \val{PH.Matriz}
+  \val{Informal} \val{Bien_Uso_Publico} \val{Condominio.Matriz} \val{Via}
+  \val{Parque_Cementerio.Matriz}}
+\categoria{destinacion}{}{destinacion_economica}{\val{Habitacional} \val{Comercial}
+  \val{Servicios_Funerarios} \val{Agricola} \val{Industrial} \val{Lote_Urbanizado_No_Construido}
+  \val{Uso_Publico} \val{Agropecuario} \val{Lote_Urbanizable_No_Urbanizado} \val{Forestal}
+  \val{Institucional} \val{Educativo} \val{Lote_No_Urbanizable} \val{Infraestructura_Transporte}
+  \val{Agroforestal} \val{Pecuario} \val{Religioso} \val{Recreacional} \val{Infraestructura_Hidraulica}
+  \val{Agroindustrial} \val{Infraestructura_Asociada_Produccion_Agropecuaria} \val{Salubridad}
+  \val{Cultural} \val{Infraestructura_Saneamiento_Basico}}
+\categoria{resultado}{}{resultado_visita}{\val{Incompleto} \val{Exitoso}
+  \val{No_Permitieron_Acceso} \val{No_Hay_Nadie} \val{Sin_Visita} \val{Zona_Dificil_Acceso}
+  \val{Menor_Edad}}
+\categoria{novedad}{}{tipo_novedad_numero_predial}{\val{Cambio_Numero_Predial}
+  \val{Predio_Nuevo} \val{Desenglobe} \val{Cancelacion} \val{Englobe}}
+\categoria{tipounidad}{unidades[].}{tipo_unidad_construccion}{\val{Residencial} \val{Anexo}
+  \val{Comercial} \val{Industrial} \val{Institucional}}
+\categoria{uso}{unidades[].}{uso}{Valores de la forma \val{Grupo.Uso}. El grupo coincide con
+  \cn{tipo_unidad_construccion} en el 99,4~\% de las unidades.\newline
+  \textbf{Residencial.}\enspace \val{Vivienda_Hasta_3_Pisos_En_PH} \val{Vivienda_Hasta_3_Pisos}
+  \val{Garajes_En_PH} \val{Depositos_Lockers} \val{Apartamentos_4_y_mas_pisos_en_PH}
+  \val{Vivienda_Recreacional_En_PH} \val{Garajes_Cubiertos} \val{Salon_Comunal}
+  \val{Apartamentos_4_y_mas_pisos} \val{Vivienda_Colonial} \val{Casa_Elbas}
+  \val{Vivienda_Recreacional} \val{Barracas}\newline
+  \textbf{Anexo.}\enspace \val{Ramadas_Cobertizos_Caneyes}
+  \val{Cimientos_Estructura_Muros_y_Placa_Base} \val{Marquesinas_Patios_Cubiertos}
+  \val{Kioscos} \val{Contenedor} \val{Silos} \val{Establos_Pesebreras_Caballerizas}
+  \val{Canchas} \val{Galpones_Gallineros} \val{Canchas_de_Tenis} \val{Tanques} \val{Pergolas}
+  \val{Piscinas} \val{Construccion_en_Membrana_Arquitectonica} \val{Secaderos}
+  \val{Torres_de_Enfriamiento} \val{Pozos} \val{Estacion_Bombeo} \val{Corrales}
+  \val{Lagunas_de_Oxidacion} \val{Cerramiento} \val{Albercas_Banaderas} \val{Glamping}
+  \val{Cocheras_Marraneras_Porquerizas} \val{Hangar} \val{Muelles} \val{Beneficiaderos}
+  \val{Camaroneras} \val{Torre_de_Control}\newline
+  \textbf{Comercial.}\enspace \val{Centros_Comerciales_en_PH} \val{Oficinas_Consultorios_en_PH}
+  \val{Comercio_en_PH} \val{Comercio} \val{Parqueaderos_en_PH} \val{Bodegas_Comerciales_en_PH}
+  \val{Oficinas_Consultorios} \val{Restaurantes} \val{Bodegas_Comerciales_Grandes_Almacenes}
+  \val{Centros_Comerciales} \val{Clubes_Casinos} \val{Hoteles_en_PH} \val{Hoteles}
+  \val{Parqueaderos} \val{Restaurantes_en_PH} \val{Oficinas_Consultorios_Coloniales}
+  \val{Plaza_Mercado} \val{Restaurante_Colonial}\newline
+  \textbf{Industrial.}\enspace \val{Industrias_en_PH} \val{Bodegas_Casa_Bomba_en_PH}
+  \val{Industrias} \val{Bodega_Casa_Bomba} \val{Talleres}\newline
+  \textbf{Institucional.}\enspace \val{Parque_Cementerio} \val{Aulas_de_Clases}
+  \val{Colegio_y_Universidades} \val{Iglesia} \val{Biblioteca} \val{Unidad_Deportiva}
+  \val{Instalaciones_Militares} \val{Clinicas_Hospitales_Centros_Medicos} \val{Coliseos}
+  \val{Casas_de_Culto} \val{Puestos_de_Salud} \val{Jardin_Infantil_en_Casa} \val{Teatro}
+  \val{Seminarios_Conventos} \val{Entidad_Educativa_Colonial_Colegio_Colonial}
+  \val{Plaza_de_Toros} \val{Velodromo_Patinodromo}}
+\categoria{planta}{unidades[].}{tipo_planta}{\val{Piso} \val{Mezanine} \val{Sotano} \val{Semisotano}}
+\categoria{derecho}{}{tipo_derecho}{\val{Dominio} \val{Ocupacion} \val{Posesion}}
+\categoria{fuente}{}{tipo_fuente}{\val{Documento_Publico.Escritura_Publica} \val{Sin_Documento}
+  \val{Documento_Publico.Sentencia_Judicial} \val{Documento_Publico.Acto_Administrativo}
+  \val{Documento_Privado}}
+\categoria{principal}{}{tipo_principal}{\val{Documento} \val{Otro} \val{Imagen}}
+\categoria{agrupacion}{titulares.}{tipo_agrupacion}{\val{Grupo_Civil} \val{Grupo_Mixto}
+  \val{Grupo_Empresarial}}
+\end{longtable}
+}
+
+% =====================================================================================
+\section{Notas y fuentes}
+
+\begin{itemize}
+\item \hypertarget{nota-1}{}\textbf{1} En PH la unidad apunta casi siempre a una
+  construcción de la fila del predio matriz. 90 unidades apuntan a 45 construcciones que
+  no están en el archivo, porque en la base no están unidas a ningún predio.
+\item \hypertarget{nota-2}{}\textbf{2} Probablemente un marcador de fecha desconocida.
+\item Los \textit{id_*} son llaves del archivo: sirven para unir filas, no tienen
+  significado catastral.
+\item Cifras medidas sobre el archivo construido el 14 de octubre de 2026.
+\item Definiciones de los campos: diccionario de datos del Modelo de Aplicación de
+  Levantamiento Catastral LADM_COL V2.0 (IGAC). Número predial nacional: Resolución 1149 de
+  2021 del IGAC, artículo 61, e Instructivo de Identificación Predial IN-GCT-PC01-06 del
+  IGAC (2024), tabla 31.
+\end{itemize}
+
+\end{document}
