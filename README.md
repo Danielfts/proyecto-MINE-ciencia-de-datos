@@ -31,7 +31,7 @@ Se ejecutan en este orden, con el [entorno de Python](#entorno-de-python) instal
 
 | Orden | Notebook | Actividad | Estado |
 | --- | --- | --- | --- |
-| 1 | [entrega-1/notebooks/06-entendimiento-de-los-datos.ipynb](entrega-1/notebooks/06-entendimiento-de-los-datos.ipynb) | 6. Entendimiento de los datos | En desarrollo: carga los datos (etapa 2); las etapas 3 a 8 están por desarrollar |
+| 1 | [entrega-1/notebooks/06-entendimiento-de-los-datos.ipynb](entrega-1/notebooks/06-entendimiento-de-los-datos.ipynb) | 6. Entendimiento de los datos | Completo: análisis, interpretaciones y conclusiones |
 
 Se abren con JupyterLab (`uv run jupyter lab`) o con VS Code y se ejecutan de arriba abajo. También desde la terminal, en la raíz del repositorio:
 
@@ -85,9 +85,9 @@ Con conda no hay que instalar nada más. Con uv o pip, algunas dependencias de m
 | Linux x64, Debian/Ubuntu | `sudo apt install build-essential pkg-config python3-dev libcairo2-dev libpango1.0-dev` |
 | Linux x64, Fedora | `sudo dnf install gcc gcc-c++ pkgconf-pkg-config python3-devel cairo-devel pango-devel` |
 | Linux ARM64 | Use conda. Además necesita un compilador de C++ para una dependencia (`phik`) |
-| Windows ARM | Use la versión x64 de Python o de Miniforge, que corre emulada. Varias dependencias no tienen versión nativa para ARM |
+| Windows ARM | Use la versión x64 de Python o de Miniforge, que corre emulada. Varias dependencias no tienen versión nativa para ARM. Con uv: `uv sync --python cpython-3.12-windows-x86_64-none` |
 
-El entorno se verificó con las tres opciones en Linux x64. Lo indicado para las demás plataformas sale de los binarios que publican PyPI y conda-forge para las versiones fijadas.
+El entorno se verificó con las tres opciones en Linux x64, y con uv en Windows ARM usando Python x64. Lo indicado para las demás plataformas sale de los binarios que publican PyPI y conda-forge para las versiones fijadas.
 
 Para escribir fórmulas en los videos (`Tex`, `MathTex`) manim necesita además una instalación de LaTeX: MiKTeX en Windows, MacTeX en macOS o TeX Live en Linux. No se necesita instalar ffmpeg.
 

@@ -29,7 +29,9 @@ latexmk reporte.tex
 
 ## Notebook
 
-[notebooks/06-entendimiento-de-los-datos.ipynb](notebooks/06-entendimiento-de-los-datos.ipynb) desarrolla la actividad 6: el análisis exploratorio y la calidad de los datos. Tiene el encabezado, la tabla de contenido, la carga de librerías y de los datos, y una sección por etapa con las técnicas del curso que le corresponden a cada una. Las etapas 3 a 8 están por desarrollar.
+[notebooks/06-entendimiento-de-los-datos.ipynb](notebooks/06-entendimiento-de-los-datos.ipynb) desarrolla la actividad 6: el análisis exploratorio y la calidad de los datos. Tiene el encabezado, la tabla de contenido, la carga de librerías y de los datos, y una sección por etapa con las técnicas del curso que le corresponden a cada una. Las ocho etapas tienen análisis e interpretación.
+
+- **Funciones:** las que usan varias etapas (resúmenes, gráficas univariadas, pruebas con sus supuestos y la bitácora de calidad que alimenta la tabla de la etapa 6.3) están en [notebooks/utilidades_eda.py](notebooks/utilidades_eda.py).
 
 - **Etapas:** siguen el proceso de exploración de las diapositivas de EDA del curso. La tabla de contenido del notebook indica de dónde sale cada una.
 - **Ejecución:** de arriba abajo, con el entorno del proyecto. Las instrucciones están en el [README principal](../README.md#notebooks).
