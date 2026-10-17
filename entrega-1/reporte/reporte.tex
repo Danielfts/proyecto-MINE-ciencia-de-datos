@@ -23,11 +23,14 @@
 % Colores, tipografía, encabezado, portada y enlaces: identidad/estilo-reporte.tex.
 \input{../../identidad/estilo-reporte}
 
+% Columnas de tabla con texto alineado a la izquierda: >{\raggedright\arraybackslash}p{...}
+\usepackage{array}
+
 \addbibresource{referencias.bib}
 
 % La portada cuenta dentro del máximo de páginas. Con \portadafalse se cambia por
 % un título compacto en la primera página y se recupera esa página para contenido.
-\portadatrue
+\portadafalse
 
 \begin{document}
 
@@ -40,7 +43,71 @@
 % La organización y la problemática u oportunidad. La información clave del negocio
 % (estrategia, datos del sector) que sustenta su relevancia. Los objetivos del
 % proyecto y las métricas de negocio (KPIs) con las que se evaluará.
-Pendiente.
+\textbf{Organización.} Multiaservi Consultores Ltda., firma con más de 21 años de
+experiencia en contabilidad pública, gestión tributaria y asesoría a entidades
+territoriales, asesora a la alcaldía de un municipio colombiano que acaba de concluir
+una actualización catastral. La ejecutó un operador contratado para ese fin y la
+entregó, en el modelo LADM-COL, el gestor catastral municipal, adscrito a la Secretaría
+de Planeación.
+
+\textbf{Problemática.} Colombia avanza en la actualización de su catastro: el IGAC
+reportaba cerca del 45\,\% del territorio actualizado a finales de 2025
+\cite{portafolio2025igac}. Donde el catastro llevaba años sin actualizarse, el salto de
+los avalúos es abrupto. En este municipio, entre 2025 y 2026 el avalúo mediano de los
+predios facturados se multiplicó por 4,1. La administración bajó la tarifa mediana de
+10,8 a 5,6 por mil y fijó por acuerdo municipal límites transitorios al crecimiento del
+impuesto predial unificado (IPU), de 30\,\% a 80\,\% según el avalúo, dentro del tope
+legal del doble del año anterior \cite{ley44}. Aun así, el IPU facturado casi se
+duplicó, el 24\,\% de los predios tuvo un aumento superior al 50\,\%, y el 1\,\% de los
+predios con mayor IPU concentró el 56\,\% del aumento en pesos.
+
+\begin{destacado}
+En 2026 se facturó solo el 50\,\% del IPU que corresponde a los nuevos avalúos (avalúo
+$\times$ tarifa): una brecha de 68\,400 millones de pesos. Los límites transitorios rigen
+hasta el 31 de diciembre de 2027, así que la vigencia 2027 es la última en la que la
+brecha puede cerrarse de forma gradual.
+\end{destacado}
+
+La alcaldía necesita para 2027 una política tributaria predial que acerque el impuesto a
+la nueva realidad económica sin choques excesivos, sin perder progresividad ni recaudo y
+con el menor costo político posible. La administración radica ante el Concejo Municipal
+un proyecto de acuerdo con las tarifas y los límites propuestos con la guía de la
+consultoría; el Concejo lo debate, lo modifica y lo aprueba antes de terminar el año.
+Intervienen además la Secretaría de Hacienda, que liquida el impuesto, el equipo de
+gestión catastral, el gerente de Multiaservi y los contribuyentes.
+
+\textbf{Objetivo general.} Apoyar la construcción del proyecto de acuerdo de tarifas y
+límites del IPU para la vigencia 2027 con un producto de datos que permita comparar
+escenarios según los indicadores de la tabla~\ref{tab:kpis}. \textbf{Objetivos
+específicos.} (1)~Estimar, para cada predio, el IPU pleno y la brecha frente a lo
+facturado, e identificar dónde se concentra. (2)~Simular escenarios de tarifas y límites
+para 2027 y evaluar cada uno con los KPIs, la meta y los guardrails.
+
+\textbf{KPIs.} Los dos KPIs se oponen a propósito: acercar el impuesto al pleno aumenta
+el choque. Las metas se definirán con la administración y la consultoría; la línea base
+sale del comparativo de facturación del predial 2025--2026 del municipio.
+
+\begin{table}[ht]
+  \centering
+  \caption{KPIs, meta y guardrails, con su línea base de 2026.}
+  \label{tab:kpis}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.25\linewidth}
+                     >{\raggedright\arraybackslash}p{0.47\linewidth}
+                     >{\raggedright\arraybackslash}p{0.22\linewidth}@{}}
+    \toprule
+    Indicador & Qué mide & Línea base 2026 \\
+    \midrule
+    KPI 1. Convergencia & IPU facturado / IPU pleno & 50\,\% \\
+    KPI 2. Choque en la cola & Aumento en pesos del IPU en el 1\,\% y el 5\,\% de
+      predios con mayor IPU & El 1\,\% concentró el 56\,\% del aumento \\
+    Meta. Recaudo & IPU facturado total frente al año anterior & 68\,300 millones \\
+    Guardrail. Progresividad & Tarifa efectiva (IPU / avalúo) no decreciente por decil
+      de avalúo & No se cumple \\
+    Guardrail. Legalidad & Ningún predio sobre el tope legal; la vivienda de menor
+      avalúo no sube más que en 2026 & Por medir \\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \section{Ideación} % 10 %
 % Los usuarios potenciales, sus procesos actuales y sus dolores. Los requerimientos

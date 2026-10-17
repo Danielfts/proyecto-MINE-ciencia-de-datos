@@ -24,10 +24,10 @@ Lista de pendientes derivada del enunciado ([Proyecto Final.pdf](Proyecto%20Fina
 
 ### 1. Definición de la problemática y entendimiento del negocio (10%)
 
-- [ ] Seleccionar la organización y la problemática u oportunidad a abordar
-- [ ] Documentar la información clave del negocio (estrategia, datos del sector) que sustenta su relevancia
-- [ ] Definir los objetivos del proyecto
-- [ ] Definir las métricas de negocio (KPIs) para la evaluación
+- [x] Seleccionar la organización y la problemática u oportunidad a abordar
+- [x] Documentar la información clave del negocio (estrategia, datos del sector) que sustenta su relevancia
+- [x] Definir los objetivos del proyecto
+- [x] Definir las métricas de negocio (KPIs) para la evaluación
 
 ### 2. Ideación (10%)
 

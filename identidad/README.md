@@ -62,7 +62,7 @@ Reglas del manual que aplican aquí:
 - No se crean logos nuevos para proyectos, grupos o iniciativas. El proyecto no tiene logo propio.
 - Con logos de otras organizaciones (por ejemplo, la organización con la que se trabaja), todos van a la misma altura que el de la Universidad.
 
-El manual está escrito para las comunicaciones institucionales y no dice nada sobre trabajos de estudiantes. Aquí el logo se usa solo en la portada del reporte, que es un trabajo académico del curso, y siguiendo esas reglas. Si los profesores prefieren que no aparezca, se quita la portada con `\portadafalse`.
+El manual está escrito para las comunicaciones institucionales y no dice nada sobre trabajos de estudiantes. Aquí el logo se usa solo en la portada del reporte, que es un trabajo académico del curso, y siguiendo esas reglas. La primera entrega usa `\portadafalse` (título compacto, sin logo), así que el logo no aparece; con `\portadatrue` vuelve la portada con el logo y el texto legal.
 
 ## Dónde está aplicada
 

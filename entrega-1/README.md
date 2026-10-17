@@ -25,7 +25,7 @@ latexmk reporte.tex
 - **Páginas:** la compilación avisa en `reporte.log` si se pasa de 6. `pdfinfo reporte.pdf` muestra el número de páginas.
 - Para enlazar un recurso del repositorio: `\repo{entrega-1/video/guion.md}{el guion}`.
 - **Estilo:** los colores, el encabezado, la portada y los enlaces vienen de [identidad/estilo-reporte.tex](../identidad/estilo-reporte.tex), que comparten las dos entregas. El recuadro `destacado` resalta el resultado o la cifra clave de una sección.
-- **Portada:** cuenta dentro de las 6 páginas, así que deja 5 para el contenido. El enunciado recomienda no gastar páginas en portada ni tabla de contenidos. Con `\portadafalse` en `reporte.tex` se cambia por un título compacto en la primera página.
+- **Portada:** el reporte usa un título compacto en la primera página (`\portadafalse` en `reporte.tex`), porque el enunciado recomienda no gastar páginas en portada y la portada cuenta dentro de las 6 páginas. Con `\portadatrue` vuelve la portada completa, con el logo, los profesores y la fecha.
 
 ## Notebook
 
