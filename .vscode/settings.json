@@ -1,0 +1,26 @@
+{
+  // LaTeX Workshop: compila con latexmk sin forzar el motor, para que mande el
+  // .latexmkrc de cada carpeta (LuaLaTeX, que hace falta para usar Arial con
+  // fontspec). La receta por defecto pasa -pdf, que fuerza pdfLaTeX y falla.
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "latexmk (motor del .latexmkrc)",
+      "tools": ["latexmk-rc"]
+    }
+  ],
+  "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk-rc",
+      "command": "latexmk",
+      "args": [
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-outdir=%OUTDIR%",
+        "%DOC%"
+      ],
+      "env": {}
+    }
+  ],
+  "latex-workshop.latex.recipe.default": "first"
+}

@@ -11,9 +11,9 @@
 %
 \documentclass[12pt,letterpaper]{article}
 
-\newcommand{\titulo}{Título del proyecto}
-\newcommand{\titulocorto}{Título corto del proyecto} % va en la franja de cada página
-\newcommand{\subtitulo}{Una línea que diga qué problema se resuelve y para qué organización}
+\newcommand{\titulo}{Transición predial 2027: un producto de datos para fijar tarifas después de la actualización catastral}
+\newcommand{\titulocorto}{Transición predial 2027} % va en la franja de cada página
+\newcommand{\subtitulo}{Escenarios de tarifas y límites del impuesto predial 2027 para un municipio colombiano, con Multiaservi Consultores}
 \newcommand{\entrega}{Primera entrega}
 \newcommand{\fecha}{Bogotá, octubre de 2026}
 \newcommand{\maxpaginas}{6}
@@ -112,13 +112,49 @@ sale del comparativo de facturación del predial 2025--2026 del municipio.
 \section{Ideación} % 10 %
 % Los usuarios potenciales, sus procesos actuales y sus dolores. Los requerimientos
 % del producto de datos, sus componentes analíticos y tecnológicos, y el mockup.
-Pendiente.
+\textbf{Usuarios y dolores.} El producto es una herramienta de apoyo a la decisión para
+Multiaservi: sus consultores la operan en cada proyecto de tarifas del predial, para
+clientes que cambian con cada ciclo electoral. Hoy la propuesta se arma en hojas de
+cálculo, se revisa con las secretarías de Hacienda y Planeación y con los asesores, la
+ajusta el alcalde y la debate el Concejo. Los dolores son cuatro: cada escenario nuevo
+que pide la administración obliga a rehacer cálculos a mano, con riesgo de error en
+plena negociación; el trabajo no se acumula entre municipios ni entre vigencias; cada
+tarifa y cada tope deben justificarse ante el Concejo en palabras simples, frente a
+actores que no siempre son técnicos; y lo facturado no es lo que se recauda.
 
-% \begin{figure}[ht]
-%   \centering
-%   \includegraphics[width=0.7\linewidth]{imagenes/mockup.png}
-%   \caption{Mockup del producto de datos.}
-% \end{figure}
+\textbf{Dos superficies.} La decisión no se automatiza: el producto organiza la
+información para que la tomen personas. Tiene una superficie interactiva, para la
+consultora y las reuniones con la administración hasta el despacho del alcalde
+(figura~\ref{fig:mockup}), y una exportación congelada y versionada del escenario
+elegido (tablas, gráficas y textos en lenguaje llano), que sirve de insumo para el
+material que se lleva al Concejo. El Concejo no opera el simulador: cambiar valores en
+vivo durante el debate invitaría a tergiversar los resultados.
+
+\textbf{Requerimientos.} Funcionales: cargar los datos de un municipio (catastro en
+LADM-COL y facturación del predial) desde un formato documentado; definir tarifas por
+destino y rango de avalúo y límites de crecimiento por rango; calcular en segundos el
+IPU 2027 de cada predio y los indicadores de la tabla~\ref{tab:kpis}; comparar y
+versionar escenarios; estimar el recaudo esperado; alertar cuando un escenario incumpla
+un guardrail, y exportar el escenario congelado. No funcionales: explicabilidad en
+lenguaje llano, trazabilidad de cada exportación a su escenario y sus datos, ningún dato
+personal y uso exclusivo de la consultora.
+
+\textbf{Componentes.} (1)~Un motor de escenarios determinista, que aplica las tarifas y
+los topes como reglas de negocio; (2)~un modelo de \textit{machine learning} que estima
+la probabilidad de que cada predio pague la vigencia, entrenado con el indicador de pago
+de la facturación, y que ajusta el recaudo facturado a uno esperado; (3)~una API REST
+que expone el motor, el modelo y la exportación, y (4)~una aplicación web, la superficie
+interactiva. Se construirán en Python, con pandas, scikit-learn, FastAPI y Dash.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.8\linewidth]{imagenes/mockup.png}
+  \caption{Wireframe de la aplicación web: (1) tarifas por destino y rango de avalúo, y
+  límites de crecimiento; (2) alertas de guardrails; (3) indicadores del escenario;
+  (4) lectura en lenguaje llano; (5) gráficas. Las cifras entre corchetes son
+  marcadores.}
+  \label{fig:mockup}
+\end{figure}
 
 \section{Aspectos éticos y legales} % 10 %
 % Implicaciones éticas, de privacidad, confidencialidad, transparencia y

@@ -31,10 +31,10 @@ Lista de pendientes derivada del enunciado ([Proyecto Final.pdf](Proyecto%20Fina
 
 ### 2. Ideación (10%)
 
-- [ ] Identificar los potenciales usuarios, sus procesos actuales y sus dolores
-- [ ] Establecer los requerimientos del producto de datos
-- [ ] Definir los componentes analíticos y tecnológicos
-- [ ] Elaborar un mockup del producto
+- [x] Identificar los potenciales usuarios, sus procesos actuales y sus dolores
+- [x] Establecer los requerimientos del producto de datos
+- [x] Definir los componentes analíticos y tecnológicos
+- [x] Elaborar un mockup del producto
 
 ### 3. Aspectos éticos y legales (10%)
 
