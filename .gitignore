@@ -43,3 +43,11 @@ datos/predios/diccionario/*
 catastro_*.sql
 # Exportaciones de la base (ver datos/predios/README.md): no se publican
 *.parquet
+
+# Archivos del municipio (facturación y recaudo del predial): tienen datos personales
+# y sus nombres o contenidos identifican al municipio. No se publican.
+*.xlsx
+*.xls
+*.csv.gz
+# Archivos de bloqueo de LibreOffice (su nombre repite el del archivo abierto)
+.~lock.*#
