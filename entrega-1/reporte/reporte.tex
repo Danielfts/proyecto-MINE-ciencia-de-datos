@@ -230,7 +230,55 @@ debemos tener en cuenta para el aplicativo catastral son:
 % Las hipótesis o preguntas de negocio que guían la experimentación. Las técnicas
 % estadísticas, de visualización y de machine learning que las responderán. Las
 % métricas con las que se evaluará la calidad del modelo.
-Pendiente.
+Para abordar la problemática del avalúo catastral y generar un \textit{insight} que sea profundo, 
+no obvio, significativo, basado en datos y accionable, planteamos las siguientes preguntas e hipótesis:   \begin{itemize}
+\item \textbf{Pregunta de negocio 1 (Características de valor):} ¿Cuáles son las variables físicas, 
+geográficas y de infraestructura que determinan de manera más precisa el valor comercial y catastral 
+real de un predio rural frente a uno urbano?
+\item \textbf{Pregunta de negocio 2 (Concentración y equidad):} ¿Cuál es la proporción de la población 
+que concentra la propiedad de grandes extensiones de tierra (latifundios) frente a los pequeños propietarios, 
+y cómo se distribuye su carga tributaria actual?
+\item \textbf{Hipótesis 1 (Brecha catastral):} Los predios rurales de mayor extensión presentan un error de 
+subvaloración catastral significativamente mayor que los predios urbanos. Al corregir esto, se espera una 
+redistribución más equitativa de la carga tributaria.
+\item \textbf{Hipótesis 2 (Factores espaciales):} La cercanía a vías principales, fuentes hídricas y centros 
+urbanos presenta una correlación monótona positiva fuerte (Spearman) con el valor del predio.
+\end{itemize}   \subsection{Técnicas estadísticas, de visualización y Machine Learning}El ciclo de vida del 
+producto de datos requerirá las siguientes técnicas para garantizar su viabilidad técnica y metodológica:\begin{itemize}
+\item \textbf{Calidad y limpieza de datos:} Antes del modelado, se evaluará la calidad de la información catastral. 
+A nivel de atributo, se identificarán valores faltantes, errores de digitación (ej., nombres de municipios mal escritos), 
+violaciones de sintaxis y violaciones de dominio (ej., áreas negativas o edades de construcción ilógicas). 
+A nivel de registro, se validará la violación de integridad (ej., el área construida no puede ser mayor al área total del terreno).
+\item \textbf{Análisis Exploratorio de Datos (EDA) y Estadística:} Se analizarán las medidas de forma de las 
+variables continuas (como el área y el precio) evaluando la asimetría (\textit{Skewness}) y la curtosis para 
+entender la concentración de los datos. Asimismo, se identificarán valores atípicos que puedan corresponder a 
+errores o a propiedades de lujo, usando la definición estándar: valores a $\pm 3$ desviaciones estándar de la 
+media, o $\pm 1.5$ veces el IQR por debajo de Q1 o por encima de Q3.
+\item \textbf{Técnicas de Machine Learning:} Se abordará como un problema de aprendizaje supervisado, empleando 
+modelos de regresión (como Random Forest, Gradient Boosting o regresión espacial) para predecir la variable 
+continua del valor del suelo. Al analizar los resultados, se deberá tener rigor estadístico para recordar 
+que una alta correlación entre variables predictoras no implica necesariamente causalidad.
+
+Para evitar el \textit{model-first bias} (intentar mejorar exclusivamente las métricas matemáticas cuando 
+el cuello de botella puede ser el proceso o la adopción social), la evaluación del sistema se dividirá en 
+métricas algorítmicas y de negocio:   \begin{itemize}
+\item \textbf{Métricas del Modelo de Machine Learning (Offline):}
+\begin{itemize}
+\item \textbf{Error Absoluto Medio (MAE):} Para cuantificar la diferencia promedio en pesos colombianos 
+entre el avalúo predicho por el modelo y el valor real de mercado.
+\item \textbf{Error Porcentual Absoluto Medio (MAPE):} Fundamental para medir la desviación en términos 
+relativos y asegurar que los incrementos calculados no excedan desproporcionadamente los topes legales.
+\end{itemize}
+\item \textbf{Métricas de Negocio e Impacto (Online):}
+\begin{itemize}
+\item \textbf{Eficacia y Alineación:} Se medirá si cuando el municipio actúa con base en las predicciones, 
+se produce el resultado de recaudo y equidad esperado, recordando que el Valor o Impacto es igual al 
+Alcance $\times$ Adopción $\times$ Eficacia.
+\item \textbf{Métricas de Guardrails:} Se monitoreará la tasa de reclamaciones de los ciudadanos y el 
+porcentaje de predios que superan el margen legal del incremento del Impuesto Predial Unificado, asegurando 
+que el modelo se mantenga dentro de los límites éticos y normativos.
+\end{itemize}
+\end{itemize}  
 
 \section{Recolección de datos} % 10 %
 % Las fuentes de datos, según su estructura e importancia. El diccionario de datos
