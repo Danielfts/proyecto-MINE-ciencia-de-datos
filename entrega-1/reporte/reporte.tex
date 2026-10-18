@@ -301,7 +301,79 @@ Pendiente. El diccionario de datos completo está en \repo{entrega-1}{el reposit
 % Los resultados más importantes del análisis exploratorio y de la calidad de los
 % datos. Debe notarse el uso de técnicas univariadas y multivariadas, gráficas y
 % no gráficas. El notebook completo se enlaza con \repo.
-Pendiente.
+El análisis completo está en el
+\repo{entrega-1/notebooks/06-entendimiento-de-los-datos.ipynb}{notebook de entendimiento de los
+datos}. Analiza el levantamiento catastral (22\,220 predios en LADM-COL), exportado a un archivo
+con un predio por fila y sin datos personales. La tabla~\ref{tab:tecnicas} resume las técnicas
+usadas.
+
+\begin{table}[ht]
+  \centering
+  \caption{Técnicas de análisis usadas en el notebook.}
+  \label{tab:tecnicas}
+  \small
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.16\linewidth}
+                     >{\raggedright\arraybackslash}p{0.40\linewidth}
+                     >{\raggedright\arraybackslash}p{0.38\linewidth}@{}}
+    \toprule
+     & No gráfico & Gráfico \\
+    \midrule
+    Univariado & Tendencia central, dispersión, forma, atípicos de Tukey, frecuencias,
+      transformación de Box-Cox & Histogramas, diagramas de caja, barras con Pareto, QQ-plots \\
+    Multivariado & Correlación de Pearson y Spearman, tablas cruzadas estratificadas,
+      chi-cuadrado y V de Cramér, Mann-Whitney por régimen, PCA, regresión descriptiva
+      & Mapas de calor, dispersión, cajas por grupo, biplot del PCA \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\textbf{Unidad de análisis.} El levantamiento mezcla regímenes que se valoran de forma
+distinta: predios no sometidos a propiedad horizontal (NPH), matrices de propiedad horizontal
+(PH) y sus unidades, condominios, informales, vías y unidades de parque cementerio. El análisis
+del avalúo usa los predios individuales con avalúo positivo y construcción: 16\,705 predios, el
+75,2\,\% del levantamiento.
+
+\textbf{Univariado.} El avalúo mediano es de 236 millones de pesos, con una distribución muy
+asimétrica (asimetría de 37,7). El parámetro de Box-Cox cercano a 0 justifica analizarlo en
+escala logarítmica, donde queda casi simétrico. La mitad de los predios son unidades de PH. El
+64\,\% de los predios individuales tiene alguna novedad en su número predial frente al catastro
+anterior, y el 10\,\% son predios nuevos.
+
+\textbf{Multivariado.} El avalúo depende casi solo del tamaño del predio: el primer componente
+del PCA (50\,\% de la varianza) es el tamaño, y se correlaciona 0,92 con el avalúo. Una
+regresión descriptiva asocia duplicar el tamaño con algo más del doble del avalúo. La zona se
+compara dentro de cada régimen: sin estratificar, el avalúo por m² urbano es 13\,\% menor que el
+rural; en NPH son iguales, y con el terreno controlado el urbano es 56\,\% mayor.
+% Pendiente (Daniel): el indicador de pago de la facturación en el univariado y el multivariado.
+
+\begin{table}[ht]
+  \centering
+  \caption{Principales problemas de calidad de los datos.}
+  \label{tab:calidad}
+  \small
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.40\linewidth}
+                     >{\raggedright\arraybackslash}p{0.15\linewidth}
+                     >{\raggedleft\arraybackslash}p{0.10\linewidth}
+                     >{\raggedright\arraybackslash}p{0.27\linewidth}@{}}
+    \toprule
+    Problema & Dimensión & Predios & Estrategia \\
+    \midrule
+    Fecha de visita de relleno: un mismo día, todas incompletas & Precisión & 9\,010 & Faltante \\
+    Año de construcción 2000 muy por encima de sus vecinos & Precisión & 3\,322 & Marcado; análisis con y sin él \\
+    Avalúo igual a 0 & Completitud & 2\,335 & Fuera de la base del avalúo \\
+    Área levantada menor que la registral en condominio & Consistencia & 1\,436 & Reportada; causa por confirmar \\
+    Formatos del número predial y dominios & Conformidad & 0 & Sin errores \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\textbf{Calidad y suficiencia.} La tabla~\ref{tab:calidad} resume la bitácora de calidad del
+notebook, que registra 26 problemas con su dimensión y su estrategia. El 48,5\,\% de los predios
+individuales tiene información de campo confiable. En PH la visita se registra en el predio
+matriz: contarla sube la cobertura de las unidades de PH de 0,4\,\% a 60,5\,\%. La cobertura es
+débil en NPH (18\,\%) e informales (9\,\%). El catastro aporta las variables que el producto
+necesita de cada predio: avalúo, régimen, destinación, zona y tamaño. La facturación del predial
+aporta el impuesto y el indicador de pago.
 
 \section{Conclusiones iniciales} % 10 %
 % Primeras conclusiones e insights, y las acciones que siguen.
