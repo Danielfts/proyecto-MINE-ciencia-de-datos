@@ -160,111 +160,260 @@ interactiva. Se construirán en Python, con pandas, scikit-learn, FastAPI y Dash
 % Implicaciones éticas, de privacidad, confidencialidad, transparencia y
 % regulatorias en este contexto. Las fuentes consultadas se citan con \cite{clave}
 % y van en referencias.bib.
-Las principales leyes e implicaciones éticas, de privacidad y de calidad de datos que 
-debemos tener en cuenta para el aplicativo catastral son:
+\section{Aspectos éticos y legales}
 
-\begin{itemize}
-\item \textbf{Ley de Habeas Data (Ley Estatutaria 1581 de 2012):} Debido a que estamos 
-  manejando datos reales de los municipios y registros catastrales que contienen información 
-  privada, patrimonial y socioeconómica. Esta ley exige que la información confidencial no 
-  llegue a ser vista o explotada por ningún externo sin previa autorización del titular \cite{ley1581_2012}. 
-  A nivel técnico, esto obliga al uso de técnicas de anonimización para proteger la identidad de los 
-  propietarios durante el modelado.
-    
-    \item \textbf{Ley de Transparencia y Acceso a la Información Pública (Ley 1712 de 2014):} 
-    Dado que se usarán bases de datos del Estado, existe una implicación ética en saber clasificar 
-    la información \cite{ley1712_2014}. Se debe trazar una línea clara entre los datos que pueden ser abiertos 
-    (como linderos y áreas geográficas) y los datos que deben ser reservados debido a que su exposición pública 
-    podría atentar contra la seguridad física y la intimidad de las familias.
-    
-    \item \textbf{Marco legal del Catastro Multipropósito (Ley 1955 de 2019):} Los resultados del aplicativo 
-    deben alinearse con la normativa y los estándares del IGAC \cite{ley1955_2019}. Desde una perspectiva 
-    ética, el fin último de este aplicativo debe ser el cumplimiento de los principios constitucionales de 
-    equidad y justicia tributaria, garantizando que los impuestos sobre la tierra reflejen progresividad.
-    
-    \item \textbf{Sistemas de Apoyo a la Decisión e Impacto Social:} Desde un punto de vista ético, 
-    el aplicativo debe funcionar estrictamente como un sistema de apoyo a la decisión y no como un 
-    ejecutor automatizado. Históricamente en Colombia, los incrementos catastrales arbitrarios, 
-    desproporcionados o calculados sin contexto han desencadenado graves protestas sociales y paros 
-    campesinos. Por lo tanto, los avalúos sugeridos por el modelo deben estar siempre sujetos a la validación, 
-    revisión y aprobación final de una autoridad humana que considere el impacto socioeconómico real en el territorio.
+El desarrollo del aplicativo para la simulación de escenarios del Impuesto Predial Unificado 
+(IPU) requiere considerar aspectos relacionados con la protección de datos personales, 
+la confidencialidad, la transparencia, la legalidad tributaria y el uso responsable de 
+modelos predictivos. Debido a que la herramienta procesará información catastral y tributaria 
+para apoyar decisiones que afectan a los contribuyentes, su diseño debe garantizar la seguridad 
+de la información, la trazabilidad de los resultados y la supervisión humana de las recomendaciones generadas.
 
-    \item \textbf{Topes legales al Impuesto Predial (Ley 1995 de 2019 y Ley 44 de 1990):} Aunque el 
-    modelo estime el valor comercial real de la tierra, la aplicación de este avalúo para el cobro de 
-    impuestos tiene restricciones \cite{ley44_1990}. La ley protege a los ciudadanos estipulando límites
-    máximos al incremento anual del impuesto predial (protegiendo especialmente a los estratos bajos). 
-    El despliegue de esta solución debe articularse con estos topes para evitar escenarios confiscatorios 
-    que arruinen la economía de los pequeños y medianos propietarios.
-    
-    \item \textbf{Lineamientos Éticos para la IA (CONPES 4144):} Colombia avanza en lineamientos para garantizar 
-    que el desarrollo de la Inteligencia Artificial sea ético, responsable y transparente \cite{conpes4144_2025}. 
-    Legalmente, esto implica que un aplicativo predictivo del Estado no puede operar como una "caja negra"; se debe 
-    garantizar la explicabilidad del algoritmo frente a cualquier reclamación ciudadana y asegurar el respeto al debido proceso.
-    
-    \item \textbf{Normativa Técnica de Avalúos (Resolución 620 del IGAC):} Esta norma establece los procedimientos 
-    legales y parámetros obligatorios para realizar avalúos masivos en el país \cite{res620_igac}. A nivel regulatorio, 
-    el uso de técnicas modernas de analítica y \textit{Machine Learning} debe ser transparente, demostrable y 
-    homologable con los métodos estadísticos reconocidos oficialmente por el Estado para que tenga validez jurídica.
-    
-    \item \textbf{Hábeas Data Financiero (Ley Estatutaria 1266 de 2008):} Dentro de las bases de datos catastrales 
-    puede existir información sobre morosidad, pagos previos de impuestos o capacidad de pago. Si se utilizan estos 
-    datos para perfilar zonas o propietarios, se debe cumplir con el rigor de esta ley \cite{ley1266_2008}, 
-    la cual protege de forma particular los datos financieros frente a usos discriminatorios o no autorizados.
-\end{itemize}
+\subsection{Protección de datos personales y confidencialidad}
+
+La Ley Estatutaria 1581 de 2012 establece disposiciones para la protección de los datos personales 
+y regula su tratamiento por parte de entidades públicas y privadas \cite{ley1581_2012}. 
+Esta normativa resulta relevante para el proyecto porque los registros catastrales y tributarios 
+pueden contener información que permita identificar a los propietarios o asociar determinados predios con personas naturales.
+
+Por lo tanto, antes de incorporar los datos al aplicativo, se deberá verificar su clasificación, 
+el fundamento jurídico que autoriza su tratamiento y las condiciones de acceso acordadas entre 
+la administración municipal y Multiaservi Consultores Ltda. Asimismo, se aplicarán los principios 
+de finalidad, minimización y seguridad de la información, procurando utilizar únicamente los datos 
+necesarios para los objetivos analíticos del proyecto.
+
+Como medidas técnicas, se propone emplear identificadores seudonimizados durante el análisis, 
+restringir el acceso a usuarios autorizados y proteger los archivos y las exportaciones que 
+contengan información sensible. La seudonimización no se considerará equivalente a la 
+anonimización, por lo que se evitará divulgar información que permita identificar directa o indirectamente a los contribuyentes.
+
+\subsection{Transparencia y acceso a la información pública}
+
+La Ley 1712 de 2014 regula el derecho de acceso a la información pública y establece el principio de 
+máxima publicidad, sujeto a las excepciones constitucionales y legales correspondientes \cite{ley1712_2014}. 
+En consecuencia, el proyecto deberá diferenciar entre los resultados agregados que puedan divulgarse y los 
+registros individualizados cuyo acceso o publicación esté sujeto a restricciones.
+
+La herramienta facilitará la comprensión de los escenarios mediante tablas, indicadores, gráficas y 
+explicaciones en lenguaje claro. Cada escenario exportado deberá identificar las tarifas y los límites 
+utilizados, la versión de los datos, las reglas de cálculo aplicadas y los resultados obtenidos. 
+De esta manera, la consultora y la administración municipal podrán justificar sus propuestas sin exponer información personal innecesaria.
+
+La transparencia también implica comunicar las limitaciones de las estimaciones. En particular, el recaudo 
+esperado calculado mediante modelos predictivos deberá presentarse como una proyección sujeta a incertidumbre 
+y no como una garantía del dinero que efectivamente ingresará al municipio.
+
+\subsection{Legalidad tributaria y normativa catastral}
+
+El aplicativo deberá incorporar las disposiciones legales aplicables al Impuesto Predial Unificado, 
+considerando la Ley 44 de 1990, la Ley 1995 de 2019 y las disposiciones posteriores que resulten 
+pertinentes \cite{ley44,ley1995_2019,ley2294_2023}. Estas normas deberán analizarse conjuntamente con 
+las reglas tributarias municipales vigentes y las condiciones específicas aplicables a cada predio.
+
+Desde el punto de vista técnico, el motor de reglas de negocio deberá aplicar las tarifas y los límites 
+definidos para cada escenario, además de verificar las restricciones legales correspondientes. 
+Los porcentajes configurados por la administración municipal no deberán asumirse como límites universales, 
+sino como parámetros sujetos a validación jurídica para la vigencia y las categorías de predios correspondientes.
+
+Por otra parte, los datos de entrada deberán proceder de fuentes autorizadas y contar con la documentación 
+necesaria para interpretar sus variables y estructuras. El aplicativo no sustituirá los procedimientos 
+oficiales de formación o actualización catastral ni tendrá competencia para modificar los avalúos. 
+Su función será utilizar los datos suministrados para simular escenarios tributarios y evaluar sus posibles consecuencias.
+
+La normativa técnica relacionada con los avalúos deberá verificarse con base en las disposiciones vigentes 
+del Instituto Geográfico Agustín Codazzi (IGAC). En particular, se tendrá en cuenta la Resolución 941 de 2026, 
+que establece métodos y condiciones para la elaboración y presentación de avalúos y derogó la Resolución 
+620 de 2008 \cite{res941_2026}. Su aplicación concreta deberá determinarse según el procedimiento y el alcance técnico correspondiente.
+
+\subsection{Equidad tributaria y prevención de sesgos}
+
+La utilización de datos históricos y modelos predictivos puede reproducir patrones de comportamiento que no 
+representen adecuadamente las condiciones futuras de los contribuyentes. Por ejemplo, una menor frecuencia 
+histórica de pago en una categoría de predios no demuestra, por sí sola, una menor capacidad económica de sus propietarios.
+
+Por esta razón, el modelo de probabilidad de pago deberá interpretarse como una herramienta de estimación y 
+no como un mecanismo para atribuir características personales o establecer responsabilidades individuales. 
+Cuando la disponibilidad y calidad de los datos lo permitan, se evaluará su desempeño entre diferentes categorías 
+de predios para identificar posibles diferencias relevantes en los errores de predicción.
+
+Adicionalmente, la comparación de escenarios incorporará indicadores de convergencia, impacto sobre los predios 
+con mayores incrementos y progresividad de la tarifa efectiva. Estas medidas permitirán estudiar las consecuencias distributivas 
+de las propuestas sin asumir que un único indicador representa por completo la equidad tributaria.
+
+La evaluación deberá considerar conjuntamente el recaudo esperado, la distribución de los incrementos y las 
+restricciones legales aplicables. De este modo, se evitará que la búsqueda de un mayor recaudo se convierta en 
+el único criterio para seleccionar una política tributaria.
+
+\subsection{Uso responsable de la inteligencia artificial y supervisión humana}
+
+El Documento CONPES 4144 de 2025 establece la Política Nacional de Inteligencia Artificial de Colombia y plantea 
+orientaciones para promover su desarrollo y adopción ética y responsable \cite{conpes4144_2025}. En concordancia 
+con estos principios, el componente predictivo del proyecto deberá documentarse, evaluarse y utilizarse de manera transparente.
+
+La solución diferenciará dos funciones: el motor determinista calculará el impuesto correspondiente a cada escenario 
+según las reglas configuradas, mientras que el modelo de aprendizaje automático estimará la probabilidad de pago. 
+Esta separación permitirá distinguir los cálculos tributarios de las proyecciones probabilísticas y facilitará la revisión de los resultados.
+
+El aplicativo funcionará exclusivamente como un sistema de apoyo a la decisión. No aprobará tarifas, modificará 
+avalúos ni adoptará decisiones tributarias de manera autónoma. La interpretación de los indicadores, la selección 
+del escenario y la aprobación de las propuestas corresponderán a los actores humanos competentes.
+
+Asimismo, las exportaciones deberán incluir los supuestos utilizados, las limitaciones conocidas y las alertas 
+relacionadas con el incumplimiento de las restricciones configuradas. Estas medidas contribuirán a que los resultados 
+puedan ser examinados y discutidos por la consultora y la administración municipal antes de su presentación al Concejo.
+
+\subsection{Trazabilidad y calidad de los datos}
+
+La calidad de las conclusiones dependerá de la consistencia de los registros catastrales y tributarios utilizados. 
+Por ello, antes de ejecutar los análisis se deberán identificar valores faltantes, registros duplicados, 
+inconsistencias entre vigencias y posibles errores en las variables necesarias para calcular el impuesto.
+
+Las transformaciones y correcciones realizadas deberán documentarse para evitar que los cambios en los datos alteren 
+los resultados sin una justificación verificable. También se deberá conservar la identificación de las fuentes, las 
+versiones de los conjuntos de datos, los parámetros del modelo y las reglas utilizadas en cada simulación.
+
+Finalmente, las responsabilidades relacionadas con el acceso, tratamiento, almacenamiento y eliminación de los datos 
+deberán establecerse entre las partes involucradas. La implementación de estas medidas permitirá reducir los riesgos de uso indebido de la información y mejorar la reproducibilidad de los resultados.
+
+En conjunto, estos principios buscan que el aplicativo contribuya a la formulación de escenarios tributarios 
+técnicamente sustentados, jurídicamente verificables y comprensibles para quienes participan en la toma de decisiones.
+
 
 \section{Enfoque analítico} % 15 %
 % Las hipótesis o preguntas de negocio que guían la experimentación. Las técnicas
 % estadísticas, de visualización y de machine learning que las responderán. Las
 % métricas con las que se evaluará la calidad del modelo.
-Para abordar la problemática del avalúo catastral y generar un \textit{insight} que sea profundo, 
-no obvio, significativo, basado en datos y accionable, planteamos las siguientes preguntas e hipótesis:   \begin{itemize}
-\item \textbf{Pregunta de negocio 1 (Características de valor):} ¿Cuáles son las variables físicas, 
-geográficas y de infraestructura que determinan de manera más precisa el valor comercial y catastral 
-real de un predio rural frente a uno urbano?
-\item \textbf{Pregunta de negocio 2 (Concentración y equidad):} ¿Cuál es la proporción de la población 
-que concentra la propiedad de grandes extensiones de tierra (latifundios) frente a los pequeños propietarios, 
-y cómo se distribuye su carga tributaria actual?
-\item \textbf{Hipótesis 1 (Brecha catastral):} Los predios rurales de mayor extensión presentan un error de 
-subvaloración catastral significativamente mayor que los predios urbanos. Al corregir esto, se espera una 
-redistribución más equitativa de la carga tributaria.
-\item \textbf{Hipótesis 2 (Factores espaciales):} La cercanía a vías principales, fuentes hídricas y centros 
-urbanos presenta una correlación monótona positiva fuerte (Spearman) con el valor del predio.
-\end{itemize}   \subsection{Técnicas estadísticas, de visualización y Machine Learning}El ciclo de vida del 
-producto de datos requerirá las siguientes técnicas para garantizar su viabilidad técnica y metodológica:\begin{itemize}
-\item \textbf{Calidad y limpieza de datos:} Antes del modelado, se evaluará la calidad de la información catastral. 
-A nivel de atributo, se identificarán valores faltantes, errores de digitación (ej., nombres de municipios mal escritos), 
-violaciones de sintaxis y violaciones de dominio (ej., áreas negativas o edades de construcción ilógicas). 
-A nivel de registro, se validará la violación de integridad (ej., el área construida no puede ser mayor al área total del terreno).
-\item \textbf{Análisis Exploratorio de Datos (EDA) y Estadística:} Se analizarán las medidas de forma de las 
-variables continuas (como el área y el precio) evaluando la asimetría (\textit{Skewness}) y la curtosis para 
-entender la concentración de los datos. Asimismo, se identificarán valores atípicos que puedan corresponder a 
-errores o a propiedades de lujo, usando la definición estándar: valores a $\pm 3$ desviaciones estándar de la 
-media, o $\pm 1.5$ veces el IQR por debajo de Q1 o por encima de Q3.
-\item \textbf{Técnicas de Machine Learning:} Se abordará como un problema de aprendizaje supervisado, empleando 
-modelos de regresión (como Random Forest, Gradient Boosting o regresión espacial) para predecir la variable 
-continua del valor del suelo. Al analizar los resultados, se deberá tener rigor estadístico para recordar 
-que una alta correlación entre variables predictoras no implica necesariamente causalidad.
+El enfoque analítico del proyecto busca comprender la distribución de los incrementos del Impuesto Predial 
+Unificado (IPU), identificar los factores asociados al comportamiento histórico de pago y evaluar diferentes 
+escenarios tributarios para la vigencia 2027. Para ello, se combinarán técnicas de estadística descriptiva, 
+visualización de datos, aprendizaje automático y simulación determinista.
 
-Para evitar el \textit{model-first bias} (intentar mejorar exclusivamente las métricas matemáticas cuando 
-el cuello de botella puede ser el proceso o la adopción social), la evaluación del sistema se dividirá en 
-métricas algorítmicas y de negocio:   \begin{itemize}
-\item \textbf{Métricas del Modelo de Machine Learning (Offline):}
+El análisis se organizará en dos componentes complementarios: el primero estudiará el comportamiento de los 
+datos catastrales y tributarios históricos, mientras que el segundo permitirá comparar escenarios de tarifas y 
+límites de crecimiento mediante indicadores de negocio y restricciones previamente definidas.
+
+\subsection{Preguntas de negocio e hipótesis}
+
+Las preguntas de negocio se formulan a partir de la necesidad de comprender los efectos de la actualización 
+catastral y de evaluar alternativas que permitan acercar el impuesto facturado a su valor pleno sin generar 
+incrementos excesivos para determinados grupos de predios.
+
 \begin{itemize}
-\item \textbf{Error Absoluto Medio (MAE):} Para cuantificar la diferencia promedio en pesos colombianos 
-entre el avalúo predicho por el modelo y el valor real de mercado.
-\item \textbf{Error Porcentual Absoluto Medio (MAPE):} Fundamental para medir la desviación en términos 
-relativos y asegurar que los incrementos calculados no excedan desproporcionadamente los topes legales.
+
+    \item \textbf{Pregunta 1:} ¿Cómo se distribuyen los incrementos del IPU y qué proporción del aumento total en pesos se concentra en los predios más afectados?
+
+    \textbf{Hipótesis 1:} Los incrementos del IPU presentan una distribución asimétrica hacia la derecha y una concentración elevada del aumento absoluto en un grupo reducido de predios. Esta hipótesis se evaluará mediante medidas de posición, dispersión, asimetría y concentración.
+
+    \item \textbf{Pregunta 2:} ¿Qué relación existe entre el incremento del IPU facturado y la probabilidad de pago del impuesto?
+
+    \textbf{Hipótesis 2:} Manteniendo constantes otras características observables, los predios que experimentan incrementos porcentuales más elevados del IPU presentan una menor probabilidad estimada de pago. Esta hipótesis se estudiará mediante el análisis exploratorio de los datos y un modelo de clasificación binaria, sujeto a la disponibilidad de registros históricos de facturación y pago.
+
 \end{itemize}
-\item \textbf{Métricas de Negocio e Impacto (Online):}
+
+La primera hipótesis permitirá caracterizar la distribución de los incrementos e identificar los grupos que concentran una mayor variación del impuesto. La segunda permitirá investigar la asociación entre los incrementos tributarios y el comportamiento de pago. No obstante, una asociación estadística no será interpretada como evidencia suficiente de una relación causal.
+
+\subsection{Técnicas estadísticas y de visualización}
+
+Para caracterizar los datos y estudiar las hipótesis planteadas se emplearán técnicas de estadística descriptiva y visualización. Estas permitirán identificar patrones, comparar grupos de predios y detectar posibles inconsistencias antes de construir los escenarios de simulación.
+
 \begin{itemize}
-\item \textbf{Eficacia y Alineación:} Se medirá si cuando el municipio actúa con base en las predicciones, 
-se produce el resultado de recaudo y equidad esperado, recordando que el Valor o Impacto es igual al 
-Alcance $\times$ Adopción $\times$ Eficacia.
-\item \textbf{Métricas de Guardrails:} Se monitoreará la tasa de reclamaciones de los ciudadanos y el 
-porcentaje de predios que superan el margen legal del incremento del Impuesto Predial Unificado, asegurando 
-que el modelo se mantenga dentro de los límites éticos y normativos.
+
+    \item \textbf{Medidas de tendencia central y posición:} Se calcularán la media, la mediana, los cuartiles y los percentiles 95 y 99 de los avalúos y de los incrementos del IPU. La comparación entre la media y la mediana permitirá evaluar la influencia de los valores extremos sobre los resultados agregados, mientras que los percentiles altos facilitarán el estudio de los predios con mayores incrementos.
+
+    \item \textbf{Medidas de dispersión y asimetría:} Se utilizarán el rango intercuartílico (IQR), la desviación estándar y el coeficiente de asimetría para caracterizar la variabilidad de los incrementos y evaluar si su distribución presenta una concentración de valores en los rangos inferiores y una cola hacia los valores superiores.
+
+    \item \textbf{Diagramas de caja y detección de valores atípicos:} Se construirán diagramas de caja para comparar la distribución de los incrementos entre grupos de predios. Los posibles valores atípicos se identificarán mediante los límites habituales de Tukey:
+
+    \[
+    L_{\text{inferior}}=Q_1-1.5(IQR)
+    \]
+
+    \[
+    L_{\text{superior}}=Q_3+1.5(IQR)
+    \]
+
+    donde $IQR=Q_3-Q_1$. Los valores que se encuentren fuera de estos límites serán examinados para determinar si corresponden a observaciones extremas válidas o a posibles inconsistencias en los datos.
+
+    \item \textbf{Histogramas:} Se utilizarán histogramas para estudiar la distribución de los avalúos, los importes del IPU y sus incrementos porcentuales. Estas visualizaciones permitirán identificar rangos de concentración y comparar el comportamiento de los predios según las categorías disponibles.
+
+    \item \textbf{Gráficos de dispersión y análisis por grupos:} Se explorará la relación entre el incremento porcentual del IPU y el comportamiento histórico de pago. Cuando la variable de pago sea binaria, se calcularán proporciones de pago por intervalos de incremento y se compararán los resultados entre grupos de predios. Esta aproximación facilitará la identificación de posibles asociaciones sin asumir que los incrementos son la única variable relacionada con el pago.
+
+    \item \textbf{Análisis de concentración:} Se calculará la proporción del aumento total en pesos que corresponde al 1\,\% y al 5\,\% de los predios con mayores incrementos absolutos. Este análisis permitirá cuantificar la concentración del impacto tributario y aportará información para la evaluación del KPI relacionado con el choque en la cola de la distribución.
+
+    \item \textbf{Comparación de valores agregados:} Se contrastará el IPU facturado con el IPU pleno calculado a partir de los avalúos y las tarifas correspondientes. La diferencia permitirá cuantificar la brecha tributaria y analizar su distribución entre las categorías de predios.
+
 \end{itemize}
-\end{itemize}  
+
+Los resultados descriptivos se utilizarán como insumo para el diseño de los escenarios y para la interpretación de los indicadores. Las visualizaciones no se considerarán evidencia suficiente de causalidad, sino herramientas para identificar patrones y orientar análisis posteriores.
+
+\subsection{Técnicas de Machine Learning y simulación}
+
+El producto de datos combinará un motor determinista de reglas de negocio con un modelo de aprendizaje automático para estimar la probabilidad de pago. Ambos componentes tendrán funciones diferenciadas.
+
+\begin{itemize}
+
+    \item \textbf{Motor de reglas de negocio:} Será un componente determinista encargado de calcular el IPU correspondiente a cada predio bajo las tarifas y los límites definidos para un escenario. Recibirá los datos catastrales y tributarios, aplicará las reglas configuradas y generará el impuesto calculado para la vigencia 2027. Para una misma entrada y una misma configuración, el resultado deberá ser reproducible.
+
+    \item \textbf{Modelo de clasificación mediante regresión logística:} Se propone utilizar regresión logística para estimar la probabilidad de que un predio pague el impuesto dentro de un período previamente definido. La variable objetivo será binaria, con valor 1 cuando se registre el pago conforme a la definición adoptada y 0 cuando no se registre dentro del período de observación.
+
+    Entre las variables predictoras candidatas se encuentran el incremento porcentual del IPU, el importe facturado, el uso o destino del predio, el rango de avalúo y el historial de pago, siempre que estas variables estén disponibles y su utilización resulte pertinente. La selección definitiva dependerá de la calidad de los datos, su disponibilidad al momento de realizar la predicción y las condiciones jurídicas aplicables.
+
+    \item \textbf{Modelo alternativo de Random Forest:} Como alternativa, se podrá evaluar un modelo de Random Forest para identificar relaciones no lineales e interacciones entre las variables predictoras. Su desempeño se comparará con el de la regresión logística, considerando tanto la calidad de las predicciones como la calibración de las probabilidades y la facilidad de interpretación.
+
+    \item \textbf{Estimación del recaudo esperado:} Cuando se disponga de un modelo de probabilidad de pago validado, el recaudo esperado de un escenario se estimará mediante la suma de los importes facturados multiplicados por sus respectivas probabilidades de pago:
+
+    \[
+    R_{\text{esperado}}=\sum_{i=1}^{n} IPU_i \cdot p_i
+    \]
+
+    donde $IPU_i$ representa el importe facturado al predio $i$ bajo el escenario simulado y $p_i$ corresponde a la probabilidad estimada de pago dentro del período definido. Esta estimación supone, en su forma básica, un resultado de pago binario y el pago del importe facturado. Los descuentos, pagos parciales y otras particularidades deberán considerarse si forman parte de los datos y del alcance del modelo.
+
+\end{itemize}
+
+La implementación del modelo predictivo dependerá de la disponibilidad de registros históricos que permitan relacionar la facturación de los predios con su comportamiento de pago. Si estos registros no están disponibles o no tienen calidad suficiente, se mantendrá el motor determinista para evaluar los escenarios, sin presentar estimaciones de recaudo basadas en un modelo que no haya podido entrenarse y validarse.
+
+Para reducir el riesgo de fuga de información, las variables predictoras deberán corresponder a información disponible en el momento en que se realizaría la predicción. Cuando la cantidad y estructura de los datos lo permitan, el modelo se entrenará con vigencias anteriores y se evaluará con una vigencia posterior no utilizada durante el entrenamiento.
+
+\subsection{Métricas de evaluación}
+
+La evaluación se realizará en dos niveles: la calidad predictiva del modelo de aprendizaje automático y el desempeño de los escenarios tributarios frente a los indicadores y las restricciones de negocio.
+
+\begin{itemize}
+
+    \item \textbf{ROC-AUC:} Se utilizará para evaluar la capacidad del modelo de distinguir entre los predios que pagan y los que no pagan dentro del período definido. Esta métrica permite evaluar la discriminación entre las dos clases, pero no garantiza por sí sola que las probabilidades estimadas sean precisas.
+
+    \item \textbf{Log-Loss:} Se empleará para evaluar la calidad de las probabilidades estimadas. Esta métrica penaliza especialmente las predicciones que asignan probabilidades muy elevadas a resultados que no se observan.
+
+    \item \textbf{Calibración de probabilidades:} Se compararán las probabilidades estimadas con las proporciones de pago observadas en grupos de predios con probabilidades similares. Esta evaluación es relevante porque las probabilidades del modelo se utilizarán para estimar el recaudo esperado.
+
+    \item \textbf{Evaluación de negocio:} Los escenarios se compararán mediante los KPIs definidos en la problemática: la convergencia entre el IPU facturado y el IPU pleno, el impacto sobre los predios con mayores incrementos y el recaudo esperado, cuando este último pueda estimarse de manera confiable.
+
+    \item \textbf{Verificación de restricciones:} Cada escenario será evaluado frente a los límites legales aplicables y a las condiciones de progresividad establecidas para el proyecto. Las reglas deberán definirse de manera explícita para permitir su verificación reproducible.
+
+\end{itemize}
+
+Las métricas predictivas se calcularán sobre datos que no hayan intervenido en el entrenamiento del modelo. Cuando existan suficientes vigencias históricas, se priorizará una validación temporal que permita evaluar el comportamiento del modelo al predecir una vigencia posterior.
+
+\subsection{Comparación y selección de escenarios}
+
+El simulador permitirá modificar las tarifas por destino y rango de avalúo, así como los límites de crecimiento definidos para cada escenario. Para cada configuración, el motor de reglas calculará el IPU por predio y generará los indicadores necesarios para evaluar sus consecuencias agregadas y distributivas.
+
+La comparación se realizará considerando los siguientes criterios:
+
+\begin{itemize}
+
+    \item Incrementar la convergencia entre el impuesto facturado y el impuesto pleno.
+    \item Evaluar el recaudo esperado, cuando exista un modelo predictivo validado.
+    \item Identificar la concentración de los incrementos en los predios más afectados.
+    \item Verificar el cumplimiento de las restricciones legales aplicables.
+    \item Evaluar los criterios de progresividad definidos para los grupos de predios comparables.
+
+\end{itemize}
+
+Dado que estos objetivos pueden entrar en conflicto, el aplicativo no asumirá que existe un único escenario que maximiza simultáneamente todos los indicadores. En su lugar, presentará los resultados y las alertas de cada alternativa para facilitar la comparación entre escenarios que cumplan las restricciones obligatorias.
+
+La selección final corresponderá a los responsables de la consultoría y a las autoridades competentes. De esta manera, el producto de datos funcionará como un sistema de apoyo a la decisión, proporcionando evidencia cuantitativa y resultados trazables sin sustituir el análisis jurídico, económico y político requerido para formular la propuesta tributaria.
+
 
 \section{Recolección de datos} % 10 %
 % Las fuentes de datos, según su estructura e importancia. El diccionario de datos
