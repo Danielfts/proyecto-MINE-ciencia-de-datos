@@ -164,66 +164,52 @@ Las principales leyes e implicaciones éticas, de privacidad y de calidad de dat
 debemos tener en cuenta para el aplicativo catastral son:
 
 \begin{itemize}
-    \item \textbf{Ley de Habeas Data (Ley Estatutaria 1581 de 2012):} Debido a que estamos
-    manejando datos reales de los municipios y registros catastrales que contienen información 
-    privada, patrimonial y socioeconómica. Esta ley exige que la información confidencial no 
-    llegue a ser vista o explotada por ningún externo sin previa autorización del titular 
-    \cite{ley1581_2012}. Implica que, a nivel técnico, se deben aplicar técnicas de anonimización 
-    y enmascaramiento de identificadores (como la cédula) antes de entrenar los modelos.
+\item \textbf{Ley de Habeas Data (Ley Estatutaria 1581 de 2012):} Debido a que estamos 
+  manejando datos reales de los municipios y registros catastrales que contienen información 
+  privada, patrimonial y socioeconómica. Esta ley exige que la información confidencial no 
+  llegue a ser vista o explotada por ningún externo sin previa autorización del titular \cite{ley1581_2012}. 
+  A nivel técnico, esto obliga al uso de técnicas de anonimización para proteger la identidad de los 
+  propietarios durante el modelado.
     
     \item \textbf{Ley de Transparencia y Acceso a la Información Pública (Ley 1712 de 2014):} 
     Dado que se usarán bases de datos del Estado, existe una implicación ética en saber clasificar 
-    la información \cite{ley1712_2014}. Se debe trazar una línea clara entre los datos abiertos 
-    (como los linderos, mapas y áreas del terreno) y los datos clasificados por su impacto en la 
-    seguridad física e intimidad de las familias.
+    la información \cite{ley1712_2014}. Se debe trazar una línea clara entre los datos que pueden ser abiertos 
+    (como linderos y áreas geográficas) y los datos que deben ser reservados debido a que su exposición pública 
+    podría atentar contra la seguridad física y la intimidad de las familias.
     
-    \item \textbf{Marco legal del Catastro Multipropósito (Ley 1955 de 2019):} Legalmente, 
-    los resultados del aplicativo deben alinearse con la normativa del IGAC \cite{ley1955_2019}. 
-    Éticamente, el propósito de este aplicativo debe ceñirse a los principios constitucionales de 
-    equidad y justicia tributaria, garantizando que el cálculo refleje el valor real para lograr 
-    progresividad en los impuestos.
+    \item \textbf{Marco legal del Catastro Multipropósito (Ley 1955 de 2019):} Los resultados del aplicativo 
+    deben alinearse con la normativa y los estándares del IGAC \cite{ley1955_2019}. Desde una perspectiva 
+    ética, el fin último de este aplicativo debe ser el cumplimiento de los principios constitucionales de 
+    equidad y justicia tributaria, garantizando que los impuestos sobre la tierra reflejen progresividad.
     
-    \item \textbf{Mitigación de sesgos y ruido algorítmico:} Al construir este producto de datos, 
-    existen riesgos analíticos latentes como el sesgo y el ruido[cite: 3]. Si el modelo aprende de 
-    datos históricos sesgados (por ejemplo, grandes extensiones de tierra históricamente subvaloradas), 
-    el algoritmo replicará y automatizará esa injusticia a escala.
-    
-    \item \textbf{Precisión técnica e impacto social:} Es fundamental evaluar la precisión analítica, 
-    la cual indica si los datos logran representar correctamente las características de un objeto, 
-    situación o evento[cite: 4]. Tomar decisiones tributarias sobre datos de área o uso de suelo 
-    imprecisos violaría la confianza del ciudadano y el debido proceso.
-    
-    \item \textbf{Gobierno de datos y mantenimiento continuo:} Un modelo de avalúo predial se degrada 
-    con el tiempo. Para evitar riesgos como el \textit{data drift} o el \textit{model drift}, se debe 
-    implementar un esquema de gobierno[cite: 3]. Esto requiere definir las políticas, procesos y 
-    herramientas que mantienen los productos de datos seguros y confiables en producción[cite: 3], 
-    asegurando que las actualizaciones de los impuestos ante dinámicas del mercado (como la valorización por una nueva vía) 
-    sigan siendo justas y auditables.
+    \item \textbf{Sistemas de Apoyo a la Decisión e Impacto Social:} Desde un punto de vista ético, 
+    el aplicativo debe funcionar estrictamente como un sistema de apoyo a la decisión y no como un 
+    ejecutor automatizado. Históricamente en Colombia, los incrementos catastrales arbitrarios, 
+    desproporcionados o calculados sin contexto han desencadenado graves protestas sociales y paros 
+    campesinos. Por lo tanto, los avalúos sugeridos por el modelo deben estar siempre sujetos a la validación, 
+    revisión y aprobación final de una autoridad humana que considere el impacto socioeconómico real en el territorio.
 
     \item \textbf{Topes legales al Impuesto Predial (Ley 1995 de 2019 y Ley 44 de 1990):} Aunque el 
-    modelo estime matemáticamente el valor real de la tierra, la aplicación fiscal de este avalúo 
-    tiene restricciones. La ley protege a los ciudadanos estipulando límites al incremento del impuesto 
-    predial (por ejemplo, impidiendo que aumente más del 50\% respecto al año anterior o limitándolo al 
-    IPC para estratos bajos). Éticamente, los resultados del modelo deben articularse con estos topes 
-    para evitar escenarios confiscatorios que atenten contra la sostenibilidad económica de las familias.
+    modelo estime el valor comercial real de la tierra, la aplicación de este avalúo para el cobro de 
+    impuestos tiene restricciones \cite{ley44_1990}. La ley protege a los ciudadanos estipulando límites
+    máximos al incremento anual del impuesto predial (protegiendo especialmente a los estratos bajos). 
+    El despliegue de esta solución debe articularse con estos topes para evitar escenarios confiscatorios 
+    que arruinen la economía de los pequeños y medianos propietarios.
     
-    \item \textbf{Lineamientos Éticos para la IA (CONPES 4144 de 2025 y Proyecto de Ley 043 de 2025):} 
-    Colombia avanza en una normativa estricta para garantizar que el desarrollo de la Inteligencia 
-    Artificial sea ético, responsable y transparente. Legalmente, esto implica que un aplicativo predictivo
-    del Estado no puede operar como una "caja negra" que tome decisiones irrevocables sobre el patrimonio 
-    de los ciudadanos; debe garantizar la explicabilidad del algoritmo, el respeto a la dignidad humana y, 
-    sobre todo, ser un aplicativo de apoyo a la decisión, no un sustituto de la autoridad humana.
+    \item \textbf{Lineamientos Éticos para la IA (CONPES 4144):} Colombia avanza en lineamientos para garantizar 
+    que el desarrollo de la Inteligencia Artificial sea ético, responsable y transparente \cite{conpes4144_2025}. 
+    Legalmente, esto implica que un aplicativo predictivo del Estado no puede operar como una "caja negra"; se debe 
+    garantizar la explicabilidad del algoritmo frente a cualquier reclamación ciudadana y asegurar el respeto al debido proceso.
     
-    \item \textbf{Normativa Técnica de Avalúos del IGAC (Resolución 620 y actualizaciones recientes como la Res. 2057 de 2025):} 
-    Establecen los procedimientos legales y parámetros obligatorios para realizar 
-    avalúos comerciales y catastrales masivos en el país. A nivel regulatorio, las técnicas de Machine Learning 
-    empleadas por el aplicativo deben ser demostrables y homologables con los métodos estadísticos y econométricos 
-    reconocidos oficialmente por el Instituto Geográfico Agustín Codazzi (IGAC) para que el modelo tenga validez jurídica.
+    \item \textbf{Normativa Técnica de Avalúos (Resolución 620 del IGAC):} Esta norma establece los procedimientos 
+    legales y parámetros obligatorios para realizar avalúos masivos en el país \cite{res620_igac}. A nivel regulatorio, 
+    el uso de técnicas modernas de analítica y \textit{Machine Learning} debe ser transparente, demostrable y 
+    homologable con los métodos estadísticos reconocidos oficialmente por el Estado para que tenga validez jurídica.
     
     \item \textbf{Hábeas Data Financiero (Ley Estatutaria 1266 de 2008):} Dentro de las bases de datos catastrales 
-    puede haber informacion financiera previa, historial sobre morosidad, pagos previos de impuestos, 
-    historial crediticio o capacidad de pago de los propietarios, si se usa para perfilar zonas, se debe cumplir con el rigor 
-    de esta ley, la cual protege de forma particular los datos financieros y comerciales frente a usos discriminatorios o no autorizados.
+    puede existir información sobre morosidad, pagos previos de impuestos o capacidad de pago. Si se utilizan estos 
+    datos para perfilar zonas o propietarios, se debe cumplir con el rigor de esta ley \cite{ley1266_2008}, 
+    la cual protege de forma particular los datos financieros frente a usos discriminatorios o no autorizados.
 \end{itemize}
 
 \section{Enfoque analítico} % 15 %
