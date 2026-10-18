@@ -80,6 +80,8 @@ defusedxml==0.7.1
     # via nbconvert
 distro==1.9.0
     # via google-genai
+et-xmlfile==2.0.0
+    # via openpyxl
 executing==2.3.0
     # via stack-data
 fastjsonschema==2.22.2
@@ -291,6 +293,8 @@ numpy==2.3.5
     #   visions
     #   wordcloud
     #   ydata-profiling
+openpyxl==3.1.5
+    # via proyecto-mine-ciencia-de-datos
 packaging==26.3
     # via
     #   ipykernel

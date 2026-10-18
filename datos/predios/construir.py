@@ -3,13 +3,15 @@
 Desde la raíz del repositorio:
 
     psql -XAtq -d catastro_pruned -f datos/predios/predios.sql \\
-      | uv run python datos/predios/construir.py datos/predios/predios.parquet
+      | uv run python datos/predios/construir.py datos/predios/predios.parquet \\
+          --facturacion "datos/predios/Predial-Comparativo Predial de una vigencia 2025-2026.xlsx"
 
-Lee de la entrada estándar un objeto JSON por línea, le aplica el esquema de abajo y
-escribe el parquet. Antes de escribir comprueba que cada objeto trae exactamente los
-campos del esquema, ni uno más ni uno menos, que hay un predio por fila y que ningún
-campo tiene nombre de dato personal. El esquema y el significado de cada campo están en
-README.md, en esta misma carpeta.
+Lee de la entrada estándar un objeto JSON por línea, le aplica el esquema de abajo, le
+une la facturación del impuesto predial y escribe el parquet. Antes de escribir comprueba
+que cada objeto trae exactamente los campos del esquema, ni uno más ni uno menos, que hay
+un predio por fila, que ningún campo tiene nombre de dato personal, que del Excel de
+facturación solo se leyeron sus cuatro columnas y que queda una fila de facturación por
+código. El esquema y el significado de cada campo están en README.md, en esta misma carpeta.
 
 El parquet no va al repositorio: el .gitignore excluye los archivos *.parquet.
 """
@@ -20,10 +22,19 @@ import sys
 from datetime import date
 from pathlib import Path
 
+import pandas as pd
 import pyarrow as pa
+import pyarrow.compute as pc
 import pyarrow.parquet as pq
 
 PREDIOS_ESPERADOS = 22_220
+
+# Del Excel de facturación solo se leen estas columnas, de la hoja Consulta. Las filas 1 a 6
+# son un encabezado que identifica al municipio; los nombres de columna están en la fila 7.
+# Las columnas sin sufijo son de la vigencia 2026 y las que terminan en 1, de la 2025.
+HOJA_FACTURACION = "Consulta"
+FILA_ENCABEZADO_FACTURACION = 6
+COLUMNAS_FACTURACION = ["CODIGOCATASTRAL", "IMPPREDIAL", "INDPAGO", "INDPAGO1"]
 
 # Fragmentos que no pueden aparecer en el nombre de ningún campo, en ningún nivel
 NOMBRES_PROHIBIDOS = ("documento_identidad", "numero_documento", "tipo_documento", "nombre_",
@@ -101,7 +112,7 @@ TITULARES = pa.struct([
     ("max_predios_mismo_titular", entero32),
 ])
 
-ESQUEMA = pa.schema([
+CAMPOS_CATASTRO = [
     # Predio
     ("id_predio", entero),
     ("departamento", texto),
@@ -161,9 +172,18 @@ ESQUEMA = pa.schema([
     ("observacion_fuente", texto),
     # Titulares, solo conteos
     ("titulares", TITULARES),
-], metadata={
-    "descripcion": "Predios del levantamiento catastral, uno por fila, sin datos personales. "
-                   "Ver datos/predios/README.md",
+]
+
+# Vienen del Excel de facturación, no de predios.sql; nulos si el predio no se factura
+CAMPOS_FACTURACION = [
+    ("ipu_facturado_2026", real),
+    ("pago_2026", booleano),
+    ("pago_2025", booleano),
+]
+
+ESQUEMA = pa.schema(CAMPOS_CATASTRO + CAMPOS_FACTURACION, metadata={
+    "descripcion": "Predios del levantamiento catastral, uno por fila, sin datos personales, "
+                   "con la facturación del impuesto predial. Ver datos/predios/README.md",
 })
 
 
@@ -201,10 +221,52 @@ def nombres(tipo, prefijo=""):
             yield from nombres(campo.type, prefijo + campo.name + ".")
 
 
+def leer_facturacion(archivo):
+    """Lee el Excel de facturación y deja una fila por código catastral.
+
+    Devuelve la tabla indexada por código, con los tres campos de CAMPOS_FACTURACION, y el
+    número de códigos que estaban repetidos. Un código repetido junta dos predios de 2025
+    en uno de 2026: sus filas tienen que coincidir en las columnas de 2026, y el predio
+    cuenta como pagado en 2025 solo si todos los que lo formaron pagaron.
+    """
+    leido = pd.read_excel(archivo, sheet_name=HOJA_FACTURACION,
+                          header=FILA_ENCABEZADO_FACTURACION, usecols=COLUMNAS_FACTURACION,
+                          dtype={"CODIGOCATASTRAL": str})
+    if sorted(leido.columns) != sorted(COLUMNAS_FACTURACION):
+        sys.exit(f"Del Excel de facturación se leyeron otras columnas: {list(leido.columns)}")
+
+    por_codigo = leido.groupby("CODIGOCATASTRAL")
+    repetidos = por_codigo.size().gt(1).sum()
+    if por_codigo[["IMPPREDIAL", "INDPAGO"]].nunique(dropna=False).gt(1).any(axis=None):
+        sys.exit("Hay códigos repetidos en la facturación que difieren en las columnas de 2026")
+    if por_codigo["INDPAGO1"].agg(lambda v: 0 < v.isna().sum() < len(v)).any():
+        sys.exit("Hay códigos repetidos en la facturación con y sin pago de 2025")
+
+    facturacion = pd.DataFrame({
+        "ipu_facturado_2026": por_codigo["IMPPREDIAL"].first(),
+        "pago_2026": por_codigo["INDPAGO"].first().astype(bool),
+        # min: 0 si alguno no pagó; NaN solo si el predio no existía en 2025
+        "pago_2025": por_codigo["INDPAGO1"].min(),
+    })
+    if not facturacion.index.is_unique:
+        sys.exit("Quedó más de una fila de facturación por código")
+    return facturacion, repetidos
+
+
+def a_python(valor, tipo):
+    """Convierte un valor de pandas al de Python que espera pyarrow, con NaN como nulo."""
+    if pd.isna(valor):
+        return None
+    return bool(valor) if tipo == booleano else float(valor)
+
+
 def main():
     opciones = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     opciones.add_argument("salida", type=Path, help="archivo parquet que se escribe")
-    salida = opciones.parse_args().salida
+    opciones.add_argument("--facturacion", type=Path, required=True,
+                          help="Excel con la facturación del impuesto predial 2025-2026")
+    argumentos = opciones.parse_args()
+    salida = argumentos.salida
     if sys.stdin.isatty():
         sys.exit("Falta la entrada: la salida de predios.sql por una tubería (ver --help)")
 
@@ -212,7 +274,7 @@ def main():
     if prohibidos:
         sys.exit(f"El esquema tiene campos con nombre de dato personal: {prohibidos}")
 
-    raiz = pa.struct(ESQUEMA)
+    raiz = pa.struct(CAMPOS_CATASTRO)
     filas = [ajustar(json.loads(linea), raiz, f"línea {i}")
              for i, linea in enumerate(sys.stdin, start=1) if linea.strip()]
 
@@ -221,8 +283,32 @@ def main():
         sys.exit(f"Llegaron {len(filas)} predios y se esperaban {PREDIOS_ESPERADOS}")
     if len(set(ids)) != len(ids):
         sys.exit("Hay predios repetidos")
+    numeros = {f["numero_predial"] for f in filas}
+    if None in numeros or len(numeros) != len(filas):
+        sys.exit("Hay predios sin número predial o con el número repetido")
+
+    facturacion, repetidos = leer_facturacion(argumentos.facturacion)
+    unidos = facturacion.index.isin(list(numeros))
+    facturas = facturacion.to_dict("index")
+    for fila in filas:
+        factura = facturas.get(fila["numero_predial"])
+        for campo, tipo in CAMPOS_FACTURACION:
+            fila[campo] = None if factura is None else a_python(factura[campo], tipo)
 
     tabla = pa.Table.from_pylist(filas, schema=ESQUEMA)
+    if tabla.num_rows != PREDIOS_ESPERADOS:
+        sys.exit(f"La unión con la facturación dejó {tabla.num_rows} predios")
+    total = pc.sum(tabla["ipu_facturado_2026"]).as_py()
+    total_excel = facturacion.loc[unidos, "ipu_facturado_2026"].sum()
+    if abs(total - total_excel) > 0.5:
+        sys.exit(f"El IPU facturado del parquet ({total:,.0f}) no suma lo mismo que el "
+                 f"del Excel para los códigos unidos ({total_excel:,.0f})")
+
+    print(f"Facturación: {len(facturacion)} códigos ({repetidos} repetidos, unidos en uno), "
+          f"{unidos.sum()} unidos a un predio, {(~unidos).sum()} sin predio (se descartan), "
+          f"{tabla.num_rows - unidos.sum()} predios sin facturación")
+    print(f"IPU facturado 2026 de los predios unidos: {total:,.0f} COP")
+
     salida.parent.mkdir(parents=True, exist_ok=True)
     pq.write_table(tabla, salida, compression="zstd")
     print(f"{salida}: {tabla.num_rows} predios, {tabla.num_columns} columnas, "

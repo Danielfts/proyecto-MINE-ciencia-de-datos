@@ -27,7 +27,7 @@ Estos son los nombres que deben aparecer en todas las entregas y artefactos del 
 
 ## Notebooks
 
-Se ejecutan en este orden, con el [entorno de Python](#entorno-de-python) instalado. Leen el archivo `datos/predios/predios.parquet`, que no está en el repositorio porque identifica al municipio: hay que pedirlo al equipo o construirlo a partir de la base podada, como indica [datos/predios/](datos/predios/README.md).
+Se ejecutan en este orden, con el [entorno de Python](#entorno-de-python) instalado. Leen el archivo `datos/predios/predios.parquet`, que no está en el repositorio porque identifica al municipio: hay que pedirlo al equipo o construirlo a partir de la base podada y del Excel de facturación del impuesto predial, como indica [datos/predios/](datos/predios/README.md#cómo-se-construye).
 
 | Orden | Notebook | Actividad | Estado |
 | --- | --- | --- | --- |
@@ -43,7 +43,7 @@ uv run jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor
 
 Un solo entorno para el análisis de datos, los notebooks y los videos de sustentación (hechos con [Manim Community](https://www.manim.community/)). Usa Python 3.12 y las mismas versiones de todas las librerías sin importar la herramienta con la que se instale.
 
-Incluye: numpy, pandas, scipy, statsmodels, scikit-learn, matplotlib, seaborn, ydata-profiling, Levenshtein, pyarrow (archivos parquet), JupyterLab, manim y lo necesario para narrar los videos (manim-voiceover y el cliente de Gemini).
+Incluye: numpy, pandas, scipy, statsmodels, scikit-learn, matplotlib, seaborn, ydata-profiling, Levenshtein, pyarrow (archivos parquet), openpyxl (archivos de Excel), JupyterLab, manim y lo necesario para narrar los videos (manim-voiceover y el cliente de Gemini).
 
 ### Instalación
 

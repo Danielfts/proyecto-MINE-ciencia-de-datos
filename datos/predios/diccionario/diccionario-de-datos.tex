@@ -10,10 +10,12 @@
 % Levantamiento Catastral V2.0 del IGAC; las del número predial, de la Resolución 1149 de
 % 2021 y del Instructivo de Identificación Predial IN-GCT-PC01-06 del IGAC. No se describen
 % las columnas que identifican al municipio o pueden traer datos de personas, porque no se
-% usan en el análisis.
+% usan en el análisis. Las tres columnas de facturación del predial no son del modelo:
+% vienen del Excel de facturación que construir.py une al catastro (ver ../README.md).
 %
-% Las cifras se midieron sobre el archivo construido el 14 de octubre de 2026. El
-% documento se mantiene a mano: si cambia ../predios.sql, hay que actualizarlo.
+% Las cifras se midieron sobre el archivo construido el 14 de octubre de 2026; las de
+% facturación, sobre el del 18 de octubre. El documento se mantiene a mano: si cambia
+% ../predios.sql o la facturación que une ../construir.py, hay que actualizarlo.
 \documentclass[10pt,letterpaper]{article}
 
 % Lo que pide identidad/estilo-reporte.tex
@@ -207,8 +209,10 @@
 
 \textbf{Una fila por predio: 22 220 filas, clave \cn{id_predio}.} Lo que es de uno a uno
 con el predio va en columnas simples o en estructuras (\tS); lo que es de uno a muchos va
-en listas (\tLS). El archivo trae además columnas que identifican al municipio o pueden
-contener datos de personas; no se usan en el análisis y no se describen aquí.
+en listas (\tLS). Todo sale de la base catastral, salvo tres columnas con la facturación
+del impuesto predial, que se unen por el número predial. El archivo trae además columnas
+que identifican al municipio o pueden contener datos de personas; no se usan en el
+análisis y no se describen aquí.
 
 \section{Vista general}
 
@@ -239,12 +243,12 @@ apiladas: tienen un elemento por cada construcción o unidad del predio.
     {\textbf{predio}\enspace\tS\enspace 1 fila = 1 predio · 22 220 filas · clave \cn{id_predio}};
 
   % --- Columnas escalares, por grupo ----------------------------------------------------
-  \node[titulo] (esc) at (0.25,-0.95) {\textbf{35 columnas escalares}};
+  \node[titulo] (esc) at (0.25,-0.95) {\textbf{38 columnas escalares}};
   \coordinate (e-0) at (0.3,-1.4);
   \lineas{e}{e-0}{predio y número predial · 15, levantamiento y dirección · 8,
-    derecho y fuente · 7, PH e informalidad · 5}
+    derecho y fuente · 7, facturación del predial · 3, PH e informalidad · 5}
   \node[linea, text width=4.8cm, align=left, text height=, text depth=, color=gris]
-    (e-nota) at ($(e-4.south west)+(0.25,-0.05)$)
+    (e-nota) at ($(e-5.south west)+(0.25,-0.05)$)
     {\cn{id_predio_matriz}, \cn{ids_predios_informales} y \cn{ids_predios_formales}
      apuntan a \cn{id_predio} de otras filas};
 
@@ -316,7 +320,7 @@ apiladas: tienen un elemento por cada construcción o unidad del predio.
   \node[font=\scriptsize, align=center, anchor=south] at ($(con.east)!0.5!(uni.west)+(0,0.95)$)
     {esta fila u\\otra (PH)};
   % Las llaves a otros predios vuelven al registro
-  \draw[ref] (e-4.west) -- (e-4.west -| marco.west) -- ++(-0.35,0) |- (enc.west);
+  \draw[ref] (e-5.west) -- (e-5.west -| marco.west) -- ++(-0.35,0) |- (enc.west);
 \end{tikzpicture}
 \end{center}
 
@@ -567,23 +571,33 @@ midió en el archivo. Las categóricas enlazan con sus valores
   \dato{1900-01-01 en 754 predios\nota{2}}}
 %
 \grupo{\rI}{Titulares}{CR_Interesado, CR_AgrupacionInteresados, col_miembros}
-\campo{\rL}{titulares}{\tS}{}{Interesados que tienen el derecho sobre el predio, solo
+\campo{\rT}{titulares}{\tS}{}{Interesados que tienen el derecho sobre el predio, solo
   contados.}
-\campo{\rO\rT}{es_agrupacion}{\tE{bool}}{}{Si el derecho lo tiene una agrupación de
+\campo{\rI\rT}{es_agrupacion}{\tE{bool}}{}{Si el derecho lo tiene una agrupación de
   interesados.\dato{true en 6 142 predios}}
-\campo{\rO\rT}{tipo_agrupacion}{\tE{str}}{72}{Tipo de agrupación; nulo si el titular es uno
+\campo{\rI\rT}{tipo_agrupacion}{\tE{str}}{72}{Tipo de agrupación; nulo si el titular es uno
   solo. \cat{agrupacion}{3}}
-\campo{\rO\rT}{n_titulares}{\tE{i32}}{}{Interesados que tienen el derecho.\dato{1 a 88}}
-\campo{\rO\rT}{n_persona_natural}{\tE{i32}}{}{Titulares que son personas naturales.}
-\campo{\rO\rT}{n_persona_juridica}{\tE{i32}}{}{Titulares que son personas jurídicas.}
-\campo{\rO\rT}{n_femenino}{\tE{i32}}{}{Titulares de sexo femenino según su documento.}
-\campo{\rO\rT}{n_masculino}{\tE{i32}}{}{Titulares de sexo masculino según su documento.}
-\campo{\rO\rT}{n_sexo_sin_determinar}{\tE{i32}}{}{Titulares sin sexo determinado; incluye a
+\campo{\rI\rT}{n_titulares}{\tE{i32}}{}{Interesados que tienen el derecho.\dato{1 a 88}}
+\campo{\rI\rT}{n_persona_natural}{\tE{i32}}{}{Titulares que son personas naturales.}
+\campo{\rI\rT}{n_persona_juridica}{\tE{i32}}{}{Titulares que son personas jurídicas.}
+\campo{\rI\rT}{n_femenino}{\tE{i32}}{}{Titulares de sexo femenino según su documento.}
+\campo{\rI\rT}{n_masculino}{\tE{i32}}{}{Titulares de sexo masculino según su documento.}
+\campo{\rI\rT}{n_sexo_sin_determinar}{\tE{i32}}{}{Titulares sin sexo determinado; incluye a
   todas las personas jurídicas.}
-\campo{\rO\rT}{participacion_max}{\tE{f64}}{}{Mayor participación de un miembro en la
+\campo{\rI\rT}{participacion_max}{\tE{f64}}{}{Mayor participación de un miembro en la
   agrupación; 1 si el titular es uno solo.}
-\campo{\rO\rL}{max_predios_mismo_titular}{\tE{i32}}{}{Predios que tiene en el levantamiento
+\campo{\rI\rL}{max_predios_mismo_titular}{\tE{i32}}{}{Predios que tiene en el levantamiento
   el titular de este predio que más tiene.\dato{1 a 770}}
+%
+\grupo{\rI}{Facturación del impuesto predial}{Excel de facturación 2025-2026 de Hacienda,
+  fuera del modelo. Nulos si el predio no se factura}
+\campo{\rT}{ipu_facturado_2026}{\tE{f64}}{13}{Impuesto predial unificado facturado para 2026,
+  en pesos. Hacienda lo calculó con su propio avalúo.\nota{3}\dato{nulo también en 32 predios
+  facturados sin valor}}
+\campo{\rT}{pago_2026}{\tE{bool}}{13}{Si el impuesto de 2026 estaba pagado en la fecha de
+  extracción, con la vigencia sin cerrar.\nota{4}\dato{true en 12 266 de 19 332}}
+\campo{\rL}{pago_2025}{\tE{bool}}{31}{Si se pagó el impuesto de 2025; nulo si el predio no
+  existía en 2025.\nota{4}\textsuperscript{,}\nota{5}\dato{true en 12 540, false en 2 813}}
 \end{longtable}
 }
 
@@ -694,9 +708,19 @@ archivo.
   construcción de la fila del predio matriz. 90 unidades apuntan a 45 construcciones que
   no están en el archivo, porque en la base no están unidas a ningún predio.
 \item \hypertarget{nota-2}{}\textbf{2} Probablemente un marcador de fecha desconocida.
+\item \hypertarget{nota-3}{}\textbf{3} El avalúo con el que Hacienda liquidó el impuesto de
+  2026 difiere del de la base catastral en cerca del 6~\% de los predios. La fuente de verdad
+  de todo atributo catastral (avalúo, destino, áreas, zona) es la base catastral; de la
+  facturación solo se toman estas tres columnas.
+\item \hypertarget{nota-4}{}\textbf{4} Falta confirmar con Hacienda si la marca de pago
+  significa que se pagó el impuesto de esa vigencia o que el predio no tiene deuda. El
+  Excel se generó el 25 de septiembre de 2026, según sus metadatos.
+\item \hypertarget{nota-5}{}\textbf{5} Dos números prediales de 2026 juntan cada uno dos
+  predios de 2025: se cuentan como pagados en 2025 solo si pagaron los dos.
 \item Los \textit{id_*} son llaves del archivo: sirven para unir filas, no tienen
   significado catastral.
-\item Cifras medidas sobre el archivo construido el 14 de octubre de 2026.
+\item Cifras medidas sobre el archivo construido el 14 de octubre de 2026; las de la
+  facturación, sobre el del 18 de octubre.
 \item Definiciones de los campos: diccionario de datos del Modelo de Aplicación de
   Levantamiento Catastral LADM_COL V2.0 (IGAC). Número predial nacional: Resolución 1149 de
   2021 del IGAC, artículo 61, e Instructivo de Identificación Predial IN-GCT-PC01-06 del

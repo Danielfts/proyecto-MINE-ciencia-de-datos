@@ -19,6 +19,8 @@ dependencies = [
     "levenshtein>=0.26",
     # Lectura y escritura de archivos parquet
     "pyarrow>=26.0.0",
+    # Lectura de la facturación del predial, que llega en Excel
+    "openpyxl>=3.1.5",
     # Notebooks
     "jupyterlab>=4.3",
     "ipykernel>=6.29",
