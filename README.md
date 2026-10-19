@@ -15,7 +15,7 @@ Estos son los nombres que deben aparecer en todas las entregas y artefactos del 
 
 | Carpeta o archivo | Contenido |
 | --- | --- |
-| [entrega-1/](entrega-1/README.md) | Primera entrega: reporte en LaTeX, notebook de entendimiento de los datos, video de sustentación, guion y diapositivas |
+| [entrega-1/](entrega-1/README.md) | Primera entrega: reporte en LaTeX, notebook de entendimiento de los datos, video de sustentación ([en YouTube](https://youtu.be/gj6foaegdeE)), guion y diapositivas |
 | [datos/](datos/README.md) | Documentación de la base de datos catastral (modelo LADM-COL) que sirve de fuente al proyecto, y los modelos INTERLIS y el diccionario de datos de los que sale su estructura. En [datos/base-podada/](datos/base-podada/README.md): la versión reducida de la base que usa el proyecto, con su diagrama entidad-relación, su [diccionario de datos](datos/base-podada/diccionario-de-datos.md) y el script que la crea. En [datos/predios/](datos/predios/README.md): cómo convertir la base podada en un archivo parquet con un predio por fila y sin datos personales |
 | [identidad/](identidad/README.md) | Identidad visual del proyecto (colores, tipografía y logo de la Universidad de los Andes) y el estilo de los reportes y de las gráficas |
 | [herramientas_video/](herramientas_video/README.md) | Herramientas y flujo de trabajo para hacer los videos con manim y Gemini TTS |

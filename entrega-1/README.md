@@ -6,7 +6,7 @@ Fecha límite: **domingo 18 de octubre de 2026, 11:59 PM**. Los pendientes está
 | --- | --- | --- |
 | Reporte ejecutivo en PDF | [reporte/](reporte/) | 6 páginas, una columna, Arial 12 |
 | Notebook de entendimiento de los datos (actividad 6) | [notebooks/](notebooks/06-entendimiento-de-los-datos.ipynb) | |
-| Video de sustentación (YouTube) | [video/](video/) | 6 minutos, con participación similar de todos |
+| Video de sustentación (YouTube) | [youtu.be/gj6foaegdeE](https://youtu.be/gj6foaegdeE); fuente en [video/](video/) | 6 minutos, con participación similar de todos |
 | Guion del video | [video/guion.md](video/guion.md) | |
 | Diapositivas del video | `video/diapositivas.pptx` y `.pdf` (se generan) | |
 
@@ -40,6 +40,8 @@ latexmk reporte.tex
 - **Datos:** lee `datos/predios/predios.parquet`, la base podada en un solo archivo y sin datos personales (ver [datos/predios/](../datos/predios/README.md)). El archivo no está en el repositorio, así que quien lo clone tiene que pedirlo al equipo o construirlo antes de ejecutar el notebook.
 
 ## Video
+
+Publicado en YouTube: https://youtu.be/gj6foaegdeE
 
 [video/video_entrega_1.py](video/video_entrega_1.py) tiene la portada y una sección por actividad, con la narración por escribir (los textos que empiezan con "Pendiente"). El reparto entre integrantes es provisional.
 
