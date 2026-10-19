@@ -25,6 +25,8 @@
 
 % Columnas de tabla con texto alineado a la izquierda: >{\raggedright\arraybackslash}p{...}
 \usepackage{array}
+% Texto alrededor de una figura: wrapfigure (lo usa el wireframe de la sección 2)
+\usepackage{wrapfig}
 % Fórmulas con texto en los subíndices: \text{...}
 \usepackage{amsmath}
 
@@ -45,44 +47,35 @@
 % La organización y la problemática u oportunidad. La información clave del negocio
 % (estrategia, datos del sector) que sustenta su relevancia. Los objetivos del
 % proyecto y las métricas de negocio (KPIs) con las que se evaluará.
-\textbf{Organización.} Multiaservi Consultores Ltda., firma con más de 21 años de
-experiencia en contabilidad pública, gestión tributaria y asesoría a entidades
-territoriales, asesora a la alcaldía de un municipio colombiano que acaba de concluir
-una actualización catastral. La ejecutó un operador contratado para ese fin y la
-entregó, en el modelo LADM-COL, el gestor catastral municipal, adscrito a la Secretaría
-de Planeación.
+\textbf{Organización y problemática.} Multiaservi Consultores Ltda., firma con más de 21 años
+en contabilidad pública y gestión tributaria territorial, asesora a la alcaldía de un municipio
+colombiano que acaba de concluir una actualización catastral, producida por un operador catastral
+y entregada por el gestor catastral municipal. Colombia avanza en la actualización de su catastro
+(según el IGAC, cerca del 45\,\% del territorio a finales de 2025 \cite{portafolio2025igac}), y
+donde llevaba años sin actualizarse el salto de los avalúos es abrupto: en este municipio, el
+avalúo mediano de los predios facturados se multiplicó por 4,1 entre 2025 y 2026. La
+administración bajó la tarifa mediana de 10,8 a 5,6 por mil y fijó límites transitorios al
+crecimiento del impuesto predial unificado (IPU), de 30\,\% a 80\,\% según el avalúo y vigentes
+hasta 2027, dentro del tope legal del doble del año anterior \cite{ley44}. Aun así, el IPU
+facturado casi se duplicó, el 24\,\% de los predios tuvo un aumento superior al 50\,\%, el 1\,\%
+con mayor IPU concentró el 56\,\% del aumento en pesos, y se facturó apenas la mitad del IPU
+pleno, el que corresponde a los nuevos avalúos (avalúo $\times$ tarifa).
 
-\textbf{Problemática.} Colombia avanza en la actualización de su catastro: el IGAC
-reportaba cerca del 45\,\% del territorio actualizado a finales de 2025
-\cite{portafolio2025igac}. Donde el catastro llevaba años sin actualizarse, el salto de
-los avalúos es abrupto. En este municipio, entre 2025 y 2026 el avalúo mediano de los
-predios facturados se multiplicó por 4,1. La administración bajó la tarifa mediana de
-10,8 a 5,6 por mil y fijó por acuerdo municipal límites transitorios al crecimiento del
-impuesto predial unificado (IPU), vigentes hasta el 31 de diciembre de 2027, de 30\,\% a
-80\,\% según el avalúo, dentro del tope legal del doble del año anterior \cite{ley44}.
-Aun así, el IPU facturado casi se duplicó, el 24\,\% de los predios tuvo un aumento
-superior al 50\,\%, y el 1\,\% de los predios con mayor IPU concentró el 56\,\% del
-aumento en pesos. Con esos límites, en 2026 se facturó la mitad del IPU pleno, el que
-corresponde a los nuevos avalúos (avalúo $\times$ tarifa).
+\textbf{Decisión.} Para 2027, la alcaldía necesita una política tributaria que acerque el
+impuesto a la nueva realidad económica sin choques excesivos, sin perder progresividad ni recaudo
+y con el menor costo político posible. La administración la radica como proyecto de acuerdo, con
+la guía de la consultoría, y el Concejo lo debate, lo modifica y lo aprueba antes de terminar el
+año.
 
-La alcaldía necesita para 2027 una política tributaria predial que acerque el impuesto a
-la nueva realidad económica sin choques excesivos, sin perder progresividad ni recaudo y
-con el menor costo político posible. La administración radica ante el Concejo Municipal
-un proyecto de acuerdo con las tarifas y los límites propuestos con la guía de la
-consultoría; el Concejo lo debate, lo modifica y lo aprueba antes de terminar el año.
-Intervienen además la Secretaría de Hacienda, que liquida el impuesto, el equipo de
-gestión catastral, el gerente de Multiaservi y los contribuyentes.
+\textbf{Objetivos.} General: apoyar la construcción de ese proyecto de acuerdo con un producto de
+datos que permita comparar escenarios según los indicadores de la tabla~\ref{tab:kpis}.
+Específicos: (1)~estimar para cada predio el IPU pleno y la brecha frente a lo facturado, e
+identificar dónde se concentra; (2)~simular escenarios de tarifas y límites para 2027 y
+evaluarlos con esos indicadores.
 
-\textbf{Objetivo general.} Apoyar la construcción del proyecto de acuerdo de tarifas y
-límites del IPU para la vigencia 2027 con un producto de datos que permita comparar
-escenarios según los indicadores de la tabla~\ref{tab:kpis}. \textbf{Objetivos
-específicos.} (1)~Estimar, para cada predio, el IPU pleno y la brecha frente a lo
-facturado, e identificar dónde se concentra. (2)~Simular escenarios de tarifas y límites
-para 2027 y evaluar cada uno con los KPIs, la meta y los guardrails.
-
-\textbf{KPIs.} Los dos KPIs se oponen a propósito: acercar el impuesto al pleno aumenta
-el choque. Las metas se definirán con la administración y la consultoría; la línea base
-sale del comparativo de facturación del predial 2025--2026 del municipio.
+\textbf{KPIs.} Los dos KPIs se oponen a propósito: acercar el impuesto al pleno aumenta el choque.
+Las metas se definirán con la administración y la consultoría; la línea base sale de la
+facturación del predial 2025--2026.
 
 \begin{table}[ht]
   \centering
@@ -119,6 +112,16 @@ plena negociación; el trabajo no se acumula entre municipios ni entre vigencias
 tarifa y cada tope deben justificarse ante el Concejo en palabras simples, frente a
 actores que no siempre son técnicos; y lo facturado no es lo que se recauda.
 
+\begin{wrapfigure}{r}{0.46\linewidth}
+  \vspace{-1.2\baselineskip}
+  \centering
+  \includegraphics[width=\linewidth]{imagenes/mockup.png}
+  \captionsetup{font=footnotesize,skip=3pt}
+  \caption{Wireframe de la aplicación: (1) tarifas y límites; (2) alertas; (3) indicadores;
+  (4) lectura en lenguaje llano; (5) gráficas. Cifras entre corchetes: marcadores.}
+  \label{fig:mockup}
+  \vspace{-1\baselineskip}
+\end{wrapfigure}
 \textbf{Dos superficies.} La decisión no se automatiza: el producto organiza la
 información para que la tomen personas. Tiene una superficie interactiva, para la
 consultora y las reuniones con la administración hasta el despacho del alcalde
@@ -142,16 +145,6 @@ la probabilidad de que cada predio pague la vigencia, entrenado con el indicador
 de la facturación, y que ajusta el recaudo facturado a uno esperado; (3)~una API REST
 que expone el motor, el modelo y la exportación, y (4)~una aplicación web, la superficie
 interactiva. Se construirán en Python, con pandas, scikit-learn, FastAPI y Dash.
-
-\begin{figure}[ht]
-  \centering
-  \includegraphics[width=0.8\linewidth]{imagenes/mockup.png}
-  \caption{Wireframe de la aplicación web: (1) tarifas por destino y rango de avalúo, y
-  límites de crecimiento; (2) alertas de guardrails; (3) indicadores del escenario;
-  (4) lectura en lenguaje llano; (5) gráficas. Las cifras entre corchetes son
-  marcadores.}
-  \label{fig:mockup}
-\end{figure}
 
 \section{Aspectos éticos y legales} % 10 %
 % Implicaciones éticas, de privacidad, confidencialidad, transparencia y
@@ -201,145 +194,46 @@ tome de forma explícita.
 % Las hipótesis o preguntas de negocio que guían la experimentación. Las técnicas
 % estadísticas, de visualización y de machine learning que las responderán. Las
 % métricas con las que se evaluará la calidad del modelo.
-El enfoque analítico del proyecto busca comprender la distribución de los incrementos del Impuesto Predial 
-Unificado (IPU), identificar los factores asociados al comportamiento histórico de pago y evaluar diferentes 
-escenarios tributarios para la vigencia 2027. Para ello, se combinarán técnicas de estadística descriptiva, 
-visualización de datos, aprendizaje automático y simulación determinista.
+\textbf{Preguntas de negocio.} (1)~¿Qué combinación de tarifas y límites de crecimiento para
+2027 acerca más el IPU facturado al pleno (KPI~1) sin que el aumento en la cola supere lo que la
+administración considere aceptable (KPI~2), cumpliendo la meta y los guardrails de la
+tabla~\ref{tab:kpis}? (2)~¿Qué tan bien se puede anticipar si un predio pagará su impuesto, para
+pasar del recaudo facturado al esperado? Para la segunda planteamos una hipótesis: el historial
+de pago explica la mayor parte del comportamiento (pagó en 2026 el 80\,\% de quienes pagaron en
+2025 y el 0,3\,\% de quienes no), y las características del predio mejoran la predicción donde
+hay incertidumbre: los predios nuevos y los que dejan de pagar.
 
-El análisis se organizará en dos componentes complementarios: el primero estudiará el comportamiento de los 
-datos catastrales y tributarios históricos, mientras que el segundo permitirá comparar escenarios de tarifas y 
-límites de crecimiento mediante indicadores de negocio y restricciones previamente definidas.
+\textbf{Técnicas.} La primera pregunta se responde con el motor de escenarios, que aplica a cada
+predio las tarifas y los límites de un escenario y calcula los indicadores; recorrer una malla de
+escenarios muestra la frontera entre convergencia y choque sobre la que decide la administración.
+La segunda se responde con
+un modelo de clasificación binaria. La variable objetivo es si el predio pagó la vigencia 2026 a
+la fecha de corte, y las variables son las que se conocen antes de la vigencia: el pago de 2025,
+con una categoría para los predios nuevos, y el avalúo, la destinación, la condición del predio,
+la zona y las áreas del catastro. Se compararán tres algoritmos, cada uno con varios conjuntos de
+hiperparámetros: regresión logística y un árbol de decisión poco profundo, fáciles de explicar, y
+\textit{gradient boosting}. El recaudo esperado de un escenario es
+$R_{\text{esperado}}=\sum_{i} \mathit{IPU}_i\,p_i$, donde $\mathit{IPU}_i$ es el impuesto del
+predio $i$ en el escenario y $p_i$ su probabilidad estimada de pago. El modelo describe asociaciones de 2026: no predice cómo reaccionarían los
+contribuyentes a un aumento distinto.
 
-\subsection{Preguntas de negocio e hipótesis}
-
-Las preguntas de negocio se formulan a partir de la necesidad de comprender los efectos de la actualización 
-catastral y de evaluar alternativas que permitan acercar el impuesto facturado a su valor pleno sin generar 
-incrementos excesivos para determinados grupos de predios.
-
-\begin{itemize}
-
-    \item \textbf{Pregunta 1:} ¿Cómo se distribuyen los incrementos del IPU y qué proporción del aumento total en pesos se concentra en los predios más afectados?
-
-    \textbf{Hipótesis 1:} Los incrementos del IPU presentan una distribución asimétrica hacia la derecha y una concentración elevada del aumento absoluto en un grupo reducido de predios. Esta hipótesis se evaluará mediante medidas de posición, dispersión, asimetría y concentración.
-
-    \item \textbf{Pregunta 2:} ¿Qué relación existe entre el incremento del IPU facturado y la probabilidad de pago del impuesto?
-
-    \textbf{Hipótesis 2:} Manteniendo constantes otras características observables, los predios que experimentan incrementos porcentuales más elevados del IPU presentan una menor probabilidad estimada de pago. Esta hipótesis se estudiará mediante el análisis exploratorio de los datos y un modelo de clasificación binaria, sujeto a la disponibilidad de registros históricos de facturación y pago.
-
-\end{itemize}
-
-La primera hipótesis permitirá caracterizar la distribución de los incrementos e identificar los grupos que concentran una mayor variación del impuesto. La segunda permitirá investigar la asociación entre los incrementos tributarios y el comportamiento de pago. No obstante, una asociación estadística no será interpretada como evidencia suficiente de una relación causal.
-
-\subsection{Técnicas estadísticas y de visualización}
-
-Para caracterizar los datos y estudiar las hipótesis planteadas se emplearán técnicas de estadística descriptiva y visualización. Estas permitirán identificar patrones, comparar grupos de predios y detectar posibles inconsistencias antes de construir los escenarios de simulación.
-
-\begin{itemize}
-
-    \item \textbf{Medidas de tendencia central y posición:} Se calcularán la media, la mediana, los cuartiles y los percentiles 95 y 99 de los avalúos y de los incrementos del IPU. La comparación entre la media y la mediana permitirá evaluar la influencia de los valores extremos sobre los resultados agregados, mientras que los percentiles altos facilitarán el estudio de los predios con mayores incrementos.
-
-    \item \textbf{Medidas de dispersión y asimetría:} Se utilizarán el rango intercuartílico (IQR), la desviación estándar y el coeficiente de asimetría para caracterizar la variabilidad de los incrementos y evaluar si su distribución presenta una concentración de valores en los rangos inferiores y una cola hacia los valores superiores.
-
-    \item \textbf{Diagramas de caja y detección de valores atípicos:} Se construirán diagramas de caja para comparar la distribución de los incrementos entre grupos de predios. Los posibles valores atípicos se identificarán mediante los límites habituales de Tukey:
-
-    \[
-    L_{\text{inferior}}=Q_1-1.5(IQR)
-    \]
-
-    \[
-    L_{\text{superior}}=Q_3+1.5(IQR)
-    \]
-
-    donde $IQR=Q_3-Q_1$. Los valores que se encuentren fuera de estos límites serán examinados para determinar si corresponden a observaciones extremas válidas o a posibles inconsistencias en los datos.
-
-    \item \textbf{Histogramas:} Se utilizarán histogramas para estudiar la distribución de los avalúos, los importes del IPU y sus incrementos porcentuales. Estas visualizaciones permitirán identificar rangos de concentración y comparar el comportamiento de los predios según las categorías disponibles.
-
-    \item \textbf{Gráficos de dispersión y análisis por grupos:} Se explorará la relación entre el incremento porcentual del IPU y el comportamiento histórico de pago. Cuando la variable de pago sea binaria, se calcularán proporciones de pago por intervalos de incremento y se compararán los resultados entre grupos de predios. Esta aproximación facilitará la identificación de posibles asociaciones sin asumir que los incrementos son la única variable relacionada con el pago.
-
-    \item \textbf{Análisis de concentración:} Se calculará la proporción del aumento total en pesos que corresponde al 1\,\% y al 5\,\% de los predios con mayores incrementos absolutos. Este análisis permitirá cuantificar la concentración del impacto tributario y aportará información para la evaluación del KPI relacionado con el choque en la cola de la distribución.
-
-    \item \textbf{Comparación de valores agregados:} Se contrastará el IPU facturado con el IPU pleno calculado a partir de los avalúos y las tarifas correspondientes. La diferencia permitirá cuantificar la brecha tributaria y analizar su distribución entre las categorías de predios.
-
-\end{itemize}
-
-Los resultados descriptivos se utilizarán como insumo para el diseño de los escenarios y para la interpretación de los indicadores. Las visualizaciones no se considerarán evidencia suficiente de causalidad, sino herramientas para identificar patrones y orientar análisis posteriores.
-
-\subsection{Técnicas de Machine Learning y simulación}
-
-El producto de datos combinará un motor determinista de reglas de negocio con un modelo de aprendizaje automático para estimar la probabilidad de pago. Ambos componentes tendrán funciones diferenciadas.
-
-\begin{itemize}
-
-    \item \textbf{Motor de reglas de negocio:} Será un componente determinista encargado de calcular el IPU correspondiente a cada predio bajo las tarifas y los límites definidos para un escenario. Recibirá los datos catastrales y tributarios, aplicará las reglas configuradas y generará el impuesto calculado para la vigencia 2027. Para una misma entrada y una misma configuración, el resultado deberá ser reproducible.
-
-    \item \textbf{Modelo de clasificación mediante regresión logística:} Se propone utilizar regresión logística para estimar la probabilidad de que un predio pague el impuesto dentro de un período previamente definido. La variable objetivo será binaria, con valor 1 cuando se registre el pago conforme a la definición adoptada y 0 cuando no se registre dentro del período de observación.
-
-    Entre las variables predictoras candidatas se encuentran el incremento porcentual del IPU, el importe facturado, el uso o destino del predio, el rango de avalúo y el historial de pago, siempre que estas variables estén disponibles y su utilización resulte pertinente. La selección definitiva dependerá de la calidad de los datos, su disponibilidad al momento de realizar la predicción y las condiciones jurídicas aplicables.
-
-    \item \textbf{Modelo alternativo de Random Forest:} Como alternativa, se podrá evaluar un modelo de Random Forest para identificar relaciones no lineales e interacciones entre las variables predictoras. Su desempeño se comparará con el de la regresión logística, considerando tanto la calidad de las predicciones como la calibración de las probabilidades y la facilidad de interpretación.
-
-    \item \textbf{Estimación del recaudo esperado:} Cuando se disponga de un modelo de probabilidad de pago validado, el recaudo esperado de un escenario se estimará mediante la suma de los importes facturados multiplicados por sus respectivas probabilidades de pago:
-
-    \[
-    R_{\text{esperado}}=\sum_{i=1}^{n} IPU_i \cdot p_i
-    \]
-
-    donde $IPU_i$ representa el importe facturado al predio $i$ bajo el escenario simulado y $p_i$ corresponde a la probabilidad estimada de pago dentro del período definido. Esta estimación supone, en su forma básica, un resultado de pago binario y el pago del importe facturado. Los descuentos, pagos parciales y otras particularidades deberán considerarse si forman parte de los datos y del alcance del modelo.
-
-\end{itemize}
-
-La implementación del modelo predictivo dependerá de la disponibilidad de registros históricos que permitan relacionar la facturación de los predios con su comportamiento de pago. Si estos registros no están disponibles o no tienen calidad suficiente, se mantendrá el motor determinista para evaluar los escenarios, sin presentar estimaciones de recaudo basadas en un modelo que no haya podido entrenarse y validarse.
-
-Para reducir el riesgo de fuga de información, las variables predictoras deberán corresponder a información disponible en el momento en que se realizaría la predicción. Cuando la cantidad y estructura de los datos lo permitan, el modelo se entrenará con vigencias anteriores y se evaluará con una vigencia posterior no utilizada durante el entrenamiento.
-
-\subsection{Métricas de evaluación}
-
-La evaluación se realizará en dos niveles: la calidad predictiva del modelo de aprendizaje automático y el desempeño de los escenarios tributarios frente a los indicadores y las restricciones de negocio.
-
-\begin{itemize}
-
-    \item \textbf{ROC-AUC:} Se utilizará para evaluar la capacidad del modelo de distinguir entre los predios que pagan y los que no pagan dentro del período definido. Esta métrica permite evaluar la discriminación entre las dos clases, pero no garantiza por sí sola que las probabilidades estimadas sean precisas.
-
-    \item \textbf{Log-Loss:} Se empleará para evaluar la calidad de las probabilidades estimadas. Esta métrica penaliza especialmente las predicciones que asignan probabilidades muy elevadas a resultados que no se observan.
-
-    \item \textbf{Calibración de probabilidades:} Se compararán las probabilidades estimadas con las proporciones de pago observadas en grupos de predios con probabilidades similares. Esta evaluación es relevante porque las probabilidades del modelo se utilizarán para estimar el recaudo esperado.
-
-    \item \textbf{Evaluación de negocio:} Los escenarios se compararán mediante los KPIs definidos en la problemática: la convergencia entre el IPU facturado y el IPU pleno, el impacto sobre los predios con mayores incrementos y el recaudo esperado, cuando este último pueda estimarse de manera confiable.
-
-    \item \textbf{Verificación de restricciones:} Cada escenario será evaluado frente a los límites legales aplicables y a las condiciones de progresividad establecidas para el proyecto. Las reglas deberán definirse de manera explícita para permitir su verificación reproducible.
-
-\end{itemize}
-
-Las métricas predictivas se calcularán sobre datos que no hayan intervenido en el entrenamiento del modelo. Cuando existan suficientes vigencias históricas, se priorizará una validación temporal que permita evaluar el comportamiento del modelo al predecir una vigencia posterior.
-
-\subsection{Comparación y selección de escenarios}
-
-El simulador permitirá modificar las tarifas por destino y rango de avalúo, así como los límites de crecimiento definidos para cada escenario. Para cada configuración, el motor de reglas calculará el IPU por predio y generará los indicadores necesarios para evaluar sus consecuencias agregadas y distributivas.
-
-La comparación se realizará considerando los siguientes criterios:
-
-\begin{itemize}
-
-    \item Incrementar la convergencia entre el impuesto facturado y el impuesto pleno.
-    \item Evaluar el recaudo esperado, cuando exista un modelo predictivo validado.
-    \item Identificar la concentración de los incrementos en los predios más afectados.
-    \item Verificar el cumplimiento de las restricciones legales aplicables.
-    \item Evaluar los criterios de progresividad definidos para los grupos de predios comparables.
-
-\end{itemize}
-
-Dado que estos objetivos pueden entrar en conflicto, el aplicativo no asumirá que existe un único escenario que maximiza simultáneamente todos los indicadores. En su lugar, presentará los resultados y las alertas de cada alternativa para facilitar la comparación entre escenarios que cumplan las restricciones obligatorias.
-
-La selección final corresponderá a los responsables de la consultoría y a las autoridades competentes. De esta manera, el producto de datos funcionará como un sistema de apoyo a la decisión, proporcionando evidencia cuantitativa y resultados trazables sin sustituir el análisis jurídico, económico y político requerido para formular la propuesta tributaria.
-
+\textbf{Métricas.} El motor se valida reproduciendo el IPU facturado en 2026 con las reglas del
+acuerdo vigente, salvo en el 6\,\% de predios cuyo avalúo difiere entre el catastro y Hacienda.
+El modelo se entrena con una partición estratificada en entrenamiento, validación y prueba, y se
+evalúa en prueba con ROC-AUC para la discriminación, y con \textit{log-loss} y una curva de
+calibración para la calidad de las probabilidades, que son las que entran al recaudo esperado.
+Todas las métricas se comparan con una línea base, repetir el pago de 2025, y se reportan por
+grupo: los predios que pagaron en 2025, los que no y los nuevos.
 
 \section{Recolección de datos} % 10 %
 % Las fuentes de datos, según su estructura e importancia. El diccionario de datos
 % completo va en el repositorio; aquí, solo las entidades o atributos más relevantes.
 Los datos vienen de dos fuentes del municipio y se integran en un solo archivo con un predio por
 fila. La primera es el levantamiento catastral, producido por el operador catastral y entregado
-por el gestor catastral como un archivo de transferencia INTERLIS en el modelo LADM-COL. Se cargó
-en PostgreSQL con ili2pg (217 tablas) y se podó a las 45 tablas con contenido útil; una consulta
+por el gestor catastral como un archivo de transferencia
+\enlace{https://www.interlis.ch/en}{INTERLIS} en el modelo
+\enlace{https://www.igac.gov.co/catastro-multiproposito/ladmcol}{LADM-COL}. Se cargó
+en PostgreSQL con \enlace{https://github.com/claeis/ili2db}{ili2pg} (217 tablas) y se podó a las 45 tablas con contenido útil; una consulta
 SQL arma cada predio con sus terrenos, construcciones, unidades y titulares (estos, reducidos a
 conteos), y un programa en Python lo escribe en un archivo parquet con un esquema fijo. La
 segunda es el comparativo de facturación del impuesto predial de 2025 y 2026, exportado por la
@@ -426,7 +320,7 @@ rural; en NPH son iguales, y con el terreno controlado el urbano es 56\,\% mayor
 \end{table}
 
 \textbf{Calidad y suficiencia.} La tabla~\ref{tab:calidad} resume la bitácora de calidad del
-notebook, que registra 26 problemas con su dimensión y su estrategia. El 48,5\,\% de los predios
+notebook, que registra 31 problemas con su dimensión y su estrategia. El 48,5\,\% de los predios
 individuales tiene información de campo confiable. En PH la visita se registra en el predio
 matriz: contarla sube la cobertura de las unidades de PH de 0,4\,\% a 60,5\,\%. La cobertura es
 débil en NPH (18\,\%) e informales (9\,\%). El catastro aporta las variables que el producto
@@ -435,7 +329,10 @@ aporta el impuesto y el indicador de pago.
 
 \section{Conclusiones iniciales} % 10 %
 % Primeras conclusiones e insights, y las acciones que siguen.
-Pendiente.
+Los datos alcanzan para las dos preguntas: la facturación cubre el 87\,\% del levantamiento y el
+historial de pago anticipa casi todo el comportamiento. El 10\,\% de los predios con mayor
+impuesto factura el 81\,\% del total, y en él recae el KPI~2. Sigue validar el motor con las
+tarifas vigentes.
 
 \printbibliography
 
