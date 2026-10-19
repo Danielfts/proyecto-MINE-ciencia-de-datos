@@ -58,17 +58,12 @@ reportaba cerca del 45\,\% del territorio actualizado a finales de 2025
 los avalúos es abrupto. En este municipio, entre 2025 y 2026 el avalúo mediano de los
 predios facturados se multiplicó por 4,1. La administración bajó la tarifa mediana de
 10,8 a 5,6 por mil y fijó por acuerdo municipal límites transitorios al crecimiento del
-impuesto predial unificado (IPU), de 30\,\% a 80\,\% según el avalúo, dentro del tope
-legal del doble del año anterior \cite{ley44}. Aun así, el IPU facturado casi se
-duplicó, el 24\,\% de los predios tuvo un aumento superior al 50\,\%, y el 1\,\% de los
-predios con mayor IPU concentró el 56\,\% del aumento en pesos.
-
-\begin{destacado}
-En 2026 se facturó solo el 50\,\% del IPU que corresponde a los nuevos avalúos (avalúo
-$\times$ tarifa): una brecha de 68\,400 millones de pesos. Los límites transitorios rigen
-hasta el 31 de diciembre de 2027, así que la vigencia 2027 es la última en la que la
-brecha puede cerrarse de forma gradual.
-\end{destacado}
+impuesto predial unificado (IPU), vigentes hasta el 31 de diciembre de 2027, de 30\,\% a
+80\,\% según el avalúo, dentro del tope legal del doble del año anterior \cite{ley44}.
+Aun así, el IPU facturado casi se duplicó, el 24\,\% de los predios tuvo un aumento
+superior al 50\,\%, y el 1\,\% de los predios con mayor IPU concentró el 56\,\% del
+aumento en pesos. Con esos límites, en 2026 se facturó la mitad del IPU pleno, el que
+corresponde a los nuevos avalúos (avalúo $\times$ tarifa).
 
 La alcaldía necesita para 2027 una política tributaria predial que acerque el impuesto a
 la nueva realidad económica sin choques excesivos, sin perder progresividad ni recaudo y
@@ -163,122 +158,44 @@ interactiva. Se construirán en Python, con pandas, scikit-learn, FastAPI y Dash
 % regulatorias en este contexto. Las fuentes consultadas se citan con \cite{clave}
 % y van en referencias.bib.
 
-El desarrollo del aplicativo para la simulación de escenarios del Impuesto Predial Unificado 
-(IPU) requiere considerar aspectos relacionados con la protección de datos personales, 
-la confidencialidad, la transparencia, la legalidad tributaria y el uso responsable de 
-modelos predictivos. Debido a que la herramienta procesará información catastral y tributaria 
-para apoyar decisiones que afectan a los contribuyentes, su diseño debe garantizar la seguridad 
-de la información, la trazabilidad de los resultados y la supervisión humana de las recomendaciones generadas.
+\textbf{Protección de datos personales.} Los registros catastrales vinculan predios con personas, por lo que su tratamiento se rige por
+la Ley 1581 de 2012: la alcaldía es la responsable del tratamiento y Multiaservi actúa como
+encargada \cite{ley1581_2012}. El proyecto aplica la minimización desde la construcción de los
+datos: el archivo de análisis no contiene nombres, documentos ni contactos de los propietarios
+(los titulares quedan reducidos a conteos), los números de identificación se borran de los
+textos libres, de las geometrías solo quedan medidas y de la facturación solo se leen el
+impuesto y el indicador de pago. Como el número predial sigue identificando cada predio, el
+archivo no es anónimo: no se publica en el repositorio, ninguna salida muestra datos de un
+predio individual y el municipio no se nombra en los entregables.
 
-\subsection{Protección de datos personales y confidencialidad}
+\textbf{Transparencia.} Los registros catastrales y tributarios de cada predio no se publican: la Ley 1712 de 2014
+exceptúa del acceso público la información que afecta la intimidad de las personas
+\cite{ley1712_2014}. Lo que sí es público es la decisión: el proyecto de acuerdo y su
+sustentación técnica se debaten en el Concejo y se publican con el acuerdo. Por eso, lo que
+el producto exporte para esa sustentación debe ser agregado, explicable en palabras simples y
+presentar el recaudo esperado como una estimación sujeta a incertidumbre, no como una
+garantía.
 
-La Ley Estatutaria 1581 de 2012 establece disposiciones para la protección de los datos personales 
-y regula su tratamiento por parte de entidades públicas y privadas \cite{ley1581_2012}. 
-Esta normativa resulta relevante para el proyecto porque los registros catastrales y tributarios 
-pueden contener información que permita identificar a los propietarios o asociar determinados predios con personas naturales.
-
-Por lo tanto, antes de incorporar los datos al aplicativo, se deberá verificar su clasificación, 
-el fundamento jurídico que autoriza su tratamiento y las condiciones de acceso acordadas entre 
-la administración municipal y Multiaservi Consultores Ltda. Asimismo, se aplicarán los principios 
-de finalidad, minimización y seguridad de la información, procurando utilizar únicamente los datos 
-necesarios para los objetivos analíticos del proyecto.
-
-Como medidas técnicas, se propone emplear identificadores seudonimizados durante el análisis, 
-restringir el acceso a usuarios autorizados y proteger los archivos y las exportaciones que 
-contengan información sensible. La seudonimización no se considerará equivalente a la 
-anonimización, por lo que se evitará divulgar información que permita identificar directa o indirectamente a los contribuyentes.
-
-\subsection{Transparencia y acceso a la información pública}
-
-La Ley 1712 de 2014 regula el derecho de acceso a la información pública y establece el principio de 
-máxima publicidad, sujeto a las excepciones constitucionales y legales correspondientes \cite{ley1712_2014}. 
-En consecuencia, el proyecto deberá diferenciar entre los resultados agregados que puedan divulgarse y los 
-registros individualizados cuyo acceso o publicación esté sujeto a restricciones.
-
-La herramienta facilitará la comprensión de los escenarios mediante tablas, indicadores, gráficas y 
-explicaciones en lenguaje claro. Cada escenario exportado deberá identificar las tarifas y los límites 
-utilizados, la versión de los datos, las reglas de cálculo aplicadas y los resultados obtenidos. 
-De esta manera, la consultora y la administración municipal podrán justificar sus propuestas sin exponer información personal innecesaria.
-
-La transparencia también implica comunicar las limitaciones de las estimaciones. En particular, el recaudo 
-esperado calculado mediante modelos predictivos deberá presentarse como una proyección sujeta a incertidumbre 
-y no como una garantía del dinero que efectivamente ingresará al municipio.
-
-\subsection{Legalidad tributaria y normativa catastral}
-
-El aplicativo deberá incorporar las disposiciones legales aplicables al Impuesto Predial Unificado, 
-considerando la Ley 44 de 1990, la Ley 1995 de 2019 y las disposiciones posteriores que resulten 
-pertinentes \cite{ley44,ley1995_2019,ley2294_2023}. Estas normas deberán analizarse conjuntamente con 
+% POR CONFIRMAR (equipo, revisión interna): compactar esta parte en una oración, quitar
+% "datos de fuentes autorizadas…" y advertir que la Ley 1995 de 2019 se aplicaba por cinco
+% años desde agosto de 2019 (art. 3), salvo que se confirme una prórroga.
+\textbf{Legalidad tributaria y normativa catastral.} El aplicativo deberá incorporar las disposiciones legales aplicables al Impuesto Predial Unificado, 
+considerando la Ley 44 de 1990 y la Ley 1995 de 2019 \cite{ley44,ley1995_2019}. Estas normas deberán analizarse conjuntamente con 
 las reglas tributarias municipales vigentes y las condiciones específicas aplicables a cada predio.
 
-Desde el punto de vista técnico, el motor de reglas de negocio deberá aplicar las tarifas y los límites 
-definidos para cada escenario, además de verificar las restricciones legales correspondientes. 
-Los porcentajes configurados por la administración municipal no deberán asumirse como límites universales, 
-sino como parámetros sujetos a validación jurídica para la vigencia y las categorías de predios correspondientes.
+Por otra parte, los datos de entrada deberán proceder de fuentes autorizadas y contar con la documentación
+necesaria para interpretar sus variables y estructuras.
 
-Por otra parte, los datos de entrada deberán proceder de fuentes autorizadas y contar con la documentación 
-necesaria para interpretar sus variables y estructuras. El aplicativo no sustituirá los procedimientos 
-oficiales de formación o actualización catastral ni tendrá competencia para modificar los avalúos. 
-Su función será utilizar los datos suministrados para simular escenarios tributarios y evaluar sus posibles consecuencias.
+\textbf{Equidad tributaria y prevención de sesgos.} Un menor historial de pago en un grupo de
+predios no demuestra una menor capacidad económica de sus propietarios. Por eso, el modelo de
+pago solo estima el recaudo agregado, no atribuye responsabilidades individuales, y sus errores
+se compararán entre grupos de predios.
 
-La normativa técnica relacionada con los avalúos deberá verificarse con base en las disposiciones vigentes 
-del Instituto Geográfico Agustín Codazzi (IGAC). En particular, se tendrá en cuenta la Resolución 941 de 2026, 
-que establece métodos y condiciones para la elaboración y presentación de avalúos y derogó la Resolución 
-620 de 2008 \cite{res941_2026}. Su aplicación concreta deberá determinarse según el procedimiento y el alcance técnico correspondiente.
-
-\subsection{Equidad tributaria y prevención de sesgos}
-
-La utilización de datos históricos y modelos predictivos puede reproducir patrones de comportamiento que no 
-representen adecuadamente las condiciones futuras de los contribuyentes. Por ejemplo, una menor frecuencia 
-histórica de pago en una categoría de predios no demuestra, por sí sola, una menor capacidad económica de sus propietarios.
-
-Por esta razón, el modelo de probabilidad de pago deberá interpretarse como una herramienta de estimación y 
-no como un mecanismo para atribuir características personales o establecer responsabilidades individuales. 
-Cuando la disponibilidad y calidad de los datos lo permitan, se evaluará su desempeño entre diferentes categorías 
-de predios para identificar posibles diferencias relevantes en los errores de predicción.
-
-Adicionalmente, la comparación de escenarios incorporará indicadores de convergencia, impacto sobre los predios 
-con mayores incrementos y progresividad de la tarifa efectiva. Estas medidas permitirán estudiar las consecuencias distributivas 
-de las propuestas sin asumir que un único indicador representa por completo la equidad tributaria.
-
-La evaluación deberá considerar conjuntamente el recaudo esperado, la distribución de los incrementos y las 
-restricciones legales aplicables. De este modo, se evitará que la búsqueda de un mayor recaudo se convierta en 
-el único criterio para seleccionar una política tributaria.
-
-\subsection{Uso responsable de la inteligencia artificial y supervisión humana}
-
-El Documento CONPES 4144 de 2025 establece la Política Nacional de Inteligencia Artificial de Colombia y plantea 
-orientaciones para promover su desarrollo y adopción ética y responsable \cite{conpes4144_2025}. En concordancia 
-con estos principios, el componente predictivo del proyecto deberá documentarse, evaluarse y utilizarse de manera transparente.
-
-La solución diferenciará dos funciones: el motor determinista calculará el impuesto correspondiente a cada escenario 
-según las reglas configuradas, mientras que el modelo de aprendizaje automático estimará la probabilidad de pago. 
-Esta separación permitirá distinguir los cálculos tributarios de las proyecciones probabilísticas y facilitará la revisión de los resultados.
-
-El aplicativo funcionará exclusivamente como un sistema de apoyo a la decisión. No aprobará tarifas, modificará 
-avalúos ni adoptará decisiones tributarias de manera autónoma. La interpretación de los indicadores, la selección 
-del escenario y la aprobación de las propuestas corresponderán a los actores humanos competentes.
-
-Asimismo, las exportaciones deberán incluir los supuestos utilizados, las limitaciones conocidas y las alertas 
-relacionadas con el incumplimiento de las restricciones configuradas. Estas medidas contribuirán a que los resultados 
-puedan ser examinados y discutidos por la consultora y la administración municipal antes de su presentación al Concejo.
-
-\subsection{Trazabilidad y calidad de los datos}
-
-La calidad de las conclusiones dependerá de la consistencia de los registros catastrales y tributarios utilizados. 
-Por ello, antes de ejecutar los análisis se deberán identificar valores faltantes, registros duplicados, 
-inconsistencias entre vigencias y posibles errores en las variables necesarias para calcular el impuesto.
-
-Las transformaciones y correcciones realizadas deberán documentarse para evitar que los cambios en los datos alteren 
-los resultados sin una justificación verificable. También se deberá conservar la identificación de las fuentes, las 
-versiones de los conjuntos de datos, los parámetros del modelo y las reglas utilizadas en cada simulación.
-
-Finalmente, las responsabilidades relacionadas con el acceso, tratamiento, almacenamiento y eliminación de los datos 
-deberán establecerse entre las partes involucradas. La implementación de estas medidas permitirá reducir los riesgos de uso indebido de la información y mejorar la reproducibilidad de los resultados.
-
-En conjunto, estos principios buscan que el aplicativo contribuya a la formulación de escenarios tributarios 
-técnicamente sustentados, jurídicamente verificables y comprensibles para quienes participan en la toma de decisiones.
-
+\textbf{Costo político y progresividad.} Los límites al crecimiento del IPU concentran su alivio en pocos predios: el 1\,\% de los
+predios con mayor brecha acumula el 47\,\% de la brecha frente al IPU pleno. Mitigar el costo
+político puede, por eso, volver menos progresivo el impuesto. El producto hace visible esa
+tensión con el guardrail de progresividad de la tabla~\ref{tab:kpis}, para que la decisión se
+tome de forma explícita.
 
 \section{Enfoque analítico} % 15 %
 % Las hipótesis o preguntas de negocio que guían la experimentación. Las técnicas
@@ -419,19 +336,24 @@ La selección final corresponderá a los responsables de la consultoría y a las
 \section{Recolección de datos} % 10 %
 % Las fuentes de datos, según su estructura e importancia. El diccionario de datos
 % completo va en el repositorio; aquí, solo las entidades o atributos más relevantes.
-Pendiente. El diccionario de datos completo está en \repo{entrega-1}{el repositorio}.
+Los datos vienen de dos fuentes del municipio y se integran en un solo archivo con un predio por
+fila. La primera es el levantamiento catastral, producido por el operador catastral y entregado
+por el gestor catastral como un archivo de transferencia INTERLIS en el modelo LADM-COL. Se cargó
+en PostgreSQL con ili2pg (217 tablas) y se podó a las 45 tablas con contenido útil; una consulta
+SQL arma cada predio con sus terrenos, construcciones, unidades y titulares (estos, reducidos a
+conteos), y un programa en Python lo escribe en un archivo parquet con un esquema fijo. La
+segunda es el comparativo de facturación del impuesto predial de 2025 y 2026, exportado por la
+Secretaría de Hacienda: de él solo se toman el impuesto facturado en 2026 y si el predio pagó en
+2025 y en 2026, unidos por el número predial. El catastro es la fuente de todo atributo
+catastral, y el archivo final tiene 22\,220 predios y ningún dato personal.
 
-% \begin{table}[ht]
-%   \centering
-%   \caption{Atributos más relevantes.}
-%   \begin{tabular}{lll}
-%     \toprule
-%     Atributo & Tipo & Descripción \\
-%     \midrule
-%     pendiente & pendiente & pendiente \\
-%     \bottomrule
-%   \end{tabular}
-% \end{table}
+Los atributos principales son el avalúo catastral, la destinación económica, la condición del
+predio (no sometido a propiedad horizontal, propiedad horizontal, condominio o informal), la zona
+urbana o rural, las áreas de terreno y construida, el uso, la edad y la altura de las
+construcciones, el resultado de la visita de campo, las novedades del número predial frente al
+catastro anterior y, de la facturación, el impuesto facturado y el pago. El proceso completo está
+en el \repo{datos/predios/README.md}{repositorio}, con el
+\repo{datos/predios/diccionario/diccionario-de-datos.pdf}{diccionario de datos}.
 
 \section{Entendimiento de los datos} % 35 %
 % Los resultados más importantes del análisis exploratorio y de la calidad de los
