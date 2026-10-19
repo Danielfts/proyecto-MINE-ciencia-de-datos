@@ -88,7 +88,7 @@ Things that are deliberate and should not be "fixed":
 - `setuptools<81` is pinned because `ydata-profiling` imports `pkg_resources`, which newer setuptools removed.
 - `requires-python` is capped below 3.14 because `ydata-profiling` does not support it.
 - `cryptography<49` is a uv constraint (not a direct dependency): newer versions ship no wheels for Intel macOS.
-- Teammates work on Windows, macOS and Linux, on x64 and ARM. Before adding a dependency with compiled code, check it ships wheels for those platforms; the README's platform table documents the current gaps and must stay accurate.
+- Teammates work on Windows, macOS and Linux, on x64 and ARM. Before adding a dependency with compiled code, check it ships wheels for those platforms. The README no longer documents per-platform setup.
 
 ## Deliverables
 
