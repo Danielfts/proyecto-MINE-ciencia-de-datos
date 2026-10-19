@@ -4,6 +4,7 @@ course-contents/*
 
 # Bitácora privada de uso de IA; la versión que se entrega es USO_DE_IA.md
 USO_DE_IA.borrador.md
+USO_DE_IA_NICOLAS.md
 
 # Entorno de Python
 .venv/
@@ -51,3 +52,11 @@ catastro_*.sql
 *.csv.gz
 # Archivos de bloqueo de LibreOffice (su nombre repite el del archivo abierto)
 .~lock.*#
+
+# Grabaciones originales de los integrantes para los videos (fuente del audio; el video final está en YouTube)
+entrega-*/video/audios/
+*.opus
+*.ogg
+*.wav
+*.mp3
+*.m4a
