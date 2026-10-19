@@ -3,7 +3,9 @@
 Se configuran con variables de entorno o con el archivo .env de la raíz del
 repositorio (ver .env.template):
 
-    VOZ_SERVICIO=gemini            # o "silencio" para ajustar el ritmo sin generar voz
+    VOZ_SERVICIO=gemini            # o "silencio" para ajustar el ritmo sin generar voz,
+                                   # o "grabaciones" para usar la voz grabada por cada integrante
+    VOZ_GRABACIONES=...            # con "grabaciones": carpeta con indice.json (texto -> clip .wav)
     GEMINI_API_KEY=...             # llave de Vertex AI del proyecto de Google Cloud
     VOZ_MODELO=gemini-3.1-flash-tts-preview
     VOZ_NOMBRE=Zephyr              # voz de la narración que no tiene integrante asignado
@@ -14,6 +16,7 @@ repositorio (ver .env.template):
 Sin VOZ_SERVICIO se usa "silencio": nadie genera voz, ni gasta cuota, por accidente.
 """
 
+import json
 import os
 import re
 import time
@@ -182,6 +185,25 @@ class ServicioGemini(SpeechService):
         return {"input_text": text, "input_data": input_data, "original_audio": audio}
 
 
+class ServicioGrabaciones(SpeechService):
+    """La voz grabada por los integrantes, ya cortada en un clip por paso del guion.
+
+    La carpeta trae un indice.json que asocia el texto de cada narrar() con su clip.
+    Cada paso dura lo que dura su clip, así que las animaciones siguen a la grabación.
+    """
+
+    def __init__(self, carpeta, **kwargs):
+        initialize_speech_service(self, {**kwargs, "cache_dir": carpeta})
+        self.indice = json.loads((Path(carpeta) / "indice.json").read_text(encoding="utf-8"))
+
+    def generate_from_text(self, text, cache_dir=None, path=None, **kwargs):
+        texto = " ".join(remove_bookmarks(text).split())
+        if texto not in self.indice:
+            raise RuntimeError(f"Sin grabación para: {texto[:60]!r}")
+        return {"input_text": text, "input_data": {"input_text": texto, "service": "grabaciones"},
+                "original_audio": self.indice[texto]}
+
+
 def crear_servicio():
     load_dotenv(find_dotenv(usecwd=True) or RAIZ / ".env")
     servicio = os.getenv("VOZ_SERVICIO", "silencio")
@@ -196,4 +218,6 @@ def crear_servicio():
             estilo=os.getenv("VOZ_ESTILO", ""),
             cache_dir=CACHE_VOZ,
         )
-    raise ValueError(f"VOZ_SERVICIO desconocido: {servicio!r} (use 'gemini' o 'silencio')")
+    if servicio == "grabaciones":
+        return ServicioGrabaciones(Path(os.environ["VOZ_GRABACIONES"]).resolve())
+    raise ValueError(f"VOZ_SERVICIO desconocido: {servicio!r} (use 'gemini', 'silencio' o 'grabaciones')")

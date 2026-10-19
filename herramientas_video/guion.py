@@ -7,7 +7,8 @@ Desde la raíz del repositorio:
 Recorre la escena VideoCompleto sin animar y escribe guion.md junto al video: quién
 dice qué, en qué momento, cuánto dura el video y cuánto habla cada integrante.
 
-Los tiempos son estimados (15 caracteres por segundo). Con --voz se miden con los
+Los tiempos son estimados (15 caracteres por segundo). Con --grabaciones CARPETA se
+miden con la voz grabada por los integrantes (ver voz.py). Con --voz se miden con los
 clips de Gemini que ya estén en caché, y falla si falta alguno.
 
 No genera voz ni renderiza el video.
@@ -27,7 +28,7 @@ from .voz import CARACTERES_POR_SEGUNDO, RAIZ
 SIN_ASIGNAR = "Sin asignar"
 
 
-def recorrer(archivo, escena="VideoCompleto", calidad="-ql", con_voz=False):
+def recorrer(archivo, escena="VideoCompleto", calidad="-ql", con_voz=False, grabaciones=None):
     """Recorre la escena sin animar. Devuelve (carpeta de capturas, recorrido).
 
     Deja una imagen por paso narrado y el recorrido de notas.json: título, límite
@@ -37,7 +38,9 @@ def recorrer(archivo, escena="VideoCompleto", calidad="-ql", con_voz=False):
     carpeta = RAIZ / "media" / "diapositivas" / archivo.stem
     shutil.rmtree(carpeta, ignore_errors=True)
     entorno = dict(os.environ, DIAPOSITIVAS_DIR=str(carpeta))
-    if con_voz:
+    if grabaciones:
+        entorno.update(VOZ_SERVICIO="grabaciones", VOZ_GRABACIONES=str(Path(grabaciones).resolve()))
+    elif con_voz:
         entorno.update(VOZ_SERVICIO="gemini", VOZ_SOLO_CACHE="1")
     else:
         entorno["VOZ_SERVICIO"] = "silencio"
@@ -89,6 +92,7 @@ def escribir(recorrido, archivo, orden, con_voz):
             duracion += f" **Se pasa del límite por {reloj(total - limite * 60)}.**"
     lineas += [
         duracion,
+        con_voz if isinstance(con_voz, str) else
         "Tiempos medidos con la voz del prototipo." if con_voz else
         f"Tiempos estimados a {CARACTERES_POR_SEGUNDO} caracteres por segundo; "
         "cambian cuando cada quien lea su parte.",
@@ -104,10 +108,24 @@ def escribir(recorrido, archivo, orden, con_voz):
     if callados:
         lineas += ["", f"**Todavía no tienen parte:** {', '.join(callados)}."]
 
+    # Bloques: pasos seguidos de un mismo integrante, aunque crucen secciones
+    # (segundos de voz, inicio, fin), indexados por el primer paso del bloque
+    narrados = [paso for paso in pasos if paso["nota"]]
+    bloques = {}
+    for i, paso in enumerate(narrados):
+        if i and paso["quien"] == narrados[i - 1]["quien"]:
+            segundos, desde, _ = bloques[primero]
+            bloques[primero] = (segundos + paso["duracion"], desde, paso["fin"])
+        else:
+            primero = i
+            bloques[i] = (paso["duracion"], paso["inicio"], paso["fin"])
+
     seccion, quien = None, None
-    for paso in pasos:
-        if not paso["nota"]:
-            continue
+    for i, paso in enumerate(narrados):
+        if i in bloques:
+            segundos, desde, hasta = bloques[i]
+            lineas += ["", f"> **Bloque de {paso['quien'] or SIN_ASIGNAR}: {reloj(segundos)} de voz** "
+                           f"({reloj(desde)} a {reloj(hasta)})"]
         if paso["seccion"] != seccion:
             seccion, quien = paso["seccion"], None
             lineas += ["", f"## {seccion or 'Portada'}"]
@@ -125,14 +143,17 @@ def main():
     opciones = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     opciones.add_argument("video", help="archivo .py del video, con la escena VideoCompleto")
     opciones.add_argument("--escena", default="VideoCompleto")
+    opciones.add_argument("--grabaciones", metavar="CARPETA",
+                          help="medir los tiempos con la voz grabada (carpeta con indice.json)")
     opciones.add_argument("--voz", action="store_true",
                           help="medir los tiempos con los clips de Gemini en caché")
     args = opciones.parse_args()
 
     archivo = Path(args.video).resolve()
-    _, recorrido = recorrer(archivo, args.escena, con_voz=args.voz)
+    _, recorrido = recorrer(archivo, args.escena, con_voz=args.voz, grabaciones=args.grabaciones)
     orden = f"uv run python -m herramientas_video.guion {archivo.relative_to(RAIZ).as_posix()}"
-    destino, total, limite = escribir(recorrido, archivo, orden, args.voz)
+    medicion = "Tiempos medidos con las grabaciones de los integrantes." if args.grabaciones else args.voz
+    destino, total, limite = escribir(recorrido, archivo, orden, medicion)
     print(f"{destino.relative_to(RAIZ)}: {reloj(total)}"
           + (f" de {reloj(limite * 60)}" if limite else ""))
 

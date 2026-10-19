@@ -39,6 +39,11 @@ REGIONES_MOCKUP = {
 # guion.md muestra cuánto dura cada sección de verdad.
 #   portada 10 · 1. Problemática 40 · 2. Ideación 40 · 3. Ética 30 · 4. Enfoque 45
 #   5. Recolección 30 · 6. Entendimiento 110 · 7. Conclusiones 30
+# Bloques continuos de voz, grabados por cada integrante (audios/):
+#   Daniel: portada, 1 y 2 hasta la arquitectura · Nicolás: el wireframe, 3 y 4
+#   Joubert: 5 y la primera mitad de 6 · Daniel: la segunda mitad de 6 y 7
+
+IMAGENES = AQUI / "imagenes"  # gráficas recortadas del notebook de entendimiento
 
 
 def caja(titulo, detalle=None, font_size=24, borde=GRIS):
@@ -86,6 +91,14 @@ def ficha(texto):
     return VGroup(marco, rotulo)
 
 
+def igualar(*cajas):
+    """Da a todas las cajas el ancho de la más ancha, para alinearlas en una grilla."""
+    ancho = max(c[0].width for c in cajas)
+    for c in cajas:
+        c[0].stretch_to_fit_width(ancho)
+    return VGroup(*cajas)
+
+
 def numero(n, radio=0.2):
     """Círculo amarillo con un número negro, como los del wireframe."""
     return VGroup(
@@ -103,7 +116,7 @@ class EntregaBase(EscenaNarrada):
         if self.nota_actual is not None:
             objetos += (self.nota_actual,)
             self.nota_actual = None
-        self.paso(duracion, FadeOut(VGroup(*objetos)), tope=0.8)
+        self.paso(duracion, FadeOut(Group(*objetos)), tope=0.8)
 
     def portada(self):
         self.firma()
@@ -322,7 +335,7 @@ class EntregaBase(EscenaNarrada):
                     nota="Cuatro dolores del proceso actual.", tope=3.0,
                 ),
             ),
-            quien=NICOLAS,
+            quien=DANIEL,
         )
 
         # Componentes analíticos y tecnológicos
@@ -416,23 +429,41 @@ class EntregaBase(EscenaNarrada):
                     nota="Wireframe: las cifras entre corchetes son marcadores.",
                 ),
             ),
+            quien=NICOLAS,
         )
         self.limpiar()
 
     def acto_etica(self):
         self.seccion("3. Aspectos éticos y legales")
-        puntos = lista(
-            "Privacidad y confidencialidad: pendiente",
-            "Transparencia y regulación: pendiente",
-        )
+        tarjetas = igualar(
+            caja("Privacidad", "Ley 1581 de 2012\nsin nombres ni documentos\nninguna salida individual",
+                 borde=C_AMARILLO),
+            caja("Transparencia", "Ley 1712 de 2014\nregistros reservados\nla decisión es pública"),
+            caja("Legalidad", "Leyes 44 de 1990 y 1995 de 2019\ntopes al aumento del impuesto"),
+            caja("Equidad", "el modelo estima recaudo agregado\ny no señala contribuyentes"),
+        ).arrange_in_grid(rows=2, cols=2, buff=(0.6, 0.5))
+        ajustar(tarjetas).move_to(UP * 0.3)
         self.narrar(
             (
-                "Pendiente: las implicaciones éticas y de privacidad del uso de estos datos.",
-                lambda d: self.paso(d, FadeIn(puntos[0], shift=RIGHT * 0.2)),
+                "Los datos catastrales vinculan predios con personas. Por la Ley 1581, el archivo "
+                "de análisis no tiene nombres ni documentos, y ninguna salida muestra un predio "
+                "individual.",
+                lambda d: self.paso(d, FadeIn(tarjetas[0], shift=UP * 0.2)),
             ),
             (
-                "Pendiente: los aspectos regulatorios y cómo se atienden.",
-                lambda d: self.paso(d, FadeIn(puntos[1], shift=RIGHT * 0.2)),
+                "Lo público es la decisión, no los registros: al Concejo llegan agregados "
+                "explicables, con el recaudo esperado como una estimación.",
+                lambda d: self.paso(d, FadeIn(tarjetas[1], shift=UP * 0.2)),
+            ),
+            (
+                "El motor respeta los topes legales al aumento del impuesto,",
+                lambda d: self.paso(d, FadeIn(tarjetas[2], shift=UP * 0.2)),
+            ),
+            (
+                "y el modelo de pago solo estima el recaudo agregado: no señala a ningún "
+                "contribuyente.",
+                lambda d: self.paso(d, FadeIn(tarjetas[3], shift=UP * 0.2),
+                                    nota="Minimización de datos desde el diseño."),
             ),
             quien=NICOLAS,
         )
@@ -440,45 +471,109 @@ class EntregaBase(EscenaNarrada):
 
     def acto_enfoque(self):
         self.seccion("4. Enfoque analítico")
-        puntos = lista(
-            "Hipótesis o preguntas de negocio: pendiente",
-            "Técnicas de análisis y de machine learning: pendiente",
-            "Métricas de calidad del modelo: pendiente",
+
+        def columna(rotulo, pregunta, componente, detalle, metricas):
+            cabeza = VGroup(
+                Text(rotulo, font_size=26, color=C_AMARILLO, weight=BOLD),
+                Text(pregunta, font_size=22, color=C_TEXTO, line_spacing=0.85),
+            ).arrange(DOWN, buff=0.2)
+            bloque = caja(componente, detalle, font_size=24)
+            pie = Text(metricas, font_size=20, color=GRIS, line_spacing=0.85)
+            return VGroup(cabeza, bloque, pie).arrange(DOWN, buff=0.4)
+
+        escenarios = columna(
+            "Pregunta 1 · Escenarios",
+            "¿Qué tarifas y límites para 2027 acercan\nel impuesto al pleno sin un choque excesivo?",
+            "Motor de escenarios", "malla de escenarios →\nfrontera convergencia–choque",
+            "Validación: reproducir el impuesto de 2026",
+        )
+        pago = columna(
+            "Pregunta 2 · Pago",
+            "¿Qué tan bien se anticipa\nsi un predio pagará?",
+            "Clasificación binaria", "regresión logística · árbol de decisión\ngradient boosting",
+            "ROC-AUC · log-loss · calibración\nfrente a repetir el pago de 2025",
+        )
+        columnas = VGroup(escenarios, pago).arrange(RIGHT, buff=1.0, aligned_edge=UP)
+        ajustar(columnas).move_to(UP * 0.55)
+        separador = DashedLine(UP * 2.9, DOWN * 1.6, color=GRIS, stroke_width=1.5).move_to(
+            (escenarios.get_right() + pago.get_left()) / 2 * RIGHT + UP * 0.65)
+        recaudo = Text("Recaudo esperado = suma de cada impuesto × su probabilidad de pago",
+                       font_size=24, color=C_AMARILLO)
+        ajustar(recaudo).move_to(DOWN * 2.15)
+        self.narrar(
+            (
+                "Primera pregunta: qué tarifas y límites acercan el impuesto al pleno sin un "
+                "choque excesivo en la cola.",
+                lambda d: self.paso(d, FadeIn(escenarios[0], shift=DOWN * 0.2), Create(separador)),
+            ),
+            (
+                "La responde el motor de escenarios: recorre una malla de escenarios, muestra la "
+                "frontera entre convergencia y choque, y se valida reproduciendo el impuesto de "
+                "2026.",
+                lambda d: self.paso(d, FadeIn(escenarios[1], shift=UP * 0.2),
+                                    FadeIn(escenarios[2])),
+            ),
+            quien=NICOLAS,
         )
         self.narrar(
             (
-                "Pendiente: las hipótesis o preguntas de negocio que guían la experimentación.",
-                lambda d: self.paso(d, FadeIn(puntos[0], shift=RIGHT * 0.2)),
-            ),
-            quien=JOUBERT,
-        )
-        self.narrar(
-            (
-                "Pendiente: las técnicas con las que se responderán esas preguntas.",
-                lambda d: self.paso(d, FadeIn(puntos[1], shift=RIGHT * 0.2)),
+                "Segunda: qué tan bien se anticipa si un predio pagará. Es una clasificación "
+                "binaria con tres algoritmos: regresión logística, árbol de decisión y gradient "
+                "boosting,",
+                lambda d: self.paso(d, FadeIn(pago[0], shift=DOWN * 0.2),
+                                    FadeIn(pago[1], shift=UP * 0.2), tope=2.4),
             ),
             (
-                "Pendiente: las métricas con las que se evaluará el modelo.",
-                lambda d: self.paso(d, FadeIn(puntos[2], shift=RIGHT * 0.2)),
+                "evaluados con ROC-AUC, log-loss y calibración, frente a repetir el pago de 2025.",
+                lambda d: self.paso(d, FadeIn(pago[2])),
+            ),
+            (
+                "Con esas probabilidades, el recaudo esperado es la suma de cada impuesto por su "
+                "probabilidad de pago.",
+                lambda d: self.paso(d, FadeIn(recaudo, shift=UP * 0.2),
+                                    nota="El modelo describe asociaciones de 2026, no reacciones a otra tarifa."),
             ),
         )
         self.limpiar()
 
     def acto_datos(self):
         self.seccion("5. Recolección de datos")
-        puntos = lista(
-            "Fuentes de datos, estructura e importancia: pendiente",
-            "Diccionario de datos: pendiente",
-        )
+        catastro = caja("Levantamiento\ncatastral", "INTERLIS · LADM-COL", font_size=22)
+        postgres = caja("PostgreSQL", "217 → 45 tablas", font_size=22)
+        programa = caja("SQL + Python", "un predio por fila", font_size=22)
+        parquet = caja("Archivo de predios", "22 220 predios\nsin datos personales", font_size=22,
+                       borde=C_AMARILLO)
+        cadena = VGroup(catastro, postgres, programa, parquet).arrange(RIGHT, buff=0.85)
+        ajustar(cadena).move_to(UP * 1.2)
+        enlaces = VGroup(*[flecha(a, b) for a, b in zip(cadena[:-1], cadena[1:])])
+        facturacion = caja("Facturación del predial", "Secretaría de Hacienda · 2025–2026",
+                           font_size=22).move_to(DOWN * 1.3 + LEFT * 3.0)
+        union = Arrow(facturacion.get_right(), parquet.get_bottom(), buff=0.15, color=GRIS,
+                      stroke_width=3, max_tip_length_to_length_ratio=0.12)
+        rotulo_union = Text("impuesto 2026 y pago 2025–2026\npor número predial", font_size=20,
+                            color=GRIS, line_spacing=0.85).next_to(union.get_center(), DR, buff=0.15)
         self.narrar(
             (
-                "Pendiente: las fuentes de datos, cómo están estructuradas y cuáles "
-                "son las más importantes.",
-                lambda d: self.paso(d, FadeIn(puntos[0], shift=RIGHT * 0.2)),
+                "Los datos vienen de dos fuentes. La principal es el levantamiento catastral en el "
+                "modelo LADM-COL: lo cargamos en PostgreSQL y lo podamos de 217 a 45 tablas útiles.",
+                lambda d: self.paso(
+                    d, LaggedStart(FadeIn(catastro), GrowArrow(enlaces[0]), FadeIn(postgres),
+                                   GrowArrow(enlaces[1]), FadeIn(programa), lag_ratio=0.35),
+                    tope=3.0,
+                ),
             ),
             (
-                "Pendiente: las entidades y atributos más relevantes del diccionario de datos.",
-                lambda d: self.paso(d, FadeIn(puntos[1], shift=RIGHT * 0.2)),
+                "La segunda es la facturación del predial: de ella solo tomamos el impuesto de 2026 "
+                "y si el predio pagó en 2025 y 2026.",
+                lambda d: self.paso(d, FadeIn(facturacion, shift=UP * 0.2)),
+            ),
+            (
+                "Todo se une por número predial en un archivo de 22 220 predios, sin datos "
+                "personales y con su diccionario de datos.",
+                lambda d: self.paso(
+                    d, GrowArrow(enlaces[2]), FadeIn(parquet), GrowArrow(union), FadeIn(rotulo_union),
+                    nota="El catastro es la fuente de todo atributo catastral.",
+                ),
             ),
             quien=JOUBERT,
         )
@@ -487,50 +582,190 @@ class EntregaBase(EscenaNarrada):
     def acto_entendimiento(self):
         # Es la actividad que más pesa (35 %): merece la mayor parte del tiempo.
         self.seccion("6. Entendimiento de los datos")
-        puntos = lista(
-            "Calidad de los datos: pendiente",
-            "Análisis univariado: pendiente",
-            "Análisis multivariado: pendiente",
-        )
+
+        # Unidad de análisis
+        unidad = VGroup(
+            cifra("22 220", "predios del\nlevantamiento"),
+            cifra("16 705", "base del avalúo:\nindividuales con construcción"),
+        ).arrange(RIGHT, buff=1.6, aligned_edge=UP).move_to(UP * 0.4)
+        paso_unidad = Arrow(unidad[0][0].get_right(), unidad[1][0].get_left(), buff=0.4,
+                            color=GRIS, stroke_width=3)
         self.narrar(
             (
-                "Pendiente: qué tan completos y consistentes son los datos, y si "
-                "alcanzan para la solución planteada.",
-                lambda d: self.paso(d, FadeIn(puntos[0], shift=RIGHT * 0.2)),
+                "En el notebook de entendimiento analizamos los 22 220 predios. Como los regímenes "
+                "se valoran distinto, el análisis del avalúo usa 16 705 predios individuales con "
+                "construcción, el 75 % del total.",
+                lambda d: self.paso(d, FadeIn(unidad[0], shift=UP * 0.2), GrowArrow(paso_unidad),
+                                    FadeIn(unidad[1], shift=UP * 0.2), tope=2.4),
             ),
-            quien=GABRIEL,
+            quien=JOUBERT,
         )
+
+        # Univariado
+        histograma = figura(IMAGENES / "avaluo-log.png", alto=2.9)
+        ajustar(histograma, 12.6).move_to(UP * 1.2)
+        novedades = VGroup(
+            cifra("236 M", "avalúo mediano\n(pesos)"),
+            cifra("64 %", "cambió su\nnúmero predial"),
+            cifra("10 %", "predios\nnuevos"),
+        ).arrange(RIGHT, buff=1.5, aligned_edge=UP).move_to(DOWN * 1.55)
+
+        def mostrar_histograma(d):
+            self.despejar(d * 0.3, unidad, paso_unidad)
+            self.paso(d * 0.7, FadeIn(histograma), FadeIn(novedades[0], shift=UP * 0.2),
+                      nota="Univariado: histogramas y QQ-plots, en escala original y log10.")
+
         self.narrar(
             (
-                # Las gráficas del notebook se muestran con figura(AQUI / "imagenes" / "...png").
-                "Pendiente: el hallazgo más importante del análisis univariado.",
-                lambda d: self.paso(d, FadeIn(puntos[1], shift=RIGHT * 0.2)),
+                "El avalúo es muy asimétrico: la mediana es de 236 millones de pesos, y en escala "
+                "logarítmica queda casi simétrico.",
+                mostrar_histograma,
+            ),
+            (
+                "Y el catastro anterior estaba desactualizado: el 64 % de los predios cambió su "
+                "número predial, y el 10 % son nuevos.",
+                lambda d: self.paso(d, LaggedStart(FadeIn(novedades[1], shift=UP * 0.2),
+                                                   FadeIn(novedades[2], shift=UP * 0.2),
+                                                   lag_ratio=0.5)),
             ),
         )
+
+        # Multivariado
+        pca = figura(IMAGENES / "pca-varianza.png", alto=4.6).move_to(LEFT * 3.3 + UP * 0.35)
+        tamano = VGroup(
+            cifra("50 %", "de la varianza en el\nprimer componente: el tamaño"),
+            cifra("0,92", "correlación del tamaño\ncon el avalúo"),
+        ).arrange(DOWN, buff=0.7).next_to(pca, RIGHT, buff=1.0)
+
+        def mostrar_pca(d):
+            self.despejar(d * 0.3, histograma, novedades)
+            self.paso(d * 0.7, FadeIn(pca), FadeIn(tamano[0], shift=UP * 0.2))
+
         self.narrar(
             (
-                "Pendiente: el hallazgo más importante del análisis multivariado.",
-                lambda d: self.paso(d, FadeIn(puntos[2], shift=RIGHT * 0.2)),
+                "En lo multivariado, el avalúo depende casi solo del tamaño: el primer componente "
+                "principal, que es el tamaño, explica la mitad de la varianza",
+                mostrar_pca,
+            ),
+            (
+                "y se correlaciona 0,92 con el avalúo.",
+                lambda d: self.paso(d, FadeIn(tamano[1], shift=UP * 0.2),
+                                    nota="Multivariado: correlaciones, tablas cruzadas, pruebas, PCA y regresión."),
+            ),
+        )
+
+        # Calidad
+        problemas = cifra("31", "problemas en la\nbitácora de calidad").move_to(LEFT * 4.3 + UP * 0.4)
+        principales = lista(
+            "Fecha de visita de relleno: 9 010 predios",
+            "Año de construcción 2000: 3 322 predios",
+            "Avalúo igual a 0: 2 335 predios",
+            font_size=26,
+        ).next_to(problemas, RIGHT, buff=1.0)
+
+        def mostrar_calidad(d):
+            self.despejar(d * 0.3, pca, tamano)
+            self.paso(d * 0.7, FadeIn(problemas, shift=UP * 0.2),
+                      LaggedStart(*[FadeIn(r, shift=RIGHT * 0.2) for r in principales],
+                                  lag_ratio=0.4), tope=2.4)
+
+        self.narrar(
+            (
+                "La bitácora de calidad registra 31 problemas. Los más grandes son valores de "
+                "relleno: una fecha de visita repetida en 9 010 predios y el año 2000 en 3 322.",
+                mostrar_calidad,
+            ),
+            (
+                "Se marcan como faltantes, y ninguno impide el análisis.",
+                lambda d: self.paso(d, Indicate(problemas[0], color=C_AMARILLO),
+                                    nota="Completitud, conformidad, consistencia, precisión y relevancia."),
+            ),
+            quien=DANIEL,
+        )
+
+        # Facturación y pago
+        cola = cifra("10 % → 81 %", "el 10 % de predios con mayor impuesto\nfactura el 81 % del total")
+        cola.move_to(UP * 0.3)
+
+        def mostrar_cola(d):
+            self.despejar(d * 0.3, problemas, principales)
+            self.paso(d * 0.7, FadeIn(cola, shift=UP * 0.2))
+
+        self.narrar(
+            (
+                "Con la facturación, el impuesto se concentra en la cola: el 10 % de los predios "
+                "con mayor impuesto factura el 81 % del total.",
+                mostrar_cola,
+            ),
+        )
+
+        decil = figura(IMAGENES / "pago-por-decil.png", alto=4.8).move_to(LEFT * 3.2 + UP * 0.3)
+        historial = VGroup(
+            cifra("80 %", "pagó en 2026 si\npagó en 2025"),
+            cifra("0,3 %", "pagó en 2026 si\nno pagó en 2025"),
+        ).arrange(DOWN, buff=0.7).next_to(decil, RIGHT, buff=1.0)
+
+        def mostrar_decil(d):
+            self.despejar(d * 0.3, cola)
+            self.paso(d * 0.7, FadeIn(decil), FadeIn(historial, shift=UP * 0.2))
+
+        self.narrar(
+            (
+                "Y el historial anticipa el pago: pagó en 2026 el 80 % de quienes pagaron en 2025, "
+                "y casi nadie de quienes no.",
+                mostrar_decil,
+            ),
+            (
+                "La incertidumbre está en los predios sin registro de 2025, la curva amarilla.",
+                lambda d: self.paso(d, Circumscribe(decil, color=C_AMARILLO, buff=0.05),
+                                    nota="Chi-cuadrado: V de Cramér = 0,57."),
+            ),
+        )
+        suficiencia = VGroup(
+            Text("Los datos alcanzan", font_size=40, color=C_AMARILLO, weight=BOLD),
+            Text("19 150 predios facturados con avalúo, destinación, zona y régimen\n"
+                 "para el motor de escenarios y para el modelo de pago",
+                 font_size=26, color=C_TEXTO, line_spacing=0.9),
+        ).arrange(DOWN, buff=0.4)
+
+        def mostrar_suficiencia(d):
+            self.despejar(d * 0.3, decil, historial)
+            self.paso(d * 0.7, FadeIn(suficiencia, shift=UP * 0.2))
+
+        self.narrar(
+            (
+                "Así, los datos alcanzan: 19 150 predios facturados, con avalúo, destinación, zona "
+                "y régimen, para el motor y para el modelo.",
+                mostrar_suficiencia,
             ),
         )
         self.limpiar()
 
     def cierre(self):
         self.seccion("7. Conclusiones iniciales")
-        puntos = lista(
-            "Conclusiones e insights: pendiente",
-            "Próximas acciones: pendiente",
-        )
+        hallazgos = lista(
+            "Se factura la mitad del impuesto pleno",
+            "El choque se concentra en pocos predios",
+            "El historial de pago sostiene el recaudo esperado",
+        ).move_to(UP * 1.1)
+        siguientes = VGroup(
+            Text("Entrega final", font_size=26, color=C_AMARILLO, weight=BOLD),
+            Text("validar el motor · comparar tres modelos · API y aplicación web",
+                 font_size=24, color=C_TEXTO),
+        ).arrange(DOWN, buff=0.2).move_to(DOWN * 1.5)
         self.narrar(
             (
-                "Pendiente: las primeras conclusiones e insights.",
-                lambda d: self.paso(d, FadeIn(puntos[0], shift=RIGHT * 0.2)),
+                "En síntesis: se factura la mitad del impuesto pleno, el choque se concentra en "
+                "pocos predios y el historial de pago es una base sólida para el recaudo esperado.",
+                lambda d: self.paso(d, LaggedStart(*[FadeIn(r, shift=RIGHT * 0.2) for r in hallazgos],
+                                                   lag_ratio=0.5), tope=3.0),
             ),
             (
-                "Pendiente: las acciones que siguen para la entrega final.",
-                lambda d: self.paso(d, FadeIn(puntos[1], shift=RIGHT * 0.2)),
+                "Para la entrega final: validar el motor con las tarifas vigentes, comparar los "
+                "tres modelos y construir la API y la aplicación. Gracias.",
+                lambda d: self.paso(d, FadeIn(siguientes, shift=UP * 0.2)),
             ),
-            quien=GABRIEL,
+            quien=DANIEL,
             pausa=1.5,
         )
         self.limpiar()
