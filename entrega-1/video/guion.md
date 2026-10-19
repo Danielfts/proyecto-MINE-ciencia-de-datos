@@ -4,51 +4,51 @@ Generado a partir de `video_entrega_1.py`. No lo edite a mano: cambie la narraci
 
     uv run python -m herramientas_video.guion entrega-1/video/video_entrega_1.py
 
-**Duración: 1:50** de un máximo de 6:00.
+**Duración: 2:45** de un máximo de 6:00.
 Tiempos estimados a 15 caracteres por segundo; cambian cuando cada quien lea su parte.
 
 | Integrante | Tiempo de voz | Participación | Palabras |
 | --- | --- | --- | --- |
-| Daniel Felipe Triviño Santana | 0:22 | 23% | 50 |
-| Nicolas Bedoya Figueroa | 0:24 | 25% | 52 |
-| Joubert Daniel Álvarez | 0:25 | 27% | 56 |
-| Gabriel Bejarano | 0:23 | 25% | 47 |
+| Daniel Felipe Triviño Santana | 0:54 | 37% | 110 |
+| Nicolas Bedoya Figueroa | 0:46 | 31% | 117 |
+| Joubert Daniel Álvarez | 0:25 | 17% | 56 |
+| Gabriel Bejarano | 0:23 | 15% | 47 |
 
 ## Portada
 
 **0:01 · Daniel Felipe Triviño Santana**
 
-Pendiente: una frase que presente el proyecto y la organización.
+Transición predial 2027: un producto de datos para fijar las tarifas del impuesto predial después de una actualización catastral.
 
 ## 1. Problemática y entendimiento del negocio
 
-**0:07 · Daniel Felipe Triviño Santana**
+**0:14 · Daniel Felipe Triviño Santana**
 
-Pendiente: quién es la organización y qué información del negocio muestra que el problema importa.
+Multiaservi Consultores asesora a un municipio colombiano que acaba de actualizar su catastro. Su avalúo mediano se multiplicó por 4,1 y, aunque bajó la tarifa, el impuesto facturado casi se duplicó.
 
-Pendiente: la problemática u oportunidad que se aborda con ciencia de datos.
+Aun así, se facturó solo la mitad del impuesto pleno: una brecha de 68 mil millones de pesos. Y los límites al aumento vencen en 2027.
 
-Pendiente: los objetivos del proyecto y los KPIs con los que se evaluará.
+El objetivo: comparar escenarios de tarifas para 2027 con dos indicadores opuestos: cuánto se acerca el impuesto al pleno y cuánto sube para los predios de mayor impuesto, sin sacrificar recaudo, progresividad ni legalidad.
 
 ## 2. Ideación: el producto de datos
 
-**0:26 · Nicolas Bedoya Figueroa**
+**0:59 · Nicolas Bedoya Figueroa**
 
-Pendiente: quiénes usarán el producto de datos, qué hacen hoy y qué les duele.
+Lo usan los consultores de Multiaservi, que hoy arman cada propuesta en hojas de cálculo antes de que pase por la alcaldía y el Concejo. Cada escenario nuevo se rehace a mano y cada tarifa debe explicarse en palabras simples.
 
-Pendiente: los requerimientos del producto y sus componentes analíticos y tecnológicos.
+Proponemos un motor de escenarios y un modelo que estima la probabilidad de pago de cada predio, servidos por una API y una aplicación web. Al Concejo llega un escenario congelado, no el simulador.
 
-Pendiente: un recorrido corto por el mockup.
+En el prototipo se fijan tarifas y límites, se ven las alertas y los indicadores, y se lee el resultado en palabras simples.
 
 ## 3. Aspectos éticos y legales
 
-**0:43 · Nicolas Bedoya Figueroa**
+**1:38 · Nicolas Bedoya Figueroa**
 
 Pendiente: las implicaciones éticas y de privacidad del uso de estos datos. Pendiente: los aspectos regulatorios y cómo se atienden.
 
 ## 4. Enfoque analítico
 
-**0:54 · Joubert Daniel Álvarez**
+**1:49 · Joubert Daniel Álvarez**
 
 Pendiente: las hipótesis o preguntas de negocio que guían la experimentación.
 
@@ -56,13 +56,13 @@ Pendiente: las técnicas con las que se responderán esas preguntas. Pendiente: 
 
 ## 5. Recolección de datos
 
-**1:10 · Joubert Daniel Álvarez**
+**2:05 · Joubert Daniel Álvarez**
 
 Pendiente: las fuentes de datos, cómo están estructuradas y cuáles son las más importantes. Pendiente: las entidades y atributos más relevantes del diccionario de datos.
 
 ## 6. Entendimiento de los datos
 
-**1:23 · Gabriel Bejarano**
+**2:18 · Gabriel Bejarano**
 
 Pendiente: qué tan completos y consistentes son los datos, y si alcanzan para la solución planteada.
 
@@ -72,6 +72,6 @@ Pendiente: el hallazgo más importante del análisis multivariado.
 
 ## 7. Conclusiones iniciales
 
-**1:41 · Gabriel Bejarano**
+**2:36 · Gabriel Bejarano**
 
 Pendiente: las primeras conclusiones e insights. Pendiente: las acciones que siguen para la entrega final.
