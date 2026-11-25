@@ -4,49 +4,72 @@ Esta carpeta guarda el material del curso MINE-4101 que usamos como referencia p
 
 ## Contenido esperado
 
-### Documentos del curso
+Una copia de todo lo publicado en Bloque Neón, con la misma estructura de módulos y semanas de la sección *Contenido* y los nombres de archivo del LMS (copia consolidada el 23 de noviembre de 2026), más el clon del sitio de las prácticas y las lecturas de `lecturas/`. Cada material está una sola vez.
 
-| Archivo | Contenido |
+| Carpeta | Material | Enlaces del LMS |
+| --- | --- | --- |
+| `Generalidades/` | Programa y cronograma del curso | |
+| `Módulo 0. Introducción/Semana 1/` | Introducción al curso; Fundamentos de la Ciencia de Datos | |
+| `Módulo 0. Introducción/Semana 2/` | Productos de datos, métodos y creación de valor | |
+| `Módulo 1. Análisis y limpieza de datos/Semana 3/` | Análisis Exploratorio de Datos (EDA); Tutorial 1 | [data-analysis-tutorial](https://github.com/datascience-uniandes/data-analysis-tutorial/) |
+| `Módulo 1. .../Semana 6/` | Calidad y limpieza de datos; Tutorial 2 | [data-quality-tutorial](https://github.com/datascience-uniandes/data-quality-tutorial) |
+| `Módulo 1. .../Semana 7/` | Estadística inferencial; Tutorial 3 | [hypothesis-testing-tutorial](https://github.com/datascience-uniandes/hypothesis-testing-tutorial/) |
+| `Módulo 2. Machine Learning y MLOps/Semana 9/` | Fundamentos de modelos comunes supervisados | Práctica 1 |
+| `Módulo 2. .../Semana 10/` | Fundamentos de modelos comunes no supervisados | Práctica 3 |
+| `Módulo 2. .../Semana 11/` | Métricas avanzadas y generación de valor | Práctica 4 |
+| `Módulo 2. .../Semana 12/` | Interpretabilidad | |
+| `Módulo 2. .../Semana 13/` | IA generativa en ciencia de datos | |
+| `Módulo 2. .../Semana 14/` | Despliegue de modelos; tutorial de despliegue con FastAPI y Docker | [model-deployment-tutorial](https://github.com/datascience-uniandes/model-deployment-tutorial) |
+| `Módulo 2. .../Semana 15/` | Atributos en ML | |
+| `PracticasMachineLearning/` | Clon del sitio de las prácticas: las siete prácticas y sus guías (ver [Prácticas](#prácticas)) | [sitio de las prácticas](https://datascience-uniandes.github.io/PracticasMachineLearning) |
+| `Talleres/`, `Parciales/` | Enunciados y datasets de los talleres y del primer parcial; simulacro del segundo | |
+| `Proyecto final/` | Enunciado (el mismo `Proyecto Final.pdf` de la raíz) | |
+| `Clases Virtuales/` y los `.html` de algunas semanas | Páginas del LMS con los enlaces a las grabaciones en Zoom | |
+| `lecturas/` | Lecturas de acceso abierto (ver [Lecturas](#lecturas)) | |
+
+Las semanas 4, 5 y 8 están vacías en el LMS. Los cuestionarios solo se consultan en Bloque Neón.
+
+### Relación con el proyecto
+
+| Actividad del proyecto (ver [TODO.md](../TODO.md)) | Material de apoyo |
 | --- | --- |
-| `Programa MINE4101 202620.pdf` | Programa del curso |
-| `Cronograma MINE4101 202620.pdf` | Cronograma del semestre |
+| 1. Problemática y entendimiento del negocio | Fundamentos de la Ciencia de Datos; Productos de datos (KPIs y medición de valor) |
+| 2. Ideación | Productos de datos (anatomía del producto, Design Thinking) |
+| 4. Enfoque analítico | Estadística inferencial; EDA; Productos de datos (métricas de modelo frente a métricas de negocio); Métricas avanzadas y generación de valor |
+| 5. Recolección de datos | Calidad y limpieza de datos |
+| 6. Entendimiento de los datos | EDA; Calidad y limpieza de datos; tutoriales 1 a 3 |
+| 8. Preparación de datos | Calidad y limpieza de datos (limpieza e imputación); Atributos en ML; práctica 2 (actividad 2, ingeniería de características); guías `pipeline`, `one-hot`, `estandarizar`, `escalar-variables`, `nulos`, `caracteristicas-derivadas` |
+| 9. Estrategia de validación | Fundamentos de modelos supervisados; guías `division-datos`, `validacion-cruzada`, `seleccion-hiperparametros`, `gridsearchcv` |
+| 10. Construcción y evaluación del modelo | Fundamentos de modelos supervisados; Métricas avanzadas y generación de valor; Interpretabilidad; práctica 2 (clasificación) y práctica 5 (interpretabilidad); guías `regresion-logistica`, `arbol-decision`, `gradient-boosting`, `curva-roc`, `matriz-confusion`, `comparar-metricas`, `impacto-negocio`, `shap` |
+| 11. Producto de datos | Despliegue de modelos y su tutorial (FastAPI y Docker); práctica 6 (despliegue); guías `guardar-modelo`, `api-fastapi`, `docker`, `docker-compose` |
+| 3. Aspectos éticos, 13. Conclusiones | Práctica 7 (justicia) y guía `justicia` |
+| Metodología ASUM-DM y formato de entrega | Productos de datos; Introducción al curso |
 
-### Diapositivas
+### Prácticas
 
-En el orden del cronograma. Por ahora cubren las clases 1 a 6; las diapositivas de las clases siguientes (machine learning, interpretabilidad, despliegue, etc.) deben agregarse aquí a medida que se publiquen.
+El sitio de prácticas del curso, [PracticasMachineLearning](https://datascience-uniandes.github.io/PracticasMachineLearning), es **la referencia principal de cómo hacer** la preparación de datos, la validación, los modelos y el despliegue de la entrega final. Su repositorio, [datascience-uniandes/PracticasMachineLearning](https://github.com/datascience-uniandes/PracticasMachineLearning), se clona en `PracticasMachineLearning/`, en esta carpeta, y se actualiza con `git -C course-contents/PracticasMachineLearning pull`:
 
-| Archivo | Clase | Temas | Tutorial asociado |
-| --- | --- | --- | --- |
-| `introduccion_curso.pdf` (7 diapositivas) | 1 | Plan de temas, evaluación, reglas de entrega de talleres y del proyecto final, herramientas de trabajo | — |
-| `fundamentos_ciencia_datos.pdf` (18) | 1 | Qué es y qué no es la ciencia de datos; partir de una pregunta de negocio; tipos de tareas (descriptiva, diagnóstica, predictiva, prescriptiva); casos de uso; habilidades; perspectiva de negocio (costos vs. ROI); fallas típicas (datos sesgados, fuga de información, métrica equivocada); ciclo de vida y roles | — |
-| `productos_datos_valor.pdf` (25) | 2 | Qué es un producto de datos y su anatomía (inputs, lógica, interfaz, operación, resultados); producto de datos vs. software tradicional; modelo operativo; Design Thinking, Agile, CRISP-DM, ASUM-DM y MLOps; creación y medición de valor (KPIs vs. métricas de modelo, guardrails, uplift y pensamiento causal, model-first bias) | — |
-| `eda.pdf` (71) | 3 y 4 | Objetivos del EDA e insights; tipos de variables; EDA univariado no gráfico (frecuencias, tendencia central, dispersión, posición, forma, atípicos); EDA multivariado no gráfico (tablas cruzadas, correlación, regresión lineal, PCA); visualización (marcas y canales, expresividad y efectividad, tipos de gráficas, mapas, storytelling); reducción de dimensionalidad (PCA, t-SNE, UMAP) | Tutorial 1: `data-analysis-tutorial/` |
-| `calidad_limpieza_datos.pdf` (24) | 5 | Dimensiones de calidad (completitud, consistencia, conformidad, relevancia, precisión, procesabilidad, disponibilidad, temporalidad, credibilidad); taxonomía de problemas (atributo, registro, columna, tabla, múltiples tablas); técnicas de limpieza (diccionarios, similitud, duplicados, expresiones regulares, imputación de faltantes) | Tutorial 2: `data-quality-tutorial/` |
-| `estadistica_inferencial.pdf` (22) | 6 | Población vs. muestra; error estándar; intervalos de confianza; hipótesis nula y alternativa, nivel de significancia y p-value; pasos de una prueba; significancia estadística vs. práctica; pruebas comunes (t-test, z-test, ANOVA, chi-cuadrado, correlación) | Tutorial 3: `hypothesis-testing-tutorial-master/` |
+```bash
+git clone https://github.com/datascience-uniandes/PracticasMachineLearning.git course-contents/PracticasMachineLearning
+```
 
-#### Relación con el proyecto
+A diferencia de los tutoriales, este clon conserva su carpeta `.git` para poder actualizarse; como toda la carpeta está en el `.gitignore`, git no lo ve. Es la única copia de las prácticas en esta carpeta: la que venía con el material del LMS, idéntica al clon, se quitó el 25 de noviembre de 2026. El LMS solo enlaza las prácticas 1, 3 y 4, pero el sitio tiene las siete:
 
-| Actividad del proyecto (ver [TODO.md](../TODO.md)) | Diapositivas de apoyo |
-| --- | --- |
-| 1. Problemática y entendimiento del negocio | `fundamentos_ciencia_datos.pdf`, `productos_datos_valor.pdf` (KPIs y medición de valor) |
-| 2. Ideación | `productos_datos_valor.pdf` (anatomía del producto, Design Thinking) |
-| 4. Enfoque analítico | `estadistica_inferencial.pdf`, `eda.pdf`, `productos_datos_valor.pdf` (métricas de modelo vs. de negocio) |
-| 5. Recolección de datos | `calidad_limpieza_datos.pdf` |
-| 6. Entendimiento de los datos | `eda.pdf`, `calidad_limpieza_datos.pdf` |
-| 8. Preparación de datos | `calidad_limpieza_datos.pdf` (técnicas de limpieza e imputación) |
-| Metodología ASUM-DM y formato de entrega | `productos_datos_valor.pdf`, `introduccion_curso.pdf` |
+| Práctica | Tema | Dónde |
+| --- | --- | --- |
+| 1 | Regresión lineal | `docs/talleres/practica-1/` |
+| 2 | Clasificación (incluye ingeniería de características y ensambles) | `docs/talleres/practica-2/` |
+| 3 | Agrupación | `docs/talleres/practica-3/` |
+| 4 | Pruebas A/B | `docs/talleres/practica-4/` |
+| 5 | Interpretabilidad | `docs/talleres/practica-5/` |
+| 6 | Despliegue | `docs/talleres/practica-6/` |
+| 7 | Justicia | `docs/talleres/practica-7/` |
+
+`docs/ayudas/` tiene guías cortas con código (una por técnica o métrica: pipelines, validación cruzada, curvas, SHAP, FastAPI, Docker, entre otras), y `docs/datos/`, los datasets de las prácticas. El sitio se ve en el navegador o localmente con `mkdocs serve` (ver su README). Las rutas de la tabla y de [Relación con el proyecto](#relación-con-el-proyecto) son relativas a `PracticasMachineLearning/`; en línea, `docs/ayudas/pipeline.md` es `https://datascience-uniandes.github.io/PracticasMachineLearning/ayudas/pipeline/`.
 
 ### Tutoriales
 
-Notebooks de los tutoriales del curso, con sus datasets en las carpetas `data/`. Se obtienen de la organización [datascience-uniandes](https://github.com/datascience-uniandes) en GitHub.
-
-| Carpeta | Repositorio de origen | Notebooks | Datasets |
-| --- | --- | --- | --- |
-| `data-analysis-tutorial/` | [data-analysis-tutorial](https://github.com/datascience-uniandes/data-analysis-tutorial) | `airbnb/eda.ipynb`, `fifa/eda.ipynb`, `fifa/dim-reduction.ipynb` | `airbnb/data/listings.csv.gz`, `fifa/data/fifa.csv`, `fifa/data/fifa_clean.csv` |
-| `data-quality-tutorial/` | [data-quality-tutorial](https://github.com/datascience-uniandes/data-quality-tutorial) | `data-quality-tutorial.ipynb` | `data/homicides.csv` |
-| `hypothesis-testing-tutorial-master/` | [hypothesis-testing-tutorial](https://github.com/datascience-uniandes/hypothesis-testing-tutorial) | `hypothesis-testing.ipynb`, `business-case.ipynb` | `data/listings.csv.gz`, `data/titanic.csv` |
-
-Al copiar un tutorial clonado, elimine su carpeta `.git` para no dejar repositorios anidados dentro de este.
+Están dentro de la semana que los usa (tutoriales 1 a 3 en el módulo 1, el de despliegue en la semana 14). Son copias de los repositorios de la organización [datascience-uniandes](https://github.com/datascience-uniandes) en GitHub, con sus datasets en las carpetas `data/`. Al copiar un tutorial clonado, elimine su carpeta `.git` para no dejar repositorios anidados dentro de este.
 
 ### Lecturas
 
@@ -56,9 +79,9 @@ Lecturas citadas en el programa, el cronograma y las diapositivas. La numeració
 
 | Archivo | Referencia | Dónde se cita | Fuente y licencia |
 | --- | --- | --- | --- |
-| `zech-2018-pneumonia-generalization-plos-med.pdf` | Zech et al. "Variable generalization performance of a deep learning model to detect pneumonia in chest radiographs". *PLOS Medicine*, 2018 | `fundamentos_ciencia_datos.pdf` (fuga de información) | [PMC6219764](https://pmc.ncbi.nlm.nih.gov/articles/PMC6219764/), acceso abierto |
-| `ghosh-2018-eda-tools-tabular-industrial-visual-informatics.pdf` | Ghosh et al. "A comprehensive review of tools for exploratory analysis of tabular industrial datasets". *Visual Informatics* 2(4), 2018 | `eda.pdf` | [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S2468502X18300561), acceso abierto con licencia Creative Commons |
-| `comision-europea-open-data-metadata-quality-modulo-2.2.pdf` | Comisión Europea (Open Data Support). *Open Data & Metadata Quality*, módulo de formación 2.2 | `calidad_limpieza_datos.pdf` | [Interoperable Europe](https://interoperable-europe.ec.europa.eu/sites/default/files/document/2014-02/D3.1.7%20Training%20Module%202.2%20Open%20Data%20Quality_EUI_v0.04.pdf). Las diapositivas la fechan en 2012; este PDF es la versión de 2014 con el mismo título |
+| `zech-2018-pneumonia-generalization-plos-med.pdf` | Zech et al. "Variable generalization performance of a deep learning model to detect pneumonia in chest radiographs". *PLOS Medicine*, 2018 | *Fundamentos de la Ciencia de Datos* (fuga de información) | [PMC6219764](https://pmc.ncbi.nlm.nih.gov/articles/PMC6219764/), acceso abierto |
+| `ghosh-2018-eda-tools-tabular-industrial-visual-informatics.pdf` | Ghosh et al. "A comprehensive review of tools for exploratory analysis of tabular industrial datasets". *Visual Informatics* 2(4), 2018 | *Análisis Exploratorio de Datos (EDA)* | [ScienceDirect](https://www.sciencedirect.com/science/article/pii/S2468502X18300561), acceso abierto con licencia Creative Commons |
+| `comision-europea-open-data-metadata-quality-modulo-2.2.pdf` | Comisión Europea (Open Data Support). *Open Data & Metadata Quality*, módulo de formación 2.2 | *Calidad y limpieza de datos* | [Interoperable Europe](https://interoperable-europe.ec.europa.eu/sites/default/files/document/2014-02/D3.1.7%20Training%20Module%202.2%20Open%20Data%20Quality_EUI_v0.04.pdf). Las diapositivas la fechan en 2012; este PDF es la versión de 2014 con el mismo título |
 
 #### Libros gratuitos en línea (solo en HTML)
 
@@ -92,14 +115,14 @@ Referencias de las diapositivas sin copia abierta:
 
 | Referencia | Dónde se cita | Situación |
 | --- | --- | --- |
-| Obermeyer et al. "Dissecting racial bias in an algorithm used to manage the health of populations". *Science* 366, 2019 | `fundamentos_ciencia_datos.pdf` (métrica equivocada) | De pago en *Science*; consultarlo por la biblioteca |
-| Galhardas, H. *Data Cleaning*, 2004 | `calidad_limpieza_datos.pdf` | No se pudo identificar el documento exacto; preguntar a los profesores |
-| Murali, T. *Data Quality - Proven Approaches to Data Quality*, 2005 | `calidad_limpieza_datos.pdf` | No se pudo identificar el documento exacto; preguntar a los profesores |
+| Obermeyer et al. "Dissecting racial bias in an algorithm used to manage the health of populations". *Science* 366, 2019 | *Fundamentos de la Ciencia de Datos* (métrica equivocada) | De pago en *Science*; consultarlo por la biblioteca |
+| Galhardas, H. *Data Cleaning*, 2004 | *Calidad y limpieza de datos* | No se pudo identificar el documento exacto; preguntar a los profesores |
+| Murali, T. *Data Quality - Proven Approaches to Data Quality*, 2005 | *Calidad y limpieza de datos* | No se pudo identificar el documento exacto; preguntar a los profesores |
 
 #### Enlaces web citados en las diapositivas
 
 Páginas de acceso libre; no se descargan.
 
-- `fundamentos_ciencia_datos.pdf`: [flujo de trabajo de ciencia de datos (Business Science)](https://www.business-science.io/business/2019/06/27/data-science-workflow.html)
-- `productos_datos_valor.pdf`: [The data product lifecycle (Data Minded)](https://medium.com/datamindedbe/the-data-product-lifecycle-4903c9752527), [ciclo de vida del software (Datarob)](https://datarob.com/essentials-software-development-life-cycle/), [modelo de madurez de MLOps (Microsoft)](https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/mlops-maturity-model), [Evaluating uplift models (Towards Data Science)](https://towardsdatascience.com/evaluating-uplift-models-8a078996a113/), [introducción a visualización (John Guerra)](https://johnguerra.co/lectures/information_visualization_spring2021/01_Introduction/)
-- `eda.pdf`: [Data Viz Project](https://datavizproject.com/), [Understanding UMAP (PAIR)](https://pair-code.github.io/understanding-umap/), [PCA explicado visualmente (Towards Data Science)](https://towardsdatascience.com/principal-component-analysis-pca-explained-visually-with-zero-math-1cbf392b9e7d), [PCA vs. t-SNE vs. UMAP (Towards Data Science)](https://towardsdatascience.com/dimensionality-reduction-for-data-visualization-pca-vs-tsne-vs-umap-be4aa7b1cb29), [regresión lineal múltiple y visualización (aegis4048)](https://aegis4048.github.io/mutiple_linear_regression_and_visualization_in_python), [economía circular (DANE)](https://www.dane.gov.co/index.php/estadisticas-por-tema/ambientales/economia-circular), [resultados primera vuelta 2026 (John Guerra)](https://johnguerra.co/viz/resultadosPrimeraVuelta2026/?lang=es)
+- *Fundamentos de la Ciencia de Datos*: [flujo de trabajo de ciencia de datos (Business Science)](https://www.business-science.io/business/2019/06/27/data-science-workflow.html)
+- *Productos de datos, métodos y creación de valor*: [The data product lifecycle (Data Minded)](https://medium.com/datamindedbe/the-data-product-lifecycle-4903c9752527), [ciclo de vida del software (Datarob)](https://datarob.com/essentials-software-development-life-cycle/), [modelo de madurez de MLOps (Microsoft)](https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/mlops-maturity-model), [Evaluating uplift models (Towards Data Science)](https://towardsdatascience.com/evaluating-uplift-models-8a078996a113/), [introducción a visualización (John Guerra)](https://johnguerra.co/lectures/information_visualization_spring2021/01_Introduction/)
+- *Análisis Exploratorio de Datos (EDA)*: [Data Viz Project](https://datavizproject.com/), [Understanding UMAP (PAIR)](https://pair-code.github.io/understanding-umap/), [PCA explicado visualmente (Towards Data Science)](https://towardsdatascience.com/principal-component-analysis-pca-explained-visually-with-zero-math-1cbf392b9e7d), [PCA vs. t-SNE vs. UMAP (Towards Data Science)](https://towardsdatascience.com/dimensionality-reduction-for-data-visualization-pca-vs-tsne-vs-umap-be4aa7b1cb29), [regresión lineal múltiple y visualización (aegis4048)](https://aegis4048.github.io/mutiple_linear_regression_and_visualization_in_python), [economía circular (DANE)](https://www.dane.gov.co/index.php/estadisticas-por-tema/ambientales/economia-circular), [resultados primera vuelta 2026 (John Guerra)](https://johnguerra.co/viz/resultadosPrimeraVuelta2026/?lang=es)
