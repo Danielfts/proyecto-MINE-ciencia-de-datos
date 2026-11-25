@@ -65,17 +65,17 @@ Se ejecutan en este orden, con el [entorno de Python](#entorno-de-python) instal
 
 | Orden | Notebook | Actividad | Estado |
 | --- | --- | --- | --- |
-| 1 | [entrega-1/notebooks/06-entendimiento-de-los-datos.ipynb](entrega-1/notebooks/06-entendimiento-de-los-datos.ipynb) | 6. Entendimiento de los datos | Completo: análisis, interpretaciones y conclusiones |
+| 1 | [entrega-2/notebooks/06-entendimiento-de-los-datos.ipynb](entrega-2/notebooks/06-entendimiento-de-los-datos.ipynb) | 6. Entendimiento de los datos | Heredado de la primera entrega, pendiente de aprobación |
 | 2 | [entrega-2/notebooks/08-preparacion-de-datos.ipynb](entrega-2/notebooks/08-preparacion-de-datos.ipynb) | 8. Preparación de datos | Andamiaje |
 | 3 | [entrega-2/notebooks/09-estrategia-de-validacion.ipynb](entrega-2/notebooks/09-estrategia-de-validacion.ipynb) | 9. Estrategia de validación | Andamiaje |
 | 4 | [entrega-2/notebooks/10-construccion-y-evaluacion-del-modelo.ipynb](entrega-2/notebooks/10-construccion-y-evaluacion-del-modelo.ipynb) | 10. Construcción y evaluación del modelo | Andamiaje |
 
-Los notebooks 08 a 10 se pasan archivos entre sí (ver [entrega-2/](entrega-2/README.md#notebooks)): cada uno lee lo que escribe el anterior, y ninguno de esos archivos se sube al repositorio.
+El notebook 06 es la copia, para la entrega final, del que se entregó en la primera ([entrega-1/notebooks/](entrega-1/notebooks/06-entendimiento-de-los-datos.ipynb)), que queda como se entregó. Los notebooks 08 a 10 se pasan archivos entre sí (ver [entrega-2/](entrega-2/README.md#notebooks)): cada uno lee lo que escribe el anterior, y ninguno de esos archivos se sube al repositorio.
 
 Se abren con JupyterLab (`uv run jupyter lab`) o con VS Code y se ejecutan de arriba abajo. También desde la terminal, en la raíz del repositorio:
 
 ```bash
-uv run jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.record_timing=False entrega-1/notebooks/06-entendimiento-de-los-datos.ipynb
+uv run jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.record_timing=False entrega-2/notebooks/06-entendimiento-de-los-datos.ipynb
 for n in 08-preparacion-de-datos 09-estrategia-de-validacion 10-construccion-y-evaluacion-del-modelo; do
   uv run jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.record_timing=False entrega-2/notebooks/$n.ipynb
 done

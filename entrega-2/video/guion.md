@@ -4,17 +4,17 @@ Generado a partir de `video_entrega_2.py`. No lo edite a mano: cambie la narraci
 
     uv run python -m herramientas_video.guion entrega-2/video/video_entrega_2.py
 
-**Duración: 1:57** de un máximo de 12:00.
+**Duración: 7:24** de un máximo de 12:00.
 Tiempos estimados a 15 caracteres por segundo; cambian cuando cada quien lea su parte.
 
 | Integrante | Tiempo de voz | Participación | Palabras |
 | --- | --- | --- | --- |
-| Daniel Felipe Triviño Santana | 0:32 | 32% | 75 |
-| Nicolas Bedoya Figueroa | 0:25 | 25% | 54 |
-| Joubert Daniel Álvarez | 0:17 | 17% | 35 |
-| Gabriel Bejarano | 0:27 | 27% | 63 |
+| Daniel Felipe Triviño Santana | 2:49 | 41% | 376 |
+| Nicolas Bedoya Figueroa | 1:52 | 27% | 248 |
+| Joubert Daniel Álvarez | 1:44 | 25% | 215 |
+| Gabriel Bejarano | 0:27 | 7% | 63 |
 
-> **Bloque de Daniel Felipe Triviño Santana: 0:21 de voz** (0:01 a 0:24)
+> **Bloque de Daniel Felipe Triviño Santana: 1:17 de voz** (0:01 a 1:22)
 
 ## Portada
 
@@ -22,19 +22,85 @@ Tiempos estimados a 15 caracteres por segundo; cambian cuando cada quien lea su 
 
 Pendiente: una frase que presente el proyecto y lo que trae la entrega final.
 
-## Lo que traíamos de la primera entrega
+## 1. Problemática y entendimiento del negocio (heredado de la primera entrega, pendiente de aprobación)
 
 **0:08 · Daniel Felipe Triviño Santana**
 
-Pendiente: el problema de la alcaldía, los dos KPIs y el producto de datos.
+Multiaservi Consultores asesora a un municipio colombiano que acaba de actualizar su catastro. Su avalúo mediano se multiplicó por 4,1 y, aunque bajó la tarifa, el impuesto facturado casi se duplicó.
 
-Pendiente: los datos y los hallazgos de la primera entrega que guían el modelo. Pendiente: qué ajustamos según la retroalimentación de los docentes.
+Aun así, se facturó solo la mitad del impuesto pleno: una brecha de 68 mil millones de pesos. Y los límites al aumento vencen en 2027.
 
-> **Bloque de Nicolas Bedoya Figueroa: 0:25 de voz** (0:25 a 0:53)
+El objetivo: comparar escenarios de tarifas para 2027 con dos indicadores opuestos: cuánto se acerca el impuesto al pleno y cuánto sube para los predios de mayor impuesto, sin sacrificar recaudo, progresividad ni legalidad.
+
+## 2. Ideación: el producto de datos (heredado de la primera entrega, pendiente de aprobación)
+
+**0:53 · Daniel Felipe Triviño Santana**
+
+Lo usan los consultores de Multiaservi, que hoy arman cada propuesta en hojas de cálculo antes de que pase por la alcaldía y el Concejo. Cada escenario nuevo se rehace a mano y cada tarifa debe explicarse en palabras simples.
+
+Proponemos un motor de escenarios y un modelo que estima la probabilidad de pago de cada predio, servidos por una API y una aplicación web. Al Concejo llega un escenario congelado, no el simulador.
+
+> **Bloque de Nicolas Bedoya Figueroa: 1:27 de voz** (1:23 a 2:54)
+
+**1:23 · Nicolas Bedoya Figueroa**
+
+En el prototipo se fijan tarifas y límites, se ven las alertas y los indicadores, y se lee el resultado en palabras simples.
+
+## 3. Aspectos éticos y legales (heredado de la primera entrega, pendiente de aprobación)
+
+**1:33 · Nicolas Bedoya Figueroa**
+
+Los datos catastrales vinculan predios con personas. Por la Ley 1581, el archivo de análisis no tiene nombres ni documentos, y ninguna salida muestra un predio individual. Lo público es la decisión, no los registros: al Concejo llegan agregados explicables, con el recaudo esperado como una estimación. El motor respeta los topes legales al aumento del impuesto, y el modelo de pago solo estima el recaudo agregado: no señala a ningún contribuyente.
+
+## 4. Enfoque analítico (heredado de la primera entrega, pendiente de aprobación)
+
+**2:07 · Nicolas Bedoya Figueroa**
+
+Primera pregunta: qué tarifas y límites acercan el impuesto al pleno sin un choque excesivo en la cola. La responde el motor de escenarios: recorre una malla de escenarios, muestra la frontera entre convergencia y choque, y se valida reproduciendo el impuesto de 2026.
+
+Segunda: qué tan bien se anticipa si un predio pagará. Es una clasificación binaria con tres algoritmos: regresión logística, árbol de decisión y gradient boosting, evaluados con ROC-AUC, log-loss y calibración, frente a repetir el pago de 2025. Con esas probabilidades, el recaudo esperado es la suma de cada impuesto por su probabilidad de pago.
+
+> **Bloque de Joubert Daniel Álvarez: 1:27 de voz** (2:55 a 4:25)
+
+## 5. Recolección de datos (heredado de la primera entrega, pendiente de aprobación)
+
+**2:55 · Joubert Daniel Álvarez**
+
+Los datos vienen de dos fuentes. La principal es el levantamiento catastral en el modelo LADM-COL: lo cargamos en PostgreSQL y lo podamos de 217 a 45 tablas útiles. La segunda es la facturación del predial: de ella solo tomamos el impuesto de 2026 y si el predio pagó en 2025 y 2026. Todo se une por número predial en un archivo de 22 220 predios, sin datos personales y con su diccionario de datos.
+
+## 6. Entendimiento de los datos (heredado de la primera entrega, pendiente de aprobación)
+
+**3:35 · Joubert Daniel Álvarez**
+
+En el notebook de entendimiento analizamos los 22 220 predios. Como los regímenes se valoran distinto, el análisis del avalúo usa 16 705 predios individuales con construcción, el 75 % del total.
+
+El avalúo es muy asimétrico: la mediana es de 236 millones de pesos, y en escala logarítmica queda casi simétrico. Y el catastro anterior estaba desactualizado: el 64 % de los predios cambió su número predial, y el 10 % son nuevos.
+
+En lo multivariado, el avalúo depende casi solo del tamaño: el primer componente principal, que es el tamaño, explica la mitad de la varianza y se correlaciona 0,92 con el avalúo.
+
+> **Bloque de Daniel Felipe Triviño Santana: 1:21 de voz** (4:25 a 5:50)
+
+**4:25 · Daniel Felipe Triviño Santana**
+
+La bitácora de calidad registra 31 problemas. Los más grandes son valores de relleno: una fecha de visita repetida en 9 010 predios y el año 2000 en 3 322. Se marcan como faltantes, y ninguno impide el análisis.
+
+Con la facturación, el impuesto se concentra en la cola: el 10 % de los predios con mayor impuesto factura el 81 % del total.
+
+Y el historial anticipa el pago: pagó en 2026 el 80 % de quienes pagaron en 2025, y casi nadie de quienes no. La incertidumbre está en los predios sin registro de 2025, la curva amarilla.
+
+Así, los datos alcanzan: 19 150 predios facturados, con avalúo, destinación, zona y régimen, para el motor y para el modelo.
+
+## 7. Conclusiones iniciales (heredado de la primera entrega, pendiente de aprobación)
+
+**5:29 · Daniel Felipe Triviño Santana**
+
+En síntesis: se factura la mitad del impuesto pleno, el choque se concentra en pocos predios y el historial de pago es una base sólida para el recaudo esperado. Para la entrega final: validar el motor con las tarifas vigentes, comparar los tres modelos y construir la API y la aplicación. Gracias.
+
+> **Bloque de Nicolas Bedoya Figueroa: 0:25 de voz** (5:52 a 6:19)
 
 ## 8. Preparación de datos
 
-**0:25 · Nicolas Bedoya Figueroa**
+**5:52 · Nicolas Bedoya Figueroa**
 
 Pendiente: qué predios entran al modelo y qué se predice.
 
@@ -44,15 +110,15 @@ Pendiente: las transformaciones que se ajustan solo con entrenamiento.
 
 ## 9. Estrategia de validación
 
-**0:42 · Nicolas Bedoya Figueroa**
+**6:08 · Nicolas Bedoya Figueroa**
 
 Pendiente: cómo se entrenan y se eligen los modelos. Pendiente: la partición en entrenamiento, validación y prueba, y que conserva la distribución original.
 
-> **Bloque de Joubert Daniel Álvarez: 0:17 de voz** (0:54 a 1:12)
+> **Bloque de Joubert Daniel Álvarez: 0:17 de voz** (6:21 a 6:38)
 
 ## 10. Construcción y evaluación del modelo
 
-**0:54 · Joubert Daniel Álvarez**
+**6:21 · Joubert Daniel Álvarez**
 
 Pendiente: los tres algoritmos y los hiperparámetros que se probaron.
 
@@ -60,11 +126,11 @@ Pendiente: el mejor modelo en prueba, frente a repetir el pago de 2025.
 
 Pendiente: qué aprende el modelo, dónde se equivoca y qué lo mejoraría.
 
-> **Bloque de Daniel Felipe Triviño Santana: 0:11 de voz** (1:13 a 1:25)
+> **Bloque de Daniel Felipe Triviño Santana: 0:11 de voz** (6:40 a 6:51)
 
 ## 11. Producto de datos
 
-**1:13 · Daniel Felipe Triviño Santana**
+**6:40 · Daniel Felipe Triviño Santana**
 
 Pendiente: los componentes del producto y cómo se conectan.
 
@@ -72,11 +138,11 @@ Pendiente: un recorrido por un escenario en la aplicación.
 
 Pendiente: cómo se despliega el producto.
 
-> **Bloque de Gabriel Bejarano: 0:27 de voz** (1:27 a 1:57)
+> **Bloque de Gabriel Bejarano: 0:27 de voz** (6:53 a 7:24)
 
 ## 12. Retroalimentación de la organización
 
-**1:27 · Gabriel Bejarano**
+**6:53 · Gabriel Bejarano**
 
 Pendiente: las interacciones con Multiaservi y lo que se acordó en cada una.
 
@@ -84,7 +150,7 @@ Pendiente: qué opinó la organización del producto y qué sigue.
 
 ## 13. Conclusiones
 
-**1:38 · Gabriel Bejarano**
+**7:05 · Gabriel Bejarano**
 
 Pendiente: los resultados más relevantes y si se cumplieron los objetivos.
 

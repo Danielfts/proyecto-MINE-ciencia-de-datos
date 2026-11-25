@@ -2,8 +2,8 @@
 
 Rutas de los archivos que pasan de un notebook al siguiente, la semilla, las
 columnas cuyos valores no se muestran y la configuración de tablas y gráficas.
-Las funciones del análisis exploratorio siguen en
-entrega-1/notebooks/utilidades_eda.py.
+Las funciones del análisis exploratorio están en utilidades_eda.py, en esta
+carpeta (heredado de la primera entrega).
 """
 
 from pathlib import Path

@@ -56,6 +56,11 @@ entrega-2/producto/artefactos/
 # Archivos de bloqueo de LibreOffice (su nombre repite el del archivo abierto)
 .~lock.*#
 
+# Evidencias de las interacciones con la organización (grabaciones de reuniones): solo se
+# sube el README que las describe; los archivos se comparten por un canal privado
+entrega-2/evidencias/*
+!entrega-2/evidencias/README.md
+
 # Grabaciones originales de los integrantes para los videos (fuente del audio; el video final está en YouTube)
 entrega-*/video/audios/
 *.opus

@@ -10,7 +10,7 @@ Actividad 12 de la entrega final (15 %). El enunciado pide una bitácora de al m
 
 | # | Fecha | Medio | Participantes (cargos) | Temas | Acuerdo principal |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Pendiente | | | | |
+| 1 | 2026-10-17 | Reunión grabada | Pendiente | Pendiente | Pendiente |
 | 2 | Pendiente | | | | |
 | 3 | Pendiente | | | | |
 | 4 | Pendiente: presentación final | | | Resultados y producto | |
@@ -32,7 +32,16 @@ Plantilla: una sección por interacción, en orden de fecha.
 - **Evidencia:** acta, correo o grabación, y dónde está (fuera del repositorio si tiene datos personales)
 -->
 
-### 1. Pendiente
+### 1. 2026-10-17 — Pendiente: título
+
+- **Medio:** reunión, grabada en pantalla (23:41)
+- **Participantes:** pendiente
+- **Propósito:** pendiente
+- **Temas tratados:** pendiente
+- **Acuerdos:** pendiente
+- **Cambios al proyecto que salieron de aquí:** pendiente
+- **Próximos pasos:** pendiente
+- **Evidencia:** grabación `mine_cda_interaccion_con_cliente_1_voz-ajustada.mp4` (con la voz del integrante subida de volumen), en [evidencias/](evidencias/README.md); no se sube al repositorio
 
 ### 2. Pendiente
 

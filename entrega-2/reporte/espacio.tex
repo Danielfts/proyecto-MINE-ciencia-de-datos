@@ -1,0 +1,115 @@
+% Espacio fijo por sección para el reporte de la entrega final.
+%
+% Cada sección va dentro de \begin{espacio}[nombre]{<páginas>} ... \end{espacio},
+% con el espacio que le corresponde en páginas (se admiten decimales: 1.55 es una
+% página y algo más de media). Al terminar la sección se rellena con espacio en
+% blanco lo que le sobra, así que la siguiente empieza siempre en el mismo lugar y
+% el PDF tiene siempre las mismas páginas: la suma de los espacios. El nombre, si se
+% da, sale en los avisos; si no, sale "sección N".
+%
+% Si una sección se pasa de su espacio, la compilación lo avisa ("Espacio fijo:
+% sección N (... páginas) se pasa por N líneas") y aparece una marca amarilla al
+% final de la sección. Ninguna sección se recorta: hay que acortar el texto hasta
+% que quepa.
+%
+% Cómo funciona: al comienzo y al final de cada sección anota en qué página va y
+% cuánto lleva ocupado de ella (\pagetotal), y con eso calcula cuánto ocupó la
+% sección y cuánto le falta rellenar. Todo en una sola compilación. Antes de medir
+% pone un punto de corte neutro (\penalty0) para que TeX decida si la página ya
+% se llenó: sin él, \pagetotal puede pasar del alto de la página sin que la página
+% haya cambiado todavía.
+%
+% \espaciovisibletrue escribe en gris, al comienzo del relleno, cuántas líneas le
+% sobran a la sección. Para el PDF que se entrega: \espaciovisiblefalse.
+
+\makeatletter
+\newif\ifespaciovisible
+\espaciovisibletrue
+\newdimen\espacio@presupuesto
+\newdimen\espacio@usado
+\newdimen\espacio@resto
+\newdimen\espacio@libre
+\newdimen\espacio@inicio
+\newcount\espacio@paginaini
+\newcount\espacio@excedidas
+
+% Lo que lleva ocupado la página actual, con la profundidad de la última línea
+% (0 si está vacía)
+\newcommand\espacio@total{\ifdim\pagegoal=\maxdimen 0pt\else\dimexpr\pagetotal+\pagedepth\relax\fi}
+
+\newenvironment{espacio}[2][]{%
+  \par\penalty\z@
+  \espacio@presupuesto=#2\textheight
+  \def\espacio@paginas{#2}%
+  \def\espacio@nombre{#1}%
+  \espacio@paginaini=\c@page
+  \espacio@inicio=\espacio@total
+}{%
+  \par\penalty\z@
+  \ifx\espacio@nombre\@empty\edef\espacio@nombre{sección \thesection}\fi
+  \espacio@usado=\dimexpr\numexpr\c@page-\espacio@paginaini\relax\textheight
+    - \espacio@inicio + \espacio@total\relax
+  \espacio@resto=\dimexpr\espacio@presupuesto-\espacio@usado\relax
+  \ifdim\espacio@resto<-0.5pt
+    \espacio@excedido
+  \else
+    \espacio@rellenar
+  \fi
+}
+
+\newcommand\espacio@rellenar{%
+  \edef\espacio@n{\espacio@lineas{\espacio@resto}}%
+  \ifdim\pagegoal=\maxdimen
+    \espacio@libre=\textheight
+  \else
+    \espacio@libre=\dimexpr\pagegoal-\espacio@total\relax
+  \fi
+  \ifespaciovisible
+    \ifdim\espacio@resto>\baselineskip
+      \nointerlineskip
+      \vbox to 0pt{\vskip 0.3\baselineskip
+        \centering\footnotesize\color{gris}%
+        Espacio libre de esta sección: \espacio@n\ líneas
+        de \espacio@paginas\ páginas\par\vss}%
+      \nointerlineskip
+    \fi
+  \fi
+  \ifdim\espacio@resto>\espacio@libre
+    % No cabe en esta página: se completa la página y se sigue en las siguientes
+    \advance\espacio@resto by -\espacio@libre
+    \newpage
+    \loop\ifdim\espacio@resto>\textheight
+      \null\newpage
+      \advance\espacio@resto by -\textheight
+    \repeat
+    % Arriba de la página TeX agrega \topskip antes del relleno: se descuenta
+    \advance\espacio@resto by -\topskip
+    \ifdim\espacio@resto>0pt \vspace*{\espacio@resto}\fi
+  \else
+    \ifdim\espacio@resto>0pt \vskip\espacio@resto\relax\fi
+  \fi
+  \par
+}
+
+\newcommand\espacio@excedido{%
+  \espacio@resto=-\espacio@resto
+  \edef\espacio@n{\espacio@lineas{\espacio@resto}}%
+  \global\advance\espacio@excedidas by 1
+  \PackageWarningNoLine{espacio}{Espacio fijo: \espacio@nombre\space
+    (\espacio@paginas\space páginas) se pasa por \espacio@n\space líneas}%
+  \par\noindent
+  \colorbox{amarillo}{\parbox{\dimexpr\linewidth-2\fboxsep}{\footnotesize\bfseries
+    Esta sección se pasa por \espacio@n\ líneas de su espacio
+    (\espacio@paginas\ páginas). Hay que acortarla.}}\par
+}
+
+% Una longitud expresada en líneas de texto, redondeada
+\newcommand*\espacio@lineas[1]{%
+  \the\numexpr\dimexpr#1\relax/\dimexpr\baselineskip\relax\relax}
+
+\AtEndDocument{%
+  \ifnum\espacio@excedidas>0
+    \PackageWarningNoLine{espacio}{Espacio fijo: \the\espacio@excedidas\space
+      secciones se pasan de su espacio}%
+  \fi}
+\makeatother

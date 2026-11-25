@@ -26,6 +26,9 @@ from .creditos import INTEGRANTES
 from .voz import CARACTERES_POR_SEGUNDO, RAIZ
 
 SIN_ASIGNAR = "Sin asignar"
+# Junto al título de las secciones heredadas sin cambios de una entrega anterior, las
+# que llevan en pantalla la marca MARCA_HEREDADO de escena.py.
+NOTA_HEREDADO = "(heredado de la primera entrega, pendiente de aprobación)"
 
 
 def recorrer(archivo, escena="VideoCompleto", calidad="-ql", con_voz=False, grabaciones=None):
@@ -129,7 +132,10 @@ def escribir(recorrido, archivo, orden, con_voz):
                            f"({reloj(desde)} a {reloj(hasta)})"]
         if paso["seccion"] != seccion:
             seccion, quien = paso["seccion"], None
-            lineas += ["", f"## {seccion or 'Portada'}"]
+            titulo = seccion or "Portada"
+            if paso.get("heredado"):
+                titulo += f" {NOTA_HEREDADO}"
+            lineas += ["", f"## {titulo}"]
         if paso["quien"] != quien:
             quien = paso["quien"]
             lineas += ["", f"**{reloj(paso['inicio'])} · {quien or SIN_ASIGNAR}**"]

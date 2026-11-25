@@ -48,6 +48,17 @@
 % Fórmulas con texto en los subíndices: \text{...}
 \usepackage{amsmath}
 
+% Tablas fijas en su lugar ([H]), para que no se salgan del espacio de su sección
+\usepackage{float}
+
+% Espacio fijo por sección: ver espacio.tex y la tabla de espacios más abajo
+\input{espacio}
+
+% Marca de las secciones que vienen sin cambios de la primera entrega. Se quita
+% de cada sección cuando el equipo apruebe su contenido para la entrega final.
+\newcommand{\heredado}{\par\noindent\colorbox{amarillo}{\footnotesize\bfseries
+  HEREDADO DE LA PRIMERA ENTREGA · PENDIENTE DE APROBACIÓN}\par\smallskip}
+
 \addbibresource{referencias.bib}
 
 % La portada cuenta dentro del máximo de páginas. Con \portadafalse se cambia por
@@ -56,18 +67,41 @@
 
 \begin{document}
 
+\begin{espacio}[título]{0.20}
 \encabezado
+\end{espacio}
 
+% Espacio fijo de cada sección, en páginas (entorno espacio, de espacio.tex). Suma
+% exactamente 12, el máximo del enunciado, así que el PDF tiene siempre 12 páginas.
+% Si una sección se pasa, la compilación lo avisa y la marca en amarillo.
+%
+%   Título .............................. 0,20
+%   1. Problemática (10 % de la 1.ª) .... 0,60   } Secciones de la primera entrega:
+%   2. Ideación (10 %) .................. 0,70   } 3,65 páginas. Se resumen para dejar
+%   3. Aspectos éticos (10 %) ........... 0,35   } sitio a las nuevas; el entendimiento
+%   4. Enfoque analítico (15 %) ......... 0,50   } de los datos (35 %) y la ideación,
+%   5. Recolección de datos (10 %) ...... 0,30   } con el wireframe, conservan más.
+%   6. Entendimiento de los datos (35 %)  0,90   }
+%   7. Conclusiones iniciales (10 %) .... 0,30   }
+%   8. Preparación de datos (20 %) ...... 1,55   } Secciones nuevas: 7,5 páginas,
+%   9. Validación (5 %) ................. 0,50   } repartidas según su peso en la
+%  10. Modelos (20 %) ................... 1,60   } entrega final. Las conclusiones
+%  11. Producto de datos (20 %) ......... 1,55   } (15 %) tienen algo más de lo que
+%  12. Retroalimentación (15 %) ......... 1,05   } les toca, porque deben responder
+%  13. Conclusiones (15 %) .............. 1,25   } cinco preguntas del enunciado.
+%   Referencias ......................... 0,65
+%
 % Los porcentajes de las secciones 1 a 7 son su peso en la primera entrega; los de
-% las secciones 8 a 13, su peso en la entrega final. Sirven para repartir las 12
-% páginas: las secciones 1 a 7 deben resumirse para dejar sitio a las nuevas.
+% las secciones 8 a 13, su peso en la entrega final.
 
+\begin{espacio}{0.60}
 \section{Problemática y entendimiento del negocio} % 10 %
 % Retroalimentación (7,5/10, nivel 4 de 5): vacíos menores en el sustento con
 % información del negocio o en la definición de los KPIs.
 % La organización y la problemática u oportunidad. La información clave del negocio
 % (estrategia, datos del sector) que sustenta su relevancia. Los objetivos del
 % proyecto y las métricas de negocio (KPIs) con las que se evaluará.
+\heredado
 \textbf{Organización y problemática.} Multiaservi Consultores Ltda., firma con más de 21 años
 en contabilidad pública y gestión tributaria territorial, asesora a la alcaldía de un municipio
 colombiano que acaba de concluir una actualización catastral, producida por un operador catastral
@@ -98,7 +132,7 @@ evaluarlos con esos indicadores.
 Las metas se definirán con la administración y la consultoría; la línea base sale de la
 facturación del predial 2025--2026.
 
-\begin{table}[ht]
+\begin{table}[H]
   \centering
   \caption{KPIs, meta y guardrails, con su línea base de 2026.}
   \label{tab:kpis}
@@ -120,11 +154,15 @@ facturación del predial 2025--2026.
   \end{tabular}
 \end{table}
 
+\end{espacio}
+
+\begin{espacio}{0.70}
 \section{Ideación} % 10 %
 % Retroalimentación (9,67/10, nivel 4 de 5): debilidades menores en usuarios y
 % dolores, en el detalle de los requerimientos o en el mockup.
 % Los usuarios potenciales, sus procesos actuales y sus dolores. Los requerimientos
 % del producto de datos, sus componentes analíticos y tecnológicos, y el mockup.
+\heredado
 \textbf{Usuarios y dolores.} El producto es una herramienta de apoyo a la decisión para
 Multiaservi: sus consultores la operan en cada proyecto de tarifas del predial, para
 clientes que cambian con cada ciclo electoral. Hoy la propuesta se arma en hojas de
@@ -169,11 +207,15 @@ de la facturación, y que ajusta el recaudo facturado a uno esperado; (3)~una AP
 que expone el motor, el modelo y la exportación, y (4)~una aplicación web, la superficie
 interactiva. Se construirán en Python, con pandas, scikit-learn, FastAPI y Dash.
 
+\end{espacio}
+
+\begin{espacio}{0.35}
 \section{Aspectos éticos y legales} % 10 %
 % Retroalimentación (10/10): nivel máximo.
 % Implicaciones éticas, de privacidad, confidencialidad, transparencia y
 % regulatorias en este contexto. Las fuentes consultadas se citan con \cite{clave}
 % y van en referencias.bib.
+\heredado
 
 \textbf{Protección de datos personales.} Los registros catastrales vinculan predios con personas, por lo que su tratamiento se rige por
 la Ley 1581 de 2012: la alcaldía es la responsable del tratamiento y Multiaservi actúa como
@@ -214,11 +256,15 @@ político puede, por eso, volver menos progresivo el impuesto. El producto hace 
 tensión con el guardrail de progresividad de la tabla~\ref{tab:kpis}, para que la decisión se
 tome de forma explícita.
 
+\end{espacio}
+
+\begin{espacio}{0.50}
 \section{Enfoque analítico} % 15 %
 % Retroalimentación (15/15): nivel máximo.
 % Las hipótesis o preguntas de negocio que guían la experimentación. Las técnicas
 % estadísticas, de visualización y de machine learning que las responderán. Las
 % métricas con las que se evaluará la calidad del modelo.
+\heredado
 \textbf{Preguntas de negocio.} (1)~¿Qué combinación de tarifas y límites de crecimiento para
 2027 acerca más el IPU facturado al pleno (KPI~1) sin que el aumento en la cola supere lo que la
 administración considere aceptable (KPI~2), cumpliendo la meta y los guardrails de la
@@ -250,12 +296,16 @@ calibración para la calidad de las probabilidades, que son las que entran al re
 Todas las métricas se comparan con una línea base, repetir el pago de 2025, y se reportan por
 grupo: los predios que pagaron en 2025, los que no y los nuevos.
 
+\end{espacio}
+
+\begin{espacio}{0.30}
 \section{Recolección de datos} % 10 %
 % Retroalimentación (8,33/10, nivel 4 de 5): vacíos menores en la cobertura del
 % diccionario o en la importancia de alguna fuente; el nivel 5 pide dejar claro el
 % origen, el acceso y la pertinencia de cada fuente.
 % Las fuentes de datos, según su estructura e importancia. El diccionario de datos
 % completo va en el repositorio; aquí, solo las entidades o atributos más relevantes.
+\heredado
 Los datos vienen de dos fuentes del municipio y se integran en un solo archivo con un predio por
 fila. La primera es el levantamiento catastral, producido por el operador catastral y entregado
 por el gestor catastral como un archivo de transferencia
@@ -278,6 +328,9 @@ en el \repo{datos/predios/README.md}{repositorio}, con el
 \repo{datos/predios/diccionario/diccionario-de-datos.pdf}{diccionario de datos}. El archivo no se
 publica; está en el \enlace{\urldatos}{almacenamiento de la Universidad}, con acceso restringido.
 
+\end{espacio}
+
+\begin{espacio}{0.90}
 \section{Entendimiento de los datos} % 35 %
 % Retroalimentación (26,25/35, nivel 4 de 5): falta profundidad en el análisis
 % multivariado, la evaluación de suficiencia o la interpretación desde el negocio.
@@ -285,13 +338,14 @@ publica; está en el \enlace{\urldatos}{almacenamiento de la Universidad}, con a
 % Los resultados más importantes del análisis exploratorio y de la calidad de los
 % datos. Debe notarse el uso de técnicas univariadas y multivariadas, gráficas y
 % no gráficas. El notebook completo se enlaza con \repo.
+\heredado
 El análisis completo está en el
 \repo{entrega-1/notebooks/06-entendimiento-de-los-datos.ipynb}{notebook de entendimiento de los
 datos}. Analiza el levantamiento catastral (22\,220 predios en LADM-COL), exportado a un archivo
 con un predio por fila y sin datos personales. La tabla~\ref{tab:tecnicas} resume las técnicas
 usadas.
 
-\begin{table}[ht]
+\begin{table}[H]
   \centering
   \caption{Técnicas de análisis usadas en el notebook.}
   \label{tab:tecnicas}
@@ -330,7 +384,7 @@ compara dentro de cada régimen: sin estratificar, el avalúo por m² urbano es 
 rural; en NPH son iguales, y con el terreno controlado el urbano es 56\,\% mayor.
 % Pendiente (Daniel): el indicador de pago de la facturación en el univariado y el multivariado.
 
-\begin{table}[ht]
+\begin{table}[H]
   \centering
   \caption{Principales problemas de calidad de los datos.}
   \label{tab:calidad}
@@ -359,16 +413,23 @@ débil en NPH (18\,\%) e informales (9\,\%). El catastro aporta las variables qu
 necesita de cada predio: avalúo, régimen, destinación, zona y tamaño. La facturación del predial
 aporta el impuesto y el indicador de pago.
 
+\end{espacio}
+
+\begin{espacio}{0.30}
 \section{Conclusiones iniciales} % 10 %
 % Retroalimentación (5/10, nivel 3 de 5): "pocos insights reales" y acciones
 % próximas "genéricas o poco conectadas con los hallazgos". Es la que más hay que
 % rehacer: insights para el negocio y acciones concretas que salgan de ellos.
 % Primeras conclusiones e insights, y las acciones que siguen.
+\heredado
 Los datos alcanzan para las dos preguntas: la facturación cubre el 87\,\% del levantamiento y el
 historial de pago anticipa casi todo el comportamiento. El 10\,\% de los predios con mayor
 impuesto factura el 81\,\% del total, y en él recae el KPI~2. Sigue validar el motor con las
 tarifas vigentes.
 
+\end{espacio}
+
+\begin{espacio}{1.55}
 \section{Preparación de datos} % 20 %
 % El proceso de preparación y evidencia de los datos preparados. Las
 % transformaciones: nuevas características, codificación de categóricas,
@@ -379,6 +440,9 @@ Pendiente: el proceso de preparación, las transformaciones y la evidencia de lo
 preparados, con enlace al
 \repo{entrega-2/notebooks/08-preparacion-de-datos.ipynb}{notebook de preparación de los datos}.
 
+\end{espacio}
+
+\begin{espacio}{0.50}
 \section{Estrategia de validación y selección del modelo} % 5 %
 % La estrategia de experimentación para entrenar y seleccionar el mejor modelo. La
 % partición en entrenamiento, validación y prueba, y un reporte breve de que los
@@ -387,6 +451,9 @@ Pendiente: la estrategia de experimentación, la partición y la verificación d
 distribuciones, con enlace al
 \repo{entrega-2/notebooks/09-estrategia-de-validacion.ipynb}{notebook de validación}.
 
+\end{espacio}
+
+\begin{espacio}{1.60}
 \section{Construcción y evaluación del modelo} % 20 %
 % Modelos con al menos tres algoritmos y distintos conjuntos de hiperparámetros.
 % Evaluación cuantitativa con las métricas del enfoque analítico (sección 4) y
@@ -397,6 +464,9 @@ las oportunidades de mejora, con enlace al
 \repo{entrega-2/notebooks/10-construccion-y-evaluacion-del-modelo.ipynb}{notebook de
 modelado}.
 
+\end{espacio}
+
+\begin{espacio}{1.55}
 \section{Producto de datos} % 20 %
 % El prototipo funcional con el mejor modelo, la API REST, la aplicación web y/o el
 % dashboard. El mecanismo de despliegue. El diagrama de arquitectura
@@ -404,6 +474,9 @@ modelado}.
 Pendiente: el prototipo, su despliegue y su arquitectura, con enlace a
 \repo{entrega-2/producto/README.md}{la carpeta del producto}.
 
+\end{espacio}
+
+\begin{espacio}{1.05}
 \section{Retroalimentación de la organización} % 15 %
 % La bitácora de al menos tres interacciones con los stakeholders durante el
 % semestre, con los acuerdos sobre la problemática, el producto de datos, el
@@ -412,6 +485,9 @@ Pendiente: el prototipo, su despliegue y su arquitectura, con enlace a
 Pendiente: el resumen de las interacciones y de la presentación final, con enlace a la
 \repo{entrega-2/bitacora-stakeholders.md}{bitácora}.
 
+\end{espacio}
+
+\begin{espacio}{1.25}
 \section{Conclusiones} % 15 %
 % Resumen ejecutivo de los resultados más relevantes. ¿Se cumplieron los objetivos?
 % ¿Cuáles fueron las mayores dificultades? ¿Cómo se impactarían los KPIs con el
@@ -419,6 +495,10 @@ Pendiente: el resumen de las interacciones y de la presentación final, con enla
 % mejores resultados? ¿El mejor modelo es suficiente para resolver el problema?
 Pendiente: el resumen ejecutivo y la respuesta a las cinco preguntas del enunciado.
 
+\end{espacio}
+
+\begin{espacio}[referencias]{0.65}
 \printbibliography
+\end{espacio}
 
 \end{document}

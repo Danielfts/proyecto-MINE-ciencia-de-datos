@@ -42,6 +42,12 @@ C_VERDE = "#6EE7B7"
 C_ROSA = "#FF8AAE"
 C_ROJO = "#FF6B6B"
 
+# Marca de las secciones que un video toma sin cambios de una entrega anterior (ver
+# EscenaNarrada.heredado). Va arriba a la derecha, debajo de quien habla: debajo del
+# título de la sección no cabe, porque hay contenido que empieza justo ahí (el wireframe
+# de la primera entrega). guion.py pone su equivalente junto al título en el guion.
+MARCA_HEREDADO = "Heredado de la primera entrega · pendiente de aprobación"
+
 # La pantalla mide 14,2 x 8 unidades. Nada debe pasar de x = ±6,9 ni bajar de y = −2,9:
 # más abajo está la nota.
 ANCHO_UTIL = 13.2
@@ -60,6 +66,20 @@ def lista(*renglones, font_size=30, color=C_TEXTO):
         *[Text(f"•  {renglon}", font_size=font_size, color=color) for renglon in renglones]
     ).arrange(DOWN, aligned_edge=LEFT, buff=0.45)
     return ajustar(renglones, 12.4)
+
+
+def marca_heredado():
+    """Etiqueta pequeña, amarillo sobre gris oscuro, para las secciones heredadas.
+
+    Queda arriba a la derecha, debajo del nombre de quien habla, y no cambia de lugar
+    cuando cambia quien habla.
+    """
+    texto = Text(MARCA_HEREDADO, font_size=14, color=C_AMARILLO)
+    fondo = RoundedRectangle(
+        corner_radius=0.08, width=texto.width + 0.24, height=texto.height + 0.12,
+        fill_color="#262626", fill_opacity=1, stroke_width=0,
+    ).move_to(texto)
+    return VGroup(fondo, texto).to_corner(UR, buff=0.4).shift(DOWN * 0.36)
 
 
 def figura(ruta, alto=4.6):
@@ -84,6 +104,12 @@ class EscenaNarrada(VoiceoverScene):
         self.hablante_actual = None
         self.quien = None
         self.diapositivas = []
+        # Si está encendido, las secciones que se abran llevan la marca de heredadas
+        # (MARCA_HEREDADO) y así quedan en el guion. Lo enciende el video que reutiliza
+        # secciones de una entrega anterior, solo mientras corren esas secciones.
+        self.heredado = False
+        self.seccion_heredada = False
+        self.marca_actual = None
 
     def capturar(self, texto="", inicio=None, duracion=0.0):
         """Guarda el cuadro actual como diapositiva, con su narración como nota."""
@@ -97,6 +123,7 @@ class EscenaNarrada(VoiceoverScene):
                 "nota": texto,
                 "quien": self.quien if texto else None,
                 "seccion": self.titulo_seccion,
+                "heredado": self.seccion_heredada,
                 "inicio": round(self.renderer.time if inicio is None else inicio, 3),
                 "duracion": round(duracion, 3),
                 "fin": round(self.renderer.time, 3),
@@ -161,14 +188,24 @@ class EscenaNarrada(VoiceoverScene):
         self.nota_actual = nueva
 
     def seccion(self, texto):
-        """Título de la sección, arriba a la izquierda. También divide el guion."""
+        """Título de la sección, arriba a la izquierda. También divide el guion.
+
+        Con `self.heredado` encendido, la sección lleva la marca de heredada.
+        """
         nueva = Text(texto, font_size=24, color=GRIS).to_corner(UL, buff=0.4)
         animaciones = [FadeIn(nueva)]
         if self.seccion_actual is not None:
             animaciones.append(FadeOut(self.seccion_actual))
+        if self.marca_actual is not None:
+            animaciones.append(FadeOut(self.marca_actual))
+            self.marca_actual = None
+        if self.heredado:
+            self.marca_actual = marca_heredado()
+            animaciones.append(FadeIn(self.marca_actual))
         self.play(*animaciones, run_time=0.5)
         self.seccion_actual = nueva
         self.titulo_seccion = texto
+        self.seccion_heredada = self.heredado
 
     def hablante(self, quien):
         """Nombre de quien habla, arriba a la derecha."""
@@ -198,3 +235,4 @@ class EscenaNarrada(VoiceoverScene):
         self.nota_actual = None
         self.seccion_actual = None
         self.hablante_actual = None
+        self.marca_actual = None

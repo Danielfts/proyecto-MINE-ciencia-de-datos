@@ -13,10 +13,15 @@ integrante (guion.md) se genera a partir de este archivo.
 
 El tiempo se reparte según el peso de cada actividad en la nota de la entrega final:
 preparación de datos 20 %, validación 5 %, modelos 20 %, producto 20 %,
-retroalimentación de la organización 15 % y conclusiones 15 %. La primera entrega se
-resume al comienzo, con los ajustes que pidió la retroalimentación.
+retroalimentación de la organización 15 % y conclusiones 15 %.
+
+Las secciones 1 a 7 son las del video de la primera entrega, sin cambios: se toman de
+entrega-1/video/video_entrega_1.py, no se copian, y cada una lleva en pantalla y en el
+guion la marca de heredada y pendiente de aprobación. Para ajustar una, se copia aquí
+su método y se quita la marca (ver `heredado`).
 """
 
+import importlib.util
 import sys
 from pathlib import Path
 
@@ -28,10 +33,52 @@ from herramientas_video.escena import *  # noqa: E402
 AQUI = Path(__file__).parent
 
 
-class EntregaBase(EscenaNarrada):
+def cargar_video(ruta, nombre):
+    """Importa el video de otra entrega como módulo aparte.
+
+    Sus escenas no entran a este módulo, así que manim no las ofrece como escenas de
+    este video. Sus actos siguen usando sus propias imágenes y ayudas (AQUI, caja,
+    figura...), porque se resuelven en su módulo.
+    """
+    especificacion = importlib.util.spec_from_file_location(nombre, ruta)
+    modulo = importlib.util.module_from_spec(especificacion)
+    sys.modules[nombre] = modulo
+    especificacion.loader.exec_module(modulo)
+    return modulo
+
+
+primera = cargar_video(AQUI.parent.parent / "entrega-1" / "video" / "video_entrega_1.py",
+                       "video_entrega_1")
+
+
+def heredado(acto):
+    """Un acto de la primera entrega, sin cambios, con la marca de heredado en cada paso."""
+    def acto_heredado(self):
+        self.heredado = True
+        try:
+            acto(self)
+        finally:
+            self.heredado = False
+
+    return acto_heredado
+
+
+class EntregaBase(primera.EntregaBase):
     TITULO = "Entrega final"
     LIMITE_MINUTOS = 12
-    # Participan los cuatro: INTEGRANTES de herramientas_video/creditos.py
+    # Participan los cuatro, incluido Gabriel, que no estuvo en la primera entrega.
+    INTEGRANTES = [DANIEL, NICOLAS, JOUBERT, GABRIEL]
+
+    # Secciones 1 a 7: las de la primera entrega, tal cual, pendientes de aprobación.
+    # Hereda de su EntregaBase para que sus actos encuentren sus ayudas (despejar).
+    # Su `cierre` es la sección 7; aquí `cierre` es la sección 13.
+    acto_problematica = heredado(primera.EntregaBase.acto_problematica)
+    acto_ideacion = heredado(primera.EntregaBase.acto_ideacion)
+    acto_etica = heredado(primera.EntregaBase.acto_etica)
+    acto_enfoque = heredado(primera.EntregaBase.acto_enfoque)
+    acto_datos = heredado(primera.EntregaBase.acto_datos)
+    acto_entendimiento = heredado(primera.EntregaBase.acto_entendimiento)
+    acto_conclusiones_iniciales = heredado(primera.EntregaBase.cierre)
 
     def portada(self):
         self.firma()
@@ -46,33 +93,6 @@ class EntregaBase(EscenaNarrada):
                 ),
             ),
             quien=DANIEL,
-        )
-        self.limpiar()
-
-    def acto_resumen(self):
-        # Breve: el problema, el producto y lo que cambió desde la primera entrega.
-        self.seccion("Lo que traíamos de la primera entrega")
-        puntos = lista(
-            "Problema, KPIs y producto: pendiente",
-            "Datos y hallazgos principales: pendiente",
-            "Ajustes según la retroalimentación: pendiente",
-        )
-        self.narrar(
-            (
-                "Pendiente: el problema de la alcaldía, los dos KPIs y el producto de datos.",
-                lambda d: self.paso(d, FadeIn(puntos[0], shift=RIGHT * 0.2)),
-            ),
-            quien=DANIEL,
-        )
-        self.narrar(
-            (
-                "Pendiente: los datos y los hallazgos de la primera entrega que guían el modelo.",
-                lambda d: self.paso(d, FadeIn(puntos[1], shift=RIGHT * 0.2)),
-            ),
-            (
-                "Pendiente: qué ajustamos según la retroalimentación de los docentes.",
-                lambda d: self.paso(d, FadeIn(puntos[2], shift=RIGHT * 0.2)),
-            ),
         )
         self.limpiar()
 
@@ -245,9 +265,39 @@ class Portada(EntregaBase):
         self.portada()
 
 
-class Resumen(EntregaBase):
+class Problematica(EntregaBase):
     def construct(self):
-        self.acto_resumen()
+        self.acto_problematica()
+
+
+class Ideacion(EntregaBase):
+    def construct(self):
+        self.acto_ideacion()
+
+
+class Etica(EntregaBase):
+    def construct(self):
+        self.acto_etica()
+
+
+class Enfoque(EntregaBase):
+    def construct(self):
+        self.acto_enfoque()
+
+
+class Datos(EntregaBase):
+    def construct(self):
+        self.acto_datos()
+
+
+class Entendimiento(EntregaBase):
+    def construct(self):
+        self.acto_entendimiento()
+
+
+class ConclusionesIniciales(EntregaBase):
+    def construct(self):
+        self.acto_conclusiones_iniciales()
 
 
 class Preparacion(EntregaBase):
@@ -283,7 +333,13 @@ class Cierre(EntregaBase):
 class VideoCompleto(EntregaBase):
     def construct(self):
         self.portada()
-        self.acto_resumen()
+        self.acto_problematica()
+        self.acto_ideacion()
+        self.acto_etica()
+        self.acto_enfoque()
+        self.acto_datos()
+        self.acto_entendimiento()
+        self.acto_conclusiones_iniciales()
         self.acto_preparacion()
         self.acto_validacion()
         self.acto_modelos()
