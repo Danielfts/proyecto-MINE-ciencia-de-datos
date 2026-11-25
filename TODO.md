@@ -10,13 +10,13 @@ Lista de pendientes derivada del enunciado ([Proyecto Final.pdf](Proyecto%20Fina
 ## Requisitos generales (aplican a ambas entregas)
 
 - [x] Equipo de 4 integrantes (ver [README.md](README.md#integrantes))
-- [ ] Organización real y stakeholder de contacto definidos (alcance, expectativas y acceso a los datos)
+- [x] Organización real y stakeholder de contacto definidos (alcance, expectativas y acceso a los datos)
 - [ ] Producto de datos con al menos 3 de estos componentes: modelo de ML, API REST (o equivalente), aplicación web/mobile, dashboard
-- [ ] Informar a los docentes si se usan técnicas o herramientas no cubiertas en clase
-- [ ] Repositorio de GitHub **público** y autocontenido, con todo indexado para fácil acceso
-- [ ] README con integrantes, alcance, conclusiones (insights), organización del repositorio, instrucciones de ejecución y dependencias
-- [ ] Archivo markdown adicional declarando el uso de IA: herramientas, prompts más relevantes o flujo de trabajo
-- [ ] Scripts/notebooks ejecutables sin errores, en un orden claramente especificado
+- [x] Informar a los docentes si se usan técnicas o herramientas no cubiertas en clase
+- [x] Repositorio de GitHub **público** y autocontenido, con todo indexado para fácil acceso
+- [x] README con integrantes, alcance, conclusiones (insights), organización del repositorio, instrucciones de ejecución y dependencias
+- [x] Archivo markdown adicional declarando el uso de IA: herramientas, prompts más relevantes o flujo de trabajo
+- [x] Scripts/notebooks ejecutables sin errores, en un orden claramente especificado
 
 ## Primera entrega — 18 de octubre de 2026, 11:59 PM
 
@@ -38,38 +38,38 @@ Lista de pendientes derivada del enunciado ([Proyecto Final.pdf](Proyecto%20Fina
 
 ### 3. Aspectos éticos y legales (10%)
 
-- [ ] Identificar implicaciones éticas, de privacidad, confidencialidad, transparencia y regulatorias
-- [ ] Citar claramente las fuentes consultadas
+- [x] Identificar implicaciones éticas, de privacidad, confidencialidad, transparencia y regulatorias
+- [x] Citar claramente las fuentes consultadas
 
 ### 4. Enfoque analítico (15%)
 
-- [ ] Definir las hipótesis o preguntas de negocio que guiarán la experimentación
-- [ ] Proponer las técnicas estadísticas, de visualización y/o de ML para responderlas
-- [ ] Plantear las métricas de evaluación de la calidad del modelo
+- [x] Definir las hipótesis o preguntas de negocio que guiarán la experimentación
+- [x] Proponer las técnicas estadísticas, de visualización y/o de ML para responderlas
+- [x] Plantear las métricas de evaluación de la calidad del modelo
 
 ### 5. Recolección de datos (10%)
 
-- [ ] Describir las fuentes de datos según su estructura e importancia
+- [x] Describir las fuentes de datos según su estructura e importancia
 - [x] Elaborar el diccionario de datos, al menos de las entidades o atributos más relevantes (ver [datos/base-podada/diccionario-de-datos.md](datos/base-podada/diccionario-de-datos.md))
 
 ### 6. Entendimiento de los datos (35%)
 
-- [ ] Reporte de análisis exploratorio
-- [ ] Reporte de calidad de los datos
-- [ ] Evidenciar técnicas univariadas y multivariadas, gráficas y no gráficas
-- [ ] Validar la calidad y suficiencia de los datos para la solución planteada
+- [x] Reporte de análisis exploratorio
+- [x] Reporte de calidad de los datos
+- [x] Evidenciar técnicas univariadas y multivariadas, gráficas y no gráficas
+- [x] Validar la calidad y suficiencia de los datos para la solución planteada
 
 ### 7. Conclusiones iniciales (10%)
 
-- [ ] Primer conjunto de conclusiones e insights
-- [ ] Acciones próximas a ejecutar
+- [x] Primer conjunto de conclusiones e insights
+- [x] Acciones próximas a ejecutar
 
 ### Formato de entrega
 
-- [ ] Reporte PDF ejecutivo: una columna, Arial 12, máx. 6 páginas, sin portada ni tabla de contenidos, con enlaces al repositorio
-- [ ] Video de sustentación ejecutiva en YouTube, máx. 6 minutos, con participación similar de todos los integrantes
-- [ ] Diapositivas incluidas en el repositorio
-- [ ] README y declaración de uso de IA actualizados
+- [x] Reporte PDF ejecutivo: una columna, Arial 12, máx. 6 páginas, sin portada ni tabla de contenidos, con enlaces al repositorio
+- [x] Video de sustentación ejecutiva en YouTube, máx. 6 minutos, con participación similar de todos los integrantes
+- [x] Diapositivas incluidas en el repositorio
+- [x] README y declaración de uso de IA actualizados
 
 ## Entrega final — 29 de noviembre de 2026, 11:59 PM
 
@@ -121,7 +121,7 @@ Lista de pendientes derivada del enunciado ([Proyecto Final.pdf](Proyecto%20Fina
 
 ### Formato de entrega
 
-- [ ] Reporte PDF incremental: incluye los resultados de la primera entrega ajustados según las recomendaciones recibidas
+- [ ] Reporte PDF incremental: incluye los resultados de la primera entrega ajustados según las recomendaciones recibidas (ver [entrega-1/retroalimentacion.md](entrega-1/retroalimentacion.md))
 - [ ] Reporte PDF ejecutivo: una columna, Arial 12, máx. 12 páginas, sin portada ni tabla de contenidos, con enlaces al repositorio
 - [ ] Video de sustentación ejecutiva en YouTube, máx. 12 minutos, con participación similar de todos los integrantes
 - [ ] Diapositivas incluidas en el repositorio

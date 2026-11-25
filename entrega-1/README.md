@@ -10,6 +10,8 @@ Fecha límite: **domingo 18 de octubre de 2026, 11:59 PM**. Los pendientes está
 | Guion del video | [video/guion.md](video/guion.md) | |
 | Diapositivas del video | `video/diapositivas.pptx` y `.pdf` (se generan) | |
 
+Calificación: **81,75 / 100**. El puntaje por criterio y lo que hay que ajustar en el reporte final están en [retroalimentacion.md](retroalimentacion.md).
+
 ## Reporte
 
 [reporte/reporte.tex](reporte/reporte.tex) tiene una sección por actividad (1 a 7) y, en comentarios, lo que el enunciado pide en cada una y su peso en la nota. Las fuentes van en [reporte/referencias.bib](reporte/referencias.bib).
