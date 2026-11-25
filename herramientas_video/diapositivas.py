@@ -27,7 +27,6 @@ from .creditos import INTEGRANTES
 from .guion import recorrer
 from .voz import RAIZ
 
-AUTORES = ", ".join(INTEGRANTES)
 
 
 def diapositivas(carpeta, pasos):
@@ -49,12 +48,12 @@ def diapositivas(carpeta, pasos):
     return resultado
 
 
-def armar_pptx(titulo, laminas, destino):
+def armar_pptx(titulo, autores, laminas, destino):
     presentacion = Presentation()
     presentacion.slide_width = Inches(13.333)
     presentacion.slide_height = Inches(7.5)
     presentacion.core_properties.title = titulo
-    presentacion.core_properties.author = AUTORES
+    presentacion.core_properties.author = autores
     presentacion.core_properties.language = "es-CO"
     en_blanco = presentacion.slide_layouts[6]
     for numero, (imagen, nota) in enumerate(laminas, start=1):
@@ -71,12 +70,12 @@ def armar_pptx(titulo, laminas, destino):
     presentacion.save(destino)
 
 
-def armar_pdf(titulo, laminas, destino):
+def armar_pdf(titulo, autores, laminas, destino):
     paginas = [Image.open(imagen).convert("RGB") for imagen, _ in laminas]
     # 1920 px a 144 ppp = 13,33 pulgadas: una página 16:9 del tamaño de la diapositiva
     paginas[0].save(
         destino, save_all=True, append_images=paginas[1:], resolution=144.0,
-        title=titulo, author=AUTORES,
+        title=titulo, author=autores,
     )
 
 
@@ -90,8 +89,9 @@ def main():
     carpeta, recorrido = recorrer(archivo, args.escena, calidad="-qh")
     titulo = recorrido["titulo"] or archivo.stem
     laminas = diapositivas(carpeta, recorrido["pasos"])
-    armar_pptx(titulo, laminas, archivo.parent / "diapositivas.pptx")
-    armar_pdf(titulo, laminas, archivo.parent / "diapositivas.pdf")
+    autores = ", ".join(recorrido.get("integrantes", INTEGRANTES))
+    armar_pptx(titulo, autores, laminas, archivo.parent / "diapositivas.pptx")
+    armar_pdf(titulo, autores, laminas, archivo.parent / "diapositivas.pdf")
     print(f"{len(laminas)} diapositivas -> {archivo.parent.relative_to(RAIZ)}")
 
 

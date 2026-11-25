@@ -5,8 +5,9 @@ DANIEL = "Daniel Felipe Triviño Santana"
 NICOLAS = "Nicolas Bedoya Figueroa"
 JOUBERT = "Joubert Daniel Álvarez"
 GABRIEL = "Gabriel Bejarano"
-# Gabriel no participa en el video de la primera entrega: Daniel lee su parte.
-INTEGRANTES = [DANIEL, NICOLAS, JOUBERT]
+# Equipo de la entrega final. Cada video puede fijar los suyos con el atributo
+# INTEGRANTES de su escena: el de la primera entrega deja fuera a Gabriel, que no participó.
+INTEGRANTES = [DANIEL, NICOLAS, JOUBERT, GABRIEL]
 
 # Segunda línea de la firma de la portada, en gris.
 CURSO = "MINE-4101 Ciencia de Datos Aplicada · Universidad de los Andes · 2026-20"

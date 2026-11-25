@@ -1,4 +1,4 @@
-# Declaración de uso de IA
+# Declaración de uso de IA — primera entrega
 
 Partes del proyecto en las que se utilizó inteligencia artificial, según lo exige el enunciado.
 

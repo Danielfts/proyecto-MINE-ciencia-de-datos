@@ -1,0 +1,27 @@
+%% Arquitectura del producto de datos (actividad 11).
+%% Borrador a partir de los componentes de la sección 2 del reporte; falta el despliegue.
+flowchart LR
+  subgraph Datos["Datos del municipio (no se publican)"]
+    CAT[("Catastro LADM-COL")]
+    FAC[("Facturación del predial")]
+  end
+  CAT --> CONS["datos/predios/construir.py"]
+  FAC --> CONS
+  CONS --> PAR[("predios.parquet")]
+  PAR --> NB["Notebooks 08 a 10"]
+  NB --> MOD[("modelo.joblib")]
+  subgraph Producto["entrega-2/producto"]
+    MOT["Motor de escenarios<br/>motor.py"]
+    ML["Modelo de pago<br/>modelo.py"]
+    API["API REST<br/>FastAPI · api.py"]
+    APP["Aplicación web<br/>Dash · app.py"]
+    EXP[["Exportación congelada<br/>del escenario"]]
+  end
+  PAR --> MOT
+  MOD --> ML
+  MOT --> API
+  ML --> API
+  API --> APP
+  API --> EXP
+  APP --- U(["Consultora y administración"])
+  EXP --> CON(["Material para el Concejo"])

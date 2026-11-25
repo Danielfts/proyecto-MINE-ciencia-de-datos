@@ -110,6 +110,8 @@ def numero(n, radio=0.2):
 class EntregaBase(EscenaNarrada):
     TITULO = "Primera entrega"
     LIMITE_MINUTOS = 6
+    # Gabriel no participó en la primera entrega: Daniel leyó su parte.
+    INTEGRANTES = [DANIEL, NICOLAS, JOUBERT]
 
     def despejar(self, duracion, *objetos):
         """Retira lo que mostró el paso anterior, con su nota, antes del siguiente."""

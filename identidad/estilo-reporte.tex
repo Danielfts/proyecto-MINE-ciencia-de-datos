@@ -4,7 +4,15 @@
 %
 % El reporte define antes: \titulo, \titulocorto, \subtitulo, \entrega, \fecha,
 % \urlrepositorio, \urlvideo y \maxpaginas, y pone \input{../../identidad/estilo-reporte}.
+% Puede definir también los integrantes: \integrantesportada (un nombre por línea, para
+% la portada) e \integrantescompacto (para el título compacto). Si no, salen los tres
+% de la primera entrega.
 % Se compila con LuaLaTeX.
+
+\providecommand{\integrantesportada}{Daniel Felipe Triviño Santana\\ Nicolas Bedoya Figueroa\\
+  Joubert Daniel Álvarez}
+\providecommand{\integrantescompacto}{Daniel Felipe Triviño Santana, Nicolas Bedoya Figueroa,\\
+  Joubert Daniel Álvarez}
 
 \usepackage[spanish,es-tabla,es-nodecimaldot]{babel}
 \usepackage{fontspec}
@@ -127,8 +135,7 @@
     \node[anchor=north west,inner sep=0pt,text width=8.5cm,align=left]
       at ([xshift=2.5cm,yshift=-18.6cm]current page.north west) {%
         {\small\bfseries\addfontfeature{LetterSpace=12}INTEGRANTES}\\[0.25cm]
-        Daniel Felipe Triviño Santana\\ Nicolas Bedoya Figueroa\\
-        Joubert Daniel Álvarez};
+        \integrantesportada};
     \node[anchor=north west,inner sep=0pt,text width=7cm,align=left]
       at ([xshift=12cm,yshift=-18.6cm]current page.north west) {%
         {\small\bfseries\addfontfeature{LetterSpace=12}PROFESORES}\\[0.25cm]
@@ -150,8 +157,7 @@
   \begin{center}
     {\Large\bfseries\titulo\par}\vspace{0.5ex}
     \entrega\ · MINE-4101 Ciencia de Datos Aplicada · 2026-20\\[0.5ex]
-    Daniel Felipe Triviño Santana, Nicolas Bedoya Figueroa,\\
-    Joubert Daniel Álvarez\\[0.5ex]
+    \integrantescompacto\\[0.5ex]
     \enlace{\urlrepositorio}{Repositorio} · \enlace{\urlvideo}{Video de sustentación}
   \end{center}}
 

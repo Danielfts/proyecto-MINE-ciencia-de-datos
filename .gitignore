@@ -2,9 +2,9 @@
 course-contents/*
 !course-contents/README.md
 
-# Bitácora privada de uso de IA; la versión que se entrega es USO_DE_IA.md
-USO_DE_IA.borrador.md
-USO_DE_IA_NICOLAS.md
+# Bitácoras privadas de uso de IA, en cada carpeta de uso-de-ia/; la versión que se entrega es USO_DE_IA.md
+uso-de-ia/*/USO_DE_IA.borrador.md
+uso-de-ia/*/USO_DE_IA_NICOLAS.md
 
 # Entorno de Python
 .venv/
@@ -44,6 +44,9 @@ datos/predios/diccionario/*
 catastro_*.sql
 # Exportaciones de la base (ver datos/predios/README.md): no se publican
 *.parquet
+# Modelos entrenados con los datos del municipio (los guarda el notebook 10)
+entrega-2/producto/artefactos/
+*.joblib
 
 # Archivos del municipio (facturación y recaudo del predial): tienen datos personales
 # y sus nombres o contenidos identifican al municipio. No se publican.

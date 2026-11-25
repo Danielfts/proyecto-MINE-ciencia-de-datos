@@ -58,9 +58,9 @@ def reloj(segundos):
     return f"{segundos // 60}:{segundos % 60:02d}"
 
 
-def resumen(pasos):
+def resumen(pasos, integrantes=INTEGRANTES):
     """Por integrante: segundos de voz y palabras, en el orden del equipo."""
-    cuenta = {nombre: [0.0, 0] for nombre in INTEGRANTES}
+    cuenta = {nombre: [0.0, 0] for nombre in integrantes}
     for paso in pasos:
         if paso["nota"]:
             fila = cuenta.setdefault(paso["quien"] or SIN_ASIGNAR, [0.0, 0])
@@ -73,7 +73,8 @@ def escribir(recorrido, archivo, orden, con_voz):
     pasos = recorrido["pasos"]
     total = max((paso["fin"] for paso in pasos), default=0.0)
     limite = recorrido["limite_minutos"]
-    cuenta = resumen(pasos)
+    integrantes = recorrido.get("integrantes", INTEGRANTES)
+    cuenta = resumen(pasos, integrantes)
     voz_total = sum(segundos for segundos, _ in cuenta.values()) or 1.0
 
     lineas = [
@@ -104,7 +105,7 @@ def escribir(recorrido, archivo, orden, con_voz):
         lineas.append(
             f"| {nombre} | {reloj(segundos)} | {segundos / voz_total:.0%} | {palabras} |"
         )
-    callados = [n for n in INTEGRANTES if cuenta[n][1] == 0]
+    callados = [n for n in integrantes if cuenta[n][1] == 0]
     if callados:
         lineas += ["", f"**Todavía no tienen parte:** {', '.join(callados)}."]
 

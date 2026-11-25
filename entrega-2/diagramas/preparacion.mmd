@@ -1,0 +1,12 @@
+%% Diagrama de bloques de la preparación de datos (actividad 8, recomendado).
+%% Borrador: ajustarlo a lo que finalmente hagan los notebooks 08 a 10.
+flowchart LR
+  A[("predios.parquet<br/>un predio por fila,<br/>sin datos personales")] --> B["Desanidar construcciones<br/>y unidades"]
+  B --> C["Unidad de análisis y<br/>variable objetivo: pagó 2026"]
+  C --> D["Limpieza: centinelas a<br/>faltantes, formatos, consistencia"]
+  D --> E["Nuevas características:<br/>historial de pago 2025,<br/>atributos por predio, log-avalúo"]
+  E --> F[("predios_preparados.parquet")]
+  F --> G["Partición estratificada:<br/>entrenamiento, validación, prueba<br/>(notebook 09)"]
+  G --> H["Pipeline ajustado en entrenamiento:<br/>imputación, codificación, escalado<br/>(notebook 10)"]
+  H --> I["Tres algoritmos con varios<br/>hiperparámetros; elección en validación"]
+  I --> J[("modelo.joblib")]

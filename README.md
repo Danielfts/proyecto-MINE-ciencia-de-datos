@@ -9,6 +9,7 @@ Estos son los nombres que deben aparecer en todas las entregas y artefactos del 
 - Daniel Felipe Triviño Santana
 - Nicolas Bedoya Figueroa
 - Joubert Daniel Álvarez
+- Gabriel Bejarano (desde la entrega final; no participó en la primera)
 
 ## Alcance
 
@@ -29,7 +30,7 @@ Estos son los nombres que deben aparecer en todas las entregas y artefactos del 
 
 **Fuera del alcance.** Los avalúos (el producto no los calcula ni los modifica), las PQR de los contribuyentes, el momento del pago, la cartera y sus intereses, y el recaudo diario.
 
-**Entregas.** La primera entrega cubre las actividades 1 a 7: problemática, ideación, aspectos éticos, enfoque analítico, recolección y entendimiento de los datos. Los modelos y el producto se construyen para la entrega final.
+**Entregas.** La primera entrega cubre las actividades 1 a 7: problemática, ideación, aspectos éticos, enfoque analítico, recolección y entendimiento de los datos. La entrega final ([entrega-2/](entrega-2/README.md)) cubre las actividades 8 a 14: preparación de los datos, estrategia de validación, modelos, producto de datos, retroalimentación de la organización y conclusiones.
 
 ## Conclusiones (insights)
 
@@ -47,14 +48,15 @@ De la primera entrega (sección 7 del [reporte](entrega-1/reporte/reporte.pdf) y
 
 | Carpeta o archivo | Contenido |
 | --- | --- |
-| [entrega-1/](entrega-1/README.md) | Primera entrega: reporte ([PDF](entrega-1/reporte/reporte.pdf) y fuente en LaTeX), notebook de entendimiento de los datos, video de sustentación ([en YouTube](https://youtu.be/gj6foaegdeE)), guion y diapositivas |
+| [entrega-1/](entrega-1/README.md) | Primera entrega: reporte ([PDF](entrega-1/reporte/reporte.pdf) y fuente en LaTeX), notebook de entendimiento de los datos, video de sustentación ([en YouTube](https://youtu.be/gj6foaegdeE)), guion y diapositivas. La calificación y la retroalimentación de los docentes están en [retroalimentacion.md](entrega-1/retroalimentacion.md) |
+| [entrega-2/](entrega-2/README.md) | Entrega final (en construcción): reporte incremental, notebooks de preparación, validación y modelado, [producto de datos](entrega-2/producto/README.md) (API y aplicación web), diagramas, bitácora de interacciones con la organización, video y diapositivas |
 | [datos/](datos/README.md) | Documentación de la base de datos catastral (modelo LADM-COL) que sirve de fuente al proyecto, y los modelos INTERLIS y el diccionario de datos de los que sale su estructura. En [datos/base-podada/](datos/base-podada/README.md): la versión reducida de la base que usa el proyecto, con su diagrama entidad-relación, su [diccionario de datos](datos/base-podada/diccionario-de-datos.md) y el script que la crea. En [datos/predios/](datos/predios/README.md): cómo convertir la base podada en un archivo parquet con un predio por fila y sin datos personales |
 | [identidad/](identidad/README.md) | Identidad visual del proyecto (colores, tipografía y logo de la Universidad de los Andes) y el estilo de los reportes y de las gráficas |
 | [herramientas_video/](herramientas_video/README.md) | Herramientas y flujo de trabajo para hacer los videos con manim y Gemini TTS |
 | [course-contents/](course-contents/README.md) | Material de referencia del curso (no versionado; el README indica qué debe contener) |
 | [Proyecto Final.pdf](Proyecto%20Final.pdf) | Enunciado del proyecto |
 | [TODO.md](TODO.md) | Pendientes y fechas límite de cada entrega |
-| [USO_DE_IA.md](USO_DE_IA.md) | Declaración de uso de IA |
+| [uso-de-ia/](uso-de-ia/README.md) | Declaración de uso de IA de cada entrega: [primera entrega](uso-de-ia/entrega-1/USO_DE_IA.md) y [entrega final](uso-de-ia/entrega-2/USO_DE_IA.md) |
 | `pyproject.toml`, `uv.lock`, `requirements.txt`, `environment.yml` | Entorno de Python |
 
 ## Notebooks
@@ -64,12 +66,22 @@ Se ejecutan en este orden, con el [entorno de Python](#entorno-de-python) instal
 | Orden | Notebook | Actividad | Estado |
 | --- | --- | --- | --- |
 | 1 | [entrega-1/notebooks/06-entendimiento-de-los-datos.ipynb](entrega-1/notebooks/06-entendimiento-de-los-datos.ipynb) | 6. Entendimiento de los datos | Completo: análisis, interpretaciones y conclusiones |
+| 2 | [entrega-2/notebooks/08-preparacion-de-datos.ipynb](entrega-2/notebooks/08-preparacion-de-datos.ipynb) | 8. Preparación de datos | Andamiaje |
+| 3 | [entrega-2/notebooks/09-estrategia-de-validacion.ipynb](entrega-2/notebooks/09-estrategia-de-validacion.ipynb) | 9. Estrategia de validación | Andamiaje |
+| 4 | [entrega-2/notebooks/10-construccion-y-evaluacion-del-modelo.ipynb](entrega-2/notebooks/10-construccion-y-evaluacion-del-modelo.ipynb) | 10. Construcción y evaluación del modelo | Andamiaje |
+
+Los notebooks 08 a 10 se pasan archivos entre sí (ver [entrega-2/](entrega-2/README.md#notebooks)): cada uno lee lo que escribe el anterior, y ninguno de esos archivos se sube al repositorio.
 
 Se abren con JupyterLab (`uv run jupyter lab`) o con VS Code y se ejecutan de arriba abajo. También desde la terminal, en la raíz del repositorio:
 
 ```bash
 uv run jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.record_timing=False entrega-1/notebooks/06-entendimiento-de-los-datos.ipynb
+for n in 08-preparacion-de-datos 09-estrategia-de-validacion 10-construccion-y-evaluacion-del-modelo; do
+  uv run jupyter nbconvert --to notebook --execute --inplace --ExecutePreprocessor.record_timing=False entrega-2/notebooks/$n.ipynb
+done
 ```
+
+El producto de datos (API y aplicación web) se ejecuta como indica [entrega-2/producto/](entrega-2/producto/README.md#cómo-se-ejecuta).
 
 ## Entorno de Python
 

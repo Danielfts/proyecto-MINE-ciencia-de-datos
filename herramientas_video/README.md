@@ -57,7 +57,7 @@ El paso de la voz de prototipo a las voces grabadas no está automatizado: hay q
 
 ## Anatomía de un video
 
-- Una clase base que hereda de `EscenaNarrada`, con `TITULO`, `LIMITE_MINUTOS` (6 en la primera entrega, 12 en la final), un método `portada`, un método `acto_...` por sección y un `cierre`.
+- Una clase base que hereda de `EscenaNarrada`, con `TITULO`, `LIMITE_MINUTOS` (6 en la primera entrega, 12 en la final), `INTEGRANTES` si no participan todos los de `creditos.py` (la primera entrega deja fuera a Gabriel), un método `portada`, un método `acto_...` por sección y un `cierre`.
 - Al final, escenas pequeñas para probar por partes y `VideoCompleto` con todo.
 - `portada` empieza con `self.firma()`: pone abajo los integrantes y el curso, que se van con la portada en `limpiar()`.
 - Cada paso es una llamada a `self.narrar((texto, acción), (texto, acción), ..., quien=INTEGRANTE)`. Cada tramo dura lo que tarda en decirse su texto; la acción recibe esos segundos y normalmente llama a `self.paso(d, *animaciones, nota=..., tope=...)`, que no estira la animación más allá de `tope`. Una acción `None` solo deja hablar.

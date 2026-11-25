@@ -30,6 +30,10 @@ dependencies = [
     "google-genai>=2.29.0",
     "python-dotenv>=1.2.4",
     "python-pptx>=1.0.2",
+    # Producto de datos de la entrega final: API REST y aplicación web
+    "fastapi>=0.115",
+    "uvicorn>=0.32",
+    "dash>=3.0",
 ]
 
 [tool.uv]

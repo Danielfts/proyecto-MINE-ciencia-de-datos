@@ -73,6 +73,8 @@ class EscenaNarrada(VoiceoverScene):
     # Los define el video de cada entrega; salen en el guion y en las diapositivas.
     TITULO = ""
     LIMITE_MINUTOS = None
+    # Quiénes firman la portada y deben aparecer en el reparto del guion.
+    INTEGRANTES = INTEGRANTES
 
     def setup(self):
         self.set_speech_service(crear_servicio())
@@ -105,6 +107,7 @@ class EscenaNarrada(VoiceoverScene):
         recorrido = {
             "titulo": self.TITULO,
             "limite_minutos": self.LIMITE_MINUTOS,
+            "integrantes": list(self.INTEGRANTES),
             "pasos": self.diapositivas,
         }
         (carpeta / "notas.json").write_text(
@@ -182,7 +185,7 @@ class EscenaNarrada(VoiceoverScene):
     def firma(self):
         """Integrantes y curso, en la zona de la nota. Va al empezar la portada y se va con ella."""
         firma = VGroup(
-            Text(" · ".join(INTEGRANTES), font_size=22, color=C_TEXTO),
+            Text(" · ".join(self.INTEGRANTES), font_size=22, color=C_TEXTO),
             Text(CURSO, font_size=18, color=GRIS),
         ).arrange(DOWN, buff=0.14)
         ajustar(firma).to_edge(DOWN, buff=0.45)
