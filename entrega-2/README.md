@@ -37,7 +37,7 @@ latexmk reporte.tex
 
 **Espacio fijo por sección.** Cada sección tiene un espacio fijo, en páginas, según su peso en la nota y su importancia, y los espacios suman exactamente 12 (el reparto y su razón están en un comentario al comienzo de `reporte.tex`). Al final de cada sección se rellena con espacio en blanco lo que le sobra, así que cada sección empieza siempre en el mismo lugar y el PDF tiene 12 páginas mientras ninguna se pase. Si una se pasa, la compilación lo avisa (`Espacio fijo: sección N (… páginas) se pasa por N líneas`) y aparece una marca amarilla al final de la sección: hay que acortarla. Mientras tanto el PDF tiene más de 12 páginas. Lo implementa [reporte/espacio.tex](reporte/espacio.tex); `\espaciovisiblefalse` quita, para la versión que se entrega, el texto gris que dice cuántas líneas le sobran a cada sección.
 
-**Heredado de la primera entrega.** Las secciones 1 a 7 llevan al comienzo la marca amarilla "Heredado de la primera entrega · pendiente de aprobación" (`\heredado`): son el texto de la primera entrega sin cambios. Se quita de cada sección cuando el equipo la apruebe. Hoy esas secciones se pasan de su espacio, porque ocupaban 6 páginas y ahora tienen 3,65.
+**Heredado de la primera entrega.** Las secciones 1 a 7 llevan al comienzo la marca amarilla "Heredado de la primera entrega · pendiente de aprobación" (`\heredado`): son el texto de la primera entrega sin cambios. Se quita de cada sección cuando el equipo la apruebe. La sección 6 ya no la lleva: se reescribió con las mejoras del issue #1 y espera la revisión del equipo. Hoy esas secciones se pasan de su espacio, porque ocupaban 6 páginas y ahora tienen 3,65.
 
 - Las mismas reglas de la [primera entrega](../entrega-1/README.md#reporte): el PDF se sube, debe compilarse con Arial (`pdffonts reporte.pdf`) y la compilación avisa si se pasa de **12** páginas (`pdfinfo reporte.pdf`).
 - Las fuentes van en [reporte/referencias.bib](reporte/referencias.bib), que empieza con las de la primera entrega.
@@ -51,14 +51,14 @@ Se ejecutan en orden: el 06 primero y después los demás, porque cada uno lee l
 
 | Orden | Notebook | Lee | Escribe |
 | --- | --- | --- | --- |
-| 0 | [06-entendimiento-de-los-datos.ipynb](notebooks/06-entendimiento-de-los-datos.ipynb) — **heredado de la primera entrega, pendiente de aprobación** | `datos/predios/predios.parquet` | Nada |
+| 0 | [06-entendimiento-de-los-datos.ipynb](notebooks/06-entendimiento-de-los-datos.ipynb) — **de la primera entrega, con las mejoras del issue #1; pendiente de aprobación** | `datos/predios/predios.parquet` | Nada |
 | 1 | [08-preparacion-de-datos.ipynb](notebooks/08-preparacion-de-datos.ipynb) | `datos/predios/predios.parquet` | `datos/modelado/predios_preparados.parquet` |
 | 2 | [09-estrategia-de-validacion.ipynb](notebooks/09-estrategia-de-validacion.ipynb) | Lo que escribe el 08 | `datos/modelado/particion.parquet` |
 | 3 | [10-construccion-y-evaluacion-del-modelo.ipynb](notebooks/10-construccion-y-evaluacion-del-modelo.ipynb) | Lo que escriben el 08 y el 09 | `producto/artefactos/modelo.joblib` |
 
 - **Archivos intermedios:** ninguno se sube al repositorio (identifican al municipio o están entrenados con sus datos). Si falta uno, el notebook que lo necesita se detiene con un mensaje que dice qué ejecutar antes.
 - **Lo compartido** (rutas, semilla, columnas reservadas y estilo) está en [notebooks/utilidades_modelado.py](notebooks/utilidades_modelado.py). Las funciones del análisis exploratorio están en [notebooks/utilidades_eda.py](notebooks/utilidades_eda.py).
-- **Heredado de la primera entrega:** el notebook 06 y `utilidades_eda.py` son copias sin cambios de `entrega-1/notebooks/`, con una marca visible al comienzo ("Heredado de la primera entrega · pendiente de aprobación"). Las mejoras van sobre estas copias (issue #1); las de `entrega-1/` quedan como se entregaron. La marca se quita cuando el equipo apruebe el contenido.
+- **Heredado de la primera entrega:** el notebook 06 y `utilidades_eda.py` son copias de `entrega-1/notebooks/`, con una marca visible al comienzo ("Heredado de la primera entrega · pendiente de aprobación"). `utilidades_eda.py` sigue sin cambios; el notebook 06 ya tiene las mejoras del issue #1, que la marca enumera. Las de `entrega-1/` quedan como se entregaron. La marca se quita cuando el equipo apruebe el contenido.
 - **Salidas, gráficas y datos:** las mismas reglas que en la [primera entrega](../entrega-1/README.md#notebook). Ninguna salida muestra datos personales ni nada que identifique al municipio.
 - **Transformaciones que aprenden de los datos** (imputación, escalado, codificación) se ajustan solo con entrenamiento, dentro del pipeline del notebook 10; el notebook 08 las define.
 

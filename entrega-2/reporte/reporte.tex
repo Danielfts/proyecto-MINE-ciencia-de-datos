@@ -338,80 +338,63 @@ publica; está en el \enlace{\urldatos}{almacenamiento de la Universidad}, con a
 % Los resultados más importantes del análisis exploratorio y de la calidad de los
 % datos. Debe notarse el uso de técnicas univariadas y multivariadas, gráficas y
 % no gráficas. El notebook completo se enlaza con \repo.
-\heredado
-El análisis completo está en el
-\repo{entrega-1/notebooks/06-entendimiento-de-los-datos.ipynb}{notebook de entendimiento de los
-datos}. Analiza el levantamiento catastral (22\,220 predios en LADM-COL), exportado a un archivo
-con un predio por fila y sin datos personales. La tabla~\ref{tab:tecnicas} resume las técnicas
-usadas.
+% Reescrita para la entrega final según la retroalimentación (issue #1): análisis
+% multivariado sobre el pago, desbalance, sesgo del cruce, suficiencia por grupo y
+% qué implica cada hallazgo. Pendiente de revisión del equipo.
+El \repo{entrega-2/notebooks/06-entendimiento-de-los-datos.ipynb}{notebook de entendimiento de
+los datos} analiza los 22\,220 predios del levantamiento y los 19\,150 que Hacienda facturó en
+2026. Usa estadísticos de forma, Box-Cox, frecuencias, tablas cruzadas con chi-cuadrado y V de
+Cramér, Mann-Whitney por régimen, PCA, regresión descriptiva y AUC univariada, con histogramas,
+cajas, mapas de calor y un biplot.
+
+\textbf{Avalúo.} Es muy asimétrico (mediana de 236 millones, asimetría de 37,7) y se analiza en
+escala logarítmica (Box-Cox $\lambda \approx 0$). Depende casi solo del tamaño: el primer
+componente del PCA se correlaciona 0,92 con él. Para el motor, el avalúo es coherente entre
+predios comparables.
+
+\textbf{Pago.} Pagó la vigencia 2026 el 64\,\% de los predios facturados. El historial de 2025
+domina (V de Cramér = 0,57), y las características del catastro pesan donde el historial no
+decide: entre los predios sin registro de 2025, el decil de avalúo se asocia con el pago
+(V = 0,31) más del doble que entre los que pagaron (0,13), y pagó el 50\,\% de los predios nuevos
+frente al 61\,\% de los desenglobes. Para el modelo: el historial y la novedad del número predial
+entran como variables, con interacciones entre ellas y el resto.
+
+\begin{destacado}
+\textbf{Pagó en 2026 el 80,3\,\% de quienes pagaron 2025 y el 0,3\,\% de quienes no.} La
+incertidumbre está en el 20\,\% que dejó de pagar y en los 3\,927 predios sin registro de 2025.
+\end{destacado}
+
+\textbf{Desbalance.} En total es leve (64\,\% y 36\,\%), pero entre quienes no pagaron 2025 solo
+9 de 2\,703 pagaron. La partición se estratifica por pago y por historial, y las métricas se
+reportan por grupo. \textbf{Concentración.} El 1\,\% de los predios con mayor impuesto factura el
+46,8\,\% del total: el KPI~2 y el recaudo esperado dependen de pocos predios.
 
 \begin{table}[H]
   \centering
-  \caption{Técnicas de análisis usadas en el notebook.}
-  \label{tab:tecnicas}
-  \small
-  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.16\linewidth}
-                     >{\raggedright\arraybackslash}p{0.40\linewidth}
-                     >{\raggedright\arraybackslash}p{0.38\linewidth}@{}}
-    \toprule
-     & No gráfico & Gráfico \\
-    \midrule
-    Univariado & Tendencia central, dispersión, forma, atípicos de Tukey, frecuencias,
-      transformación de Box-Cox & Histogramas, diagramas de caja, barras con Pareto, QQ-plots \\
-    Multivariado & Correlación de Pearson y Spearman, tablas cruzadas estratificadas,
-      chi-cuadrado y V de Cramér, Mann-Whitney por régimen, PCA, regresión descriptiva
-      & Mapas de calor, dispersión, cajas por grupo, biplot del PCA \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-\textbf{Unidad de análisis.} El levantamiento mezcla regímenes que se valoran de forma
-distinta: predios no sometidos a propiedad horizontal (NPH), matrices de propiedad horizontal
-(PH) y sus unidades, condominios, informales, vías y unidades de parque cementerio. El análisis
-del avalúo usa los predios individuales con avalúo positivo y construcción: 16\,705 predios, el
-75,2\,\% del levantamiento.
-
-\textbf{Univariado.} El avalúo mediano es de 236 millones de pesos, con una distribución muy
-asimétrica (asimetría de 37,7). El parámetro de Box-Cox cercano a 0 justifica analizarlo en
-escala logarítmica, donde queda casi simétrico. La mitad de los predios son unidades de PH. El
-64\,\% de los predios individuales tiene alguna novedad en su número predial frente al catastro
-anterior, y el 10\,\% son predios nuevos.
-
-\textbf{Multivariado.} El avalúo depende casi solo del tamaño del predio: el primer componente
-del PCA (50\,\% de la varianza) es el tamaño, y se correlaciona 0,92 con el avalúo. Una
-regresión descriptiva asocia duplicar el tamaño con algo más del doble del avalúo. La zona se
-compara dentro de cada régimen: sin estratificar, el avalúo por m² urbano es 13\,\% menor que el
-rural; en NPH son iguales, y con el terreno controlado el urbano es 56\,\% mayor.
-% Pendiente (Daniel): el indicador de pago de la facturación en el univariado y el multivariado.
-
-\begin{table}[H]
-  \centering
-  \caption{Principales problemas de calidad de los datos.}
+  \caption{Principales problemas de calidad y su tratamiento en la preparación.}
   \label{tab:calidad}
   \small
-  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.40\linewidth}
-                     >{\raggedright\arraybackslash}p{0.15\linewidth}
+  \begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.44\linewidth}
                      >{\raggedleft\arraybackslash}p{0.10\linewidth}
-                     >{\raggedright\arraybackslash}p{0.27\linewidth}@{}}
+                     >{\raggedright\arraybackslash}p{0.40\linewidth}@{}}
     \toprule
-    Problema & Dimensión & Predios & Estrategia \\
+    Problema & Predios & Tratamiento \\
     \midrule
-    Fecha de visita de relleno: un mismo día, todas incompletas & Precisión & 9\,010 & Faltante \\
-    Año de construcción 2000 muy por encima de sus vecinos & Precisión & 3\,322 & Marcado; análisis con y sin él \\
-    Avalúo igual a 0 & Completitud & 2\,335 & Fuera de la base del avalúo \\
-    Área levantada menor que la registral en condominio & Consistencia & 1\,436 & Reportada; causa por confirmar \\
-    Formatos del número predial y dominios & Conformidad & 0 & Sin errores \\
+    Fecha de visita de relleno, todas incompletas & 9\,010 & Faltante; se usa la visita efectiva \\
+    Año de construcción 2000 de relleno & 3\,322 & Faltante, con un indicador \\
+    Avalúo igual a 0 & 2\,335 & Faltante, con un indicador \\
+    Unidades de PH sin terreno ni pisos propios & 10\,993 & Terreno y pisos de su matriz \\
+    Predios del catastro sin facturación & 2\,888 & Fuera del modelo \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-\textbf{Calidad y suficiencia.} La tabla~\ref{tab:calidad} resume la bitácora de calidad del
-notebook, que registra 31 problemas con su dimensión y su estrategia. El 48,5\,\% de los predios
-individuales tiene información de campo confiable. En PH la visita se registra en el predio
-matriz: contarla sube la cobertura de las unidades de PH de 0,4\,\% a 60,5\,\%. La cobertura es
-débil en NPH (18\,\%) e informales (9\,\%). El catastro aporta las variables que el producto
-necesita de cada predio: avalúo, régimen, destinación, zona y tamaño. La facturación del predial
-aporta el impuesto y el indicador de pago.
+\textbf{Calidad y suficiencia.} La bitácora del notebook registra 32 problemas (tabla~\ref{tab:calidad});
+los formatos y dominios no tienen errores. El cruce con la facturación no sesga la muestra: 746
+de los 748 predios individuales sin facturar son predios cancelados en la actualización. Cada
+grupo del historial tiene miles de predios, y todas las variables candidatas tienen menos de
+5\,\% de faltantes, salvo el año de construcción (30\,\%). Los límites son el pago cortado a la
+fecha de extracción y los 270 predios que Hacienda liquidó con un avalúo distinto del catastral.
 
 \end{espacio}
 

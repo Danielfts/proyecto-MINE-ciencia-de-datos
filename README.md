@@ -65,7 +65,7 @@ Se ejecutan en este orden, con el [entorno de Python](#entorno-de-python) instal
 
 | Orden | Notebook | Actividad | Estado |
 | --- | --- | --- | --- |
-| 1 | [entrega-2/notebooks/06-entendimiento-de-los-datos.ipynb](entrega-2/notebooks/06-entendimiento-de-los-datos.ipynb) | 6. Entendimiento de los datos | Heredado de la primera entrega, pendiente de aprobación |
+| 1 | [entrega-2/notebooks/06-entendimiento-de-los-datos.ipynb](entrega-2/notebooks/06-entendimiento-de-los-datos.ipynb) | 6. Entendimiento de los datos | De la primera entrega, con las mejoras del issue #1; pendiente de aprobación |
 | 2 | [entrega-2/notebooks/08-preparacion-de-datos.ipynb](entrega-2/notebooks/08-preparacion-de-datos.ipynb) | 8. Preparación de datos | Andamiaje |
 | 3 | [entrega-2/notebooks/09-estrategia-de-validacion.ipynb](entrega-2/notebooks/09-estrategia-de-validacion.ipynb) | 9. Estrategia de validación | Andamiaje |
 | 4 | [entrega-2/notebooks/10-construccion-y-evaluacion-del-modelo.ipynb](entrega-2/notebooks/10-construccion-y-evaluacion-del-modelo.ipynb) | 10. Construcción y evaluación del modelo | Andamiaje |
