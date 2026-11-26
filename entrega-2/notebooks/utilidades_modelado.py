@@ -70,9 +70,12 @@ CLASE_NO_PAGA = 0
 # Grupo del historial de 2025: estratifica la partición (09) y separa las métricas (10)
 GRUPO = "historial_2025"
 
-# Características: todas se conocen antes del pago de la vigencia 2026
+# Características: todas se conocen antes del pago de la vigencia 2026. El impuesto
+# facturado (y la tarifa efectiva que sale de él) no entra: algunos valores exactos de la
+# tarifa separan casi perfectamente a los que pagaron, lo que indica que el valor registrado
+# depende del pago (ver la etapa 5 del notebook 08). Se usa solo para el recaudo esperado.
 NUMERICAS = [
-    "log_avaluo", "log_ipu", "tarifa_efectiva", "log_area_construida", "log_area_registral",
+    "log_avaluo", "log_area_construida", "log_area_registral",
     "log_area_terreno", "n_unidades", "n_construcciones", "pisos_edificio", "anio_construccion",
     "n_titulares", "log_predios_mismo_titular",
 ]
@@ -112,3 +115,124 @@ def crear_preprocesador(escalar=True, min_frecuencia=30):
                                       sparse_output=False), CATEGORICAS),
         ("binarias", "passthrough", BINARIAS),
     ], verbose_feature_names_out=True)
+
+
+# --- Interacciones con el historial (regresión logística) ----------------------------
+from sklearn.base import BaseEstimator, TransformerMixin  # noqa: E402
+
+
+class InteraccionesHistorial(TransformerMixin, BaseEstimator):
+    """Agrega el producto de cada variable numérica o binaria por el indicador de los
+    grupos del historial donde el pago es incierto (pagó 2025 y sin registro de 2025).
+
+    Así la regresión logística puede darle a cada variable un efecto distinto según el
+    historial, como mostró el notebook 06; los árboles encuentran esas interacciones solos.
+    Va después del preprocesador, que debe entregar un DataFrame
+    (`crear_preprocesador().set_output(transform="pandas")`). Con `activar=False` no hace
+    nada, para comparar las dos versiones como un hiperparámetro más.
+    """
+
+    GRUPOS = ("Pagó 2025", "Sin registro 2025")
+
+    def __init__(self, activar=True):
+        self.activar = activar
+
+    def fit(self, X, y=None):
+        self.grupos_ = [f"categoricas__{GRUPO}_{g}" for g in self.GRUPOS
+                        if f"categoricas__{GRUPO}_{g}" in X.columns]
+        self.base_ = [c for c in X.columns if c.startswith(("numericas__", "binarias__"))]
+        self.columnas_ = list(X.columns)
+        self.n_features_in_ = X.shape[1]
+        return self
+
+    def _nombres_nuevos(self):
+        return [f"interaccion__{g.removeprefix('categoricas__')} x {b.split('__', 1)[1]}"
+                for g in self.grupos_ for b in self.base_]
+
+    def transform(self, X):
+        if not self.activar:
+            return X
+        productos = [X[g] * X[b] for g in self.grupos_ for b in self.base_]
+        nuevas = pd.DataFrame(dict(zip(self._nombres_nuevos(), productos)), index=X.index)
+        return pd.concat([X, nuevas], axis=1)
+
+    def get_feature_names_out(self, input_features=None):
+        import numpy as np
+
+        return np.array(self.columnas_ + (self._nombres_nuevos() if self.activar else []), dtype=object)
+
+
+# --- Métricas (estrategia del notebook 09) ------------------------------------------
+def metricas(y, p, umbral=0.5):
+    """ROC-AUC, log-loss y precisión, recall y F1 de la clase "no paga".
+
+    `p` es la probabilidad de pagar; un predio se señala como "no paga" si p < umbral.
+    El ROC-AUC queda vacío si la clase minoritaria tiene menos de 10 predios (por ejemplo,
+    los que no pagaron 2025: en validación y prueba solo uno de ellos pagó), porque con
+    tan pocos casos no dice nada.
+    """
+    import numpy as np
+    from sklearn.metrics import f1_score, log_loss, precision_score, recall_score, roc_auc_score
+
+    y = np.asarray(y)
+    p = np.clip(np.asarray(p, dtype=float), 1e-6, 1 - 1e-6)
+    pred = (p >= umbral).astype(int)
+    argumentos = {"pos_label": CLASE_NO_PAGA, "zero_division": 0}
+    minoritaria = min((y == 1).sum(), (y == 0).sum())
+    return {
+        "predios": len(y),
+        "ROC-AUC": roc_auc_score(y, p) if minoritaria >= 10 else np.nan,
+        "log-loss": log_loss(y, p, labels=[0, 1]),
+        "precisión no paga": precision_score(y, pred, **argumentos),
+        "recall no paga": recall_score(y, pred, **argumentos),
+        "F1 no paga": f1_score(y, pred, **argumentos),
+    }
+
+
+def metricas_por_grupo(datos, p, umbral=0.5):
+    """`metricas` en total y en cada grupo del historial. `datos` trae OBJETIVO y GRUPO."""
+    import numpy as np
+
+    p = np.asarray(p)
+    filas = {"Total": metricas(datos[OBJETIVO], p, umbral)}
+    for grupo in sorted(datos[GRUPO].unique()):
+        m = (datos[GRUPO] == grupo).to_numpy()
+        filas[grupo] = metricas(datos.loc[m, OBJETIVO], p[m], umbral)
+    return pd.DataFrame(filas).T
+
+
+def umbral_f1(y, p):
+    """Umbral de probabilidad que maximiza el F1 de "no paga" (se elige en validación)."""
+    import numpy as np
+
+    umbrales = np.round(np.arange(0.05, 0.96, 0.01), 2)
+    f1 = [metricas(y, p, u)["F1 no paga"] for u in umbrales]
+    return float(umbrales[int(np.argmax(f1))])
+
+
+def graficar_roc_calibracion(y, probabilidades, titulo=""):
+    """Curvas ROC y de calibración de varios modelos sobre el mismo conjunto.
+
+    `probabilidades` es un diccionario {nombre: probabilidad de pagar}. La calibración usa
+    10 intervalos de igual número de predios.
+    """
+    from sklearn.calibration import calibration_curve
+    from sklearn.metrics import roc_auc_score, roc_curve
+
+    colores = [NEGRO, AMARILLO, GRIS, AZUL]
+    estilos = ["--", "-", "-", "-"]
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(13, 5))
+    for (nombre, p), color, estilo in zip(probabilidades.items(), colores, estilos):
+        fpr, tpr, _ = roc_curve(y, p)
+        ax1.plot(fpr, tpr, color=color, linestyle=estilo, linewidth=2,
+                 label=f"{nombre} (AUC = {roc_auc_score(y, p):.3f})")
+        real, predicha = calibration_curve(y, p, n_bins=10, strategy="quantile")
+        ax2.plot(predicha, real, color=color, linestyle=estilo, marker="o", markeredgecolor=NEGRO, label=nombre)
+    ax1.plot([0, 1], [0, 1], color=GRIS, linestyle=":", linewidth=1, label="Azar")
+    ax1.set_xlabel("Tasa de falsos positivos"); ax1.set_ylabel("Tasa de verdaderos positivos")
+    ax1.set_title(f"Curva ROC {titulo}".strip()); ax1.legend(loc="lower right")
+    ax2.plot([0, 1], [0, 1], color=GRIS, linestyle=":", linewidth=1, label="Calibración perfecta")
+    ax2.set_xlabel("Probabilidad de pago predicha"); ax2.set_ylabel("Proporción que pagó")
+    ax2.set_title(f"Curva de calibración {titulo}".strip()); ax2.legend(loc="upper left")
+    plt.tight_layout()
+    return fig
