@@ -58,3 +58,57 @@ def exigir(archivo, como_obtenerlo):
     if not archivo.exists():
         raise FileNotFoundError(f"Falta {archivo.relative_to(RAIZ)}: {como_obtenerlo}")
     return archivo
+
+
+# --- Variables del modelo de pago (las define el notebook 08) -----------------------
+# Variable objetivo: 1 si el predio pagó la vigencia 2026 a la fecha de extracción. Está
+# en COLUMNAS_RESERVADAS: se muestra solo agregada.
+OBJETIVO = "pago_2026"
+# Clase de interés para la precisión, el recall y el F1: los predios que no pagan
+# (pos_label=CLASE_NO_PAGA en las métricas de scikit-learn; ver la estrategia del notebook 09)
+CLASE_NO_PAGA = 0
+# Grupo del historial de 2025: estratifica la partición (09) y separa las métricas (10)
+GRUPO = "historial_2025"
+
+# Características: todas se conocen antes del pago de la vigencia 2026
+NUMERICAS = [
+    "log_avaluo", "log_ipu", "tarifa_efectiva", "log_area_construida", "log_area_registral",
+    "log_area_terreno", "n_unidades", "n_construcciones", "pisos_edificio", "anio_construccion",
+    "n_titulares", "log_predios_mismo_titular",
+]
+CATEGORICAS = [
+    "historial_2025", "novedad_numero_predial", "condicion_predio", "destinacion_economica",
+    "zona", "resultado_visita", "tipo_derecho", "tipo_predio", "autoriza_notificaciones",
+]
+BINARIAS = ["visita_exitosa_efectiva", "avaluo_cero", "anio_sospechoso", "tiene_matricula",
+            "titular_juridico"]
+CARACTERISTICAS = NUMERICAS + CATEGORICAS + BINARIAS
+
+
+def crear_preprocesador(escalar=True, min_frecuencia=30):
+    """ColumnTransformer de las características del modelo de pago.
+
+    - Numéricas: imputación con la mediana más una columna indicadora de cada faltante
+      y, si `escalar`, estandarización (la necesita la regresión logística; a los árboles
+      no les cambia nada).
+    - Categóricas: one-hot, con las categorías de menos de `min_frecuencia` predios
+      agrupadas en una sola ("infrequent") y las que no se vieron en entrenamiento en ceros.
+    - Binarias: pasan sin cambios (ya son 0 y 1).
+
+    Todo lo que aprende de los datos (medianas, medias, desviaciones, categorías) se ajusta
+    con `fit`, así que dentro del Pipeline del notebook 10 se ajusta solo con entrenamiento.
+    """
+    from sklearn.compose import ColumnTransformer
+    from sklearn.impute import SimpleImputer
+    from sklearn.pipeline import Pipeline
+    from sklearn.preprocessing import OneHotEncoder, StandardScaler
+
+    pasos_numericas = [("imputacion", SimpleImputer(strategy="median", add_indicator=True))]
+    if escalar:
+        pasos_numericas.append(("estandarizacion", StandardScaler()))
+    return ColumnTransformer([
+        ("numericas", Pipeline(pasos_numericas), NUMERICAS),
+        ("categoricas", OneHotEncoder(handle_unknown="infrequent_if_exist", min_frequency=min_frecuencia,
+                                      sparse_output=False), CATEGORICAS),
+        ("binarias", "passthrough", BINARIAS),
+    ], verbose_feature_names_out=True)

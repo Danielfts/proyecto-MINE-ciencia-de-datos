@@ -1,12 +1,12 @@
 %% Diagrama de bloques de la preparación de datos (actividad 8, recomendado).
-%% Borrador: ajustarlo a lo que finalmente hagan los notebooks 08 a 10.
+%% Sigue lo que hacen los notebooks 08 (preparación), 09 (partición) y 10 (pipeline).
 flowchart LR
   A[("predios.parquet<br/>un predio por fila,<br/>sin datos personales")] --> B["Desanidar construcciones<br/>y unidades"]
-  B --> C["Unidad de análisis y<br/>variable objetivo: pagó 2026"]
-  C --> D["Limpieza: centinelas a<br/>faltantes, formatos, consistencia"]
-  D --> E["Nuevas características:<br/>historial de pago 2025,<br/>atributos por predio, log-avalúo"]
+  B --> C["Limpieza: valores de relleno<br/>e incoherencias a faltantes;<br/>indicadores de avalúo 0 y año 2000"]
+  C --> D["Nuevas características:<br/>historial 2025, novedad, escalas log,<br/>terreno y pisos de la matriz en la PH,<br/>visita efectiva, titulares"]
+  D --> E["Unidad de análisis: 19 149 predios<br/>facturados en 2026, sin vías, bienes<br/>de uso público ni parque cementerio;<br/>objetivo: pagó 2026"]
   E --> F[("predios_preparados.parquet")]
-  F --> G["Partición estratificada:<br/>entrenamiento, validación, prueba<br/>(notebook 09)"]
-  G --> H["Pipeline ajustado en entrenamiento:<br/>imputación, codificación, escalado<br/>(notebook 10)"]
-  H --> I["Tres algoritmos con varios<br/>hiperparámetros; elección en validación"]
+  F --> G["Partición 70/15/15 estratificada<br/>por pago e historial<br/>(notebook 09)"]
+  G --> H["Pipeline ajustado con entrenamiento:<br/>imputación con mediana e indicador,<br/>one-hot, estandarización<br/>(notebook 10)"]
+  H --> I["Tres algoritmos con varios<br/>hiperparámetros; elección en<br/>validación por log-loss"]
   I --> J[("modelo.joblib")]
