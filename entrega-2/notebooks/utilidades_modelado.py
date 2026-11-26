@@ -236,3 +236,36 @@ def graficar_roc_calibracion(y, probabilidades, titulo=""):
     ax2.set_title(f"Curva de calibración {titulo}".strip()); ax2.legend(loc="upper left")
     plt.tight_layout()
     return fig
+
+
+def graficar_calibracion_por_grupo(datos, probabilidades, grupos=("Pagó 2025", "Sin registro 2025"), n_bins=5):
+    """Curva de calibración de varios modelos dentro de cada grupo del historial.
+
+    `datos` trae OBJETIVO y GRUPO; `probabilidades` es {nombre: probabilidad de pagar}, en
+    el orden de `datos`. El grupo que no pagó 2025 no se grafica: en validación y prueba
+    tiene un solo pago. Usa `n_bins` intervalos de igual número de predios; la línea base,
+    que da la misma probabilidad a todo el grupo, queda como un solo punto.
+    """
+    import numpy as np
+    from sklearn.calibration import calibration_curve
+
+    colores = [NEGRO, AMARILLO, GRIS, AZUL]
+    estilos = ["--", "-", "-", "-"]
+    fig, ejes = plt.subplots(1, len(grupos), figsize=(6.5 * len(grupos), 5), squeeze=False)
+    for ax, grupo in zip(ejes[0], grupos):
+        m = (datos[GRUPO] == grupo).to_numpy()
+        y = datos.loc[m, OBJETIVO].to_numpy()
+        for (nombre, p), color, estilo in zip(probabilidades.items(), colores, estilos):
+            p = np.asarray(p)[m]
+            if np.unique(p).size == 1:
+                ax.plot(p[:1], [y.mean()], color=color, marker="D", markersize=9, markeredgecolor=NEGRO,
+                        linestyle="none", label=nombre)
+                continue
+            real, predicha = calibration_curve(y, p, n_bins=n_bins, strategy="quantile")
+            ax.plot(predicha, real, color=color, linestyle=estilo, marker="o", markeredgecolor=NEGRO, label=nombre)
+        ax.plot([0, 1], [0, 1], color=GRIS, linestyle=":", linewidth=1, label="Calibración perfecta")
+        ax.set_xlim(0, 1); ax.set_ylim(0, 1)
+        ax.set_xlabel("Probabilidad de pago predicha"); ax.set_ylabel("Proporción que pagó")
+        ax.set_title(f"{grupo} ({m.sum():,} predios)".replace(",", " ")); ax.legend(loc="upper left")
+    plt.tight_layout()
+    return fig
