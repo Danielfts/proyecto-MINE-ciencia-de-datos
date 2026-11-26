@@ -3,10 +3,10 @@
 flowchart LR
   A[("predios.parquet<br/>un predio por fila,<br/>sin datos personales")] --> B["Desanidar construcciones<br/>y unidades"]
   B --> C["Limpieza: valores de relleno<br/>e incoherencias a faltantes;<br/>indicadores de avalúo 0 y año 2000"]
-  C --> D["Nuevas características:<br/>historial 2025, novedad, escalas log,<br/>terreno y pisos de la matriz en la PH,<br/>visita efectiva, titulares"]
-  D --> E["Unidad de análisis: 19 149 predios<br/>facturados en 2026, sin vías, bienes<br/>de uso público ni parque cementerio;<br/>objetivo: pagó 2026"]
+  C --> D["Nuevas características:<br/>historial 2025, novedad, escalas log,<br/>terreno y pisos de la matriz en la PH,<br/>visita efectiva, titulares, tasa de pago<br/>2025 del mismo dueño y edificio"]
+  D --> E["Unidad de análisis: 18 802 predios<br/>privados facturados en 2026;<br/>objetivo: pagó 2026"]
   E --> F[("predios_preparados.parquet")]
-  F --> G["Partición 70/15/15 estratificada<br/>por pago e historial<br/>(notebook 09)"]
+  F --> G["Partición 70/15/15 por dueño grande,<br/>estratificada por pago, historial<br/>y condición del predio (notebook 09)"]
   G --> H["Pipeline ajustado con entrenamiento:<br/>imputación con mediana e indicador,<br/>one-hot, estandarización<br/>(notebook 10)"]
   H --> I["Tres algoritmos con varios<br/>hiperparámetros; elección en<br/>validación por log-loss"]
   I --> J[("modelo.joblib")]

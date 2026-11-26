@@ -69,6 +69,9 @@ OBJETIVO = "pago_2026"
 CLASE_NO_PAGA = 0
 # Grupo del historial de 2025: estratifica la partición (09) y separa las métricas (10)
 GRUPO = "historial_2025"
+# Grupo de partición: los predios de un mismo dueño grande van juntos al mismo subconjunto
+# (notebook 09). No es una característica.
+GRUPO_PARTICION = "grupo_particion"
 
 # Características: todas se conocen antes del pago de la vigencia 2026. El impuesto
 # facturado (y la tarifa efectiva que sale de él) no entra: algunos valores exactos de la
@@ -77,11 +80,11 @@ GRUPO = "historial_2025"
 NUMERICAS = [
     "log_avaluo", "log_area_construida", "log_area_registral",
     "log_area_terreno", "n_unidades", "n_construcciones", "pisos_edificio", "anio_construccion",
-    "n_titulares", "log_predios_mismo_titular",
+    "n_titulares", "log_predios_mismo_titular", "tasa_2025_mismo_dueno", "tasa_2025_mismo_edificio",
 ]
 CATEGORICAS = [
     "historial_2025", "novedad_numero_predial", "condicion_predio", "destinacion_economica",
-    "zona", "resultado_visita", "tipo_derecho", "tipo_predio", "autoriza_notificaciones",
+    "zona", "resultado_visita", "tipo_derecho", "autoriza_notificaciones",
 ]
 BINARIAS = ["visita_exitosa_efectiva", "avaluo_cero", "anio_sospechoso", "tiene_matricula",
             "titular_juridico"]
@@ -94,8 +97,9 @@ def crear_preprocesador(escalar=True, min_frecuencia=30):
     - Numéricas: imputación con la mediana más una columna indicadora de cada faltante
       y, si `escalar`, estandarización (la necesita la regresión logística; a los árboles
       no les cambia nada).
-    - Categóricas: one-hot, con las categorías de menos de `min_frecuencia` predios
-      agrupadas en una sola ("infrequent") y las que no se vieron en entrenamiento en ceros.
+    - Categóricas: one-hot, con las categorías de menos de `min_frecuencia` predios de
+      entrenamiento agrupadas en una sola columna ("infrequent"). Una categoría que no se vio
+      en entrenamiento va a esa columna si la variable la tiene, y si no, queda en ceros.
     - Binarias: pasan sin cambios (ya son 0 y 1).
 
     Todo lo que aprende de los datos (medianas, medias, desviaciones, categorías) se ajusta
@@ -115,6 +119,62 @@ def crear_preprocesador(escalar=True, min_frecuencia=30):
                                       sparse_output=False), CATEGORICAS),
         ("binarias", "passthrough", BINARIAS),
     ], verbose_feature_names_out=True)
+
+
+# --- Partición por grupos (notebook 09) ----------------------------------------------
+PROPORCIONES = {"entrenamiento": 0.70, "validación": 0.15, "prueba": 0.15}
+
+
+def particion_por_grupos(grupo, estrato, semilla, intentos=200):
+    """Partición 70/15/15 que no separa grupos y conserva la proporción de cada estrato.
+
+    1. Los grupos de más de un predio se reparten al azar entre los subconjuntos hasta
+       completar el 15 % de prueba y el 15 % de validación (por número de predios).
+    2. Los predios que forman su propio grupo completan, estrato por estrato, lo que le
+       falta a cada subconjunto para tener la proporción del conjunto completo.
+    3. Se repite `intentos` veces con la misma semilla y se queda la partición cuyas
+       proporciones (de los estratos y de los subconjuntos) se apartan menos del objetivo.
+
+    Devuelve una Series con el subconjunto de cada fila, en el orden de `grupo`.
+    """
+    import numpy as np
+
+    grupo = pd.Series(grupo).reset_index(drop=True)
+    estrato = pd.Series(estrato).reset_index(drop=True)
+    rng = np.random.default_rng(semilla)
+    tam = grupo.map(grupo.value_counts())
+    multiple = (tam > 1).to_numpy()
+    total = estrato.value_counts()
+    nombres = list(PROPORCIONES)
+    cortes = np.cumsum([PROPORCIONES["prueba"], PROPORCIONES["validación"]])
+    tam_grupos = grupo[multiple].value_counts()
+
+    mejor = None
+    for _ in range(intentos):
+        orden = rng.permutation(tam_grupos.index.to_numpy())
+        acumulado = tam_grupos.reindex(orden).cumsum() / multiple.sum()
+        asignacion = pd.Series(np.where(acumulado <= cortes[0], "prueba",
+                                        np.where(acumulado <= cortes[1], "validación", "entrenamiento")),
+                               index=orden)
+        sub = grupo.map(asignacion).where(multiple)
+        for est in total.index:
+            libres = rng.permutation(np.flatnonzero(~multiple & (estrato == est).to_numpy()))
+            ya = sub[(estrato == est) & sub.notna()].value_counts().reindex(nombres, fill_value=0)
+            falta = (pd.Series(PROPORCIONES) * total[est] - ya).clip(lower=0)
+            falta = falta / falta.sum() * len(libres) if falta.sum() > 0 else pd.Series(PROPORCIONES) * len(libres)
+            cuotas = np.floor(falta).astype(int)
+            for k in np.argsort(-(falta - cuotas).to_numpy())[:len(libres) - cuotas.sum()]:
+                cuotas.iloc[k] += 1
+            inicio = 0
+            for nombre in nombres:
+                sub.iloc[libres[inicio:inicio + cuotas[nombre]]] = nombre
+                inicio += cuotas[nombre]
+        desvio_estratos = max((estrato[sub == s].value_counts(normalize=True).reindex(total.index, fill_value=0)
+                               - total / len(estrato)).abs().max() for s in nombres)
+        desvio_tamanos = max(abs((sub == s).mean() - PROPORCIONES[s]) for s in nombres)
+        if mejor is None or desvio_estratos + desvio_tamanos < mejor[0]:
+            mejor = (desvio_estratos + desvio_tamanos, sub.copy())
+    return mejor[1]
 
 
 # --- Interacciones con el historial (regresión logística) ----------------------------
@@ -174,8 +234,10 @@ def metricas(y, p, umbral=0.5):
     import numpy as np
     from sklearn.metrics import f1_score, log_loss, precision_score, recall_score, roc_auc_score
 
+    # El log-loss es el de scikit-learn sin recorte propio: una probabilidad de 0 o 1 que
+    # resulte equivocada pesa lo que debe pesar (el árbol tiene hojas puras)
     y = np.asarray(y)
-    p = np.clip(np.asarray(p, dtype=float), 1e-6, 1 - 1e-6)
+    p = np.asarray(p, dtype=float)
     pred = (p >= umbral).astype(int)
     argumentos = {"pos_label": CLASE_NO_PAGA, "zero_division": 0}
     minoritaria = min((y == 1).sum(), (y == 0).sum())
